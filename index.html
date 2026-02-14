@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lifestyle Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-md mx-auto p-6 pb-12">
+    <!-- Header -->
+    <header class="mb-8 pb-4 border-b border-stone-border">
+      <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
+      <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+    </header>
+
+    <!-- Today's Tasks -->
+    <div class="mb-8">
+      <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-3">Today's Tasks</h3>
+      <div class="grid gap-3" id="todayTasks">
+        <!-- Sleep task -->
+        <a href="sleep.html" id="sleepTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-lavender transition-colors group">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-lavender/10 flex items-center justify-center text-lavender">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium text-sm" id="sleepTaskTitle">Log your sleep</div>
+                <div class="text-xs text-stone-muted" id="sleepTaskDesc">Track last night's rest</div>
+              </div>
+            </div>
+            <svg class="w-5 h-5 text-stone-muted group-hover:text-lavender transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Nutrition task -->
+        <a href="nutrition.html" id="nutritionTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-terracotta transition-colors group">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-terracotta/10 flex items-center justify-center text-terracotta">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium text-sm" id="nutritionTaskTitle">Log your meals</div>
+                <div class="text-xs text-stone-muted" id="nutritionTaskDesc">Track what you eat today</div>
+              </div>
+            </div>
+            <svg class="w-5 h-5 text-stone-muted group-hover:text-terracotta transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Activity task -->
+        <a href="activity.html" id="activityTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-teal transition-colors group">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-teal/10 flex items-center justify-center text-teal">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+              </div>
+              <div>
+                <div class="font-medium text-sm" id="activityTaskTitle">Log your activity</div>
+                <div class="text-xs text-stone-muted" id="activityTaskDesc">Track your exercise</div>
+              </div>
+            </div>
+            <svg class="w-5 h-5 text-stone-muted group-hover:text-teal transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Dashboard: 7-day trends -->
+    <div class="mb-8">
+      <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-3">Last 7 days</h3>
+      <div class="grid gap-3">
+        <!-- Sleep quality trend -->
+        <div class="bg-white border border-stone-border rounded-xl p-4">
+          <div class="flex justify-between items-baseline mb-3">
+            <span class="text-sm font-medium">Sleep Quality</span>
+            <span class="text-xs text-stone-muted" id="dashSleepAvg">—</span>
+          </div>
+          <div class="flex items-end justify-between h-16 gap-0.5" id="dashSleepChart"></div>
+        </div>
+
+        <!-- Nutrition trend -->
+        <div class="bg-white border border-stone-border rounded-xl p-4">
+          <div class="flex justify-between items-baseline mb-3">
+            <span class="text-sm font-medium">Nutrition</span>
+            <span class="text-xs text-stone-muted" id="dashNutritionAvg">—</span>
+          </div>
+          <div class="flex items-end justify-between h-16 gap-0.5" id="dashNutritionChart"></div>
+        </div>
+
+        <!-- Activity trend -->
+        <div class="bg-white border border-stone-border rounded-xl p-4">
+          <div class="flex justify-between items-baseline mb-3">
+            <span class="text-sm font-medium">Activity</span>
+            <span class="text-xs text-stone-muted" id="dashActivityAvg">—</span>
+          </div>
+          <div class="flex items-end justify-between h-16 gap-0.5" id="dashActivityChart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Update today's date
+    document.getElementById('todayDate').textContent = formatDate(todayKey());
+
+    // Update today's tasks based on completion status
+    function updateTodayTasks() {
+      const sleepData = getTodayData('sleep');
+      const nutritionData = getTodayData('nutrition');
+      const activityData = getTodayData('activity');
+
+      // Sleep task
+      const sleepTask = document.getElementById('sleepTask');
+      const sleepTitle = document.getElementById('sleepTaskTitle');
+      const sleepDesc = document.getElementById('sleepTaskDesc');
+      
+      if (sleepData && sleepData.bedtime) {
+        sleepTask.classList.remove('border-2', 'border-stone-border');
+        sleepTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        sleepTitle.innerHTML = '✓ Sleep logged';
+        sleepDesc.textContent = `${formatDuration(sleepData.durationMins)} • ${sleepData.rating}`;
+      }
+
+      // Nutrition task
+      const nutritionTask = document.getElementById('nutritionTask');
+      const nutritionTitle = document.getElementById('nutritionTaskTitle');
+      const nutritionDesc = document.getElementById('nutritionTaskDesc');
+      
+      if (nutritionData && nutritionData.entries && nutritionData.entries.length > 0) {
+        const totalCals = nutritionData.entries.reduce((s, e) => s + (e.cals || 0), 0);
+        nutritionTask.classList.remove('border-2', 'border-stone-border');
+        nutritionTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        nutritionTitle.innerHTML = '✓ Meals logged';
+        nutritionDesc.textContent = `${nutritionData.entries.length} meal(s)${totalCals ? ' • ' + totalCals + ' cal' : ''}`;
+      }
+
+      // Activity task
+      const activityTask = document.getElementById('activityTask');
+      const activityTitle = document.getElementById('activityTaskTitle');
+      const activityDesc = document.getElementById('activityTaskDesc');
+      
+      if (activityData && activityData.entries && activityData.entries.length > 0) {
+        const totalMins = activityData.entries.reduce((s, e) => s + (e.mins || 0), 0);
+        activityTask.classList.remove('border-2', 'border-stone-border');
+        activityTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        activityTitle.innerHTML = '✓ Activity logged';
+        activityDesc.textContent = `${totalMins} minutes total`;
+      }
+    }
+
+    // Dashboard rendering
+    function renderDashboard() {
+      renderSleepTrend();
+      renderNutritionTrend();
+      renderActivityTrend();
+    }
+
+    function renderSleepTrend() {
+      const data = getData('sleep');
+      const chartEl = document.getElementById('dashSleepChart');
+      const avgEl = document.getElementById('dashSleepAvg');
+
+      const last7 = [];
+      for (let i = 6; i >= 0; i--) {
+        const key = getDayKey(i);
+        const day = data[key];
+        last7.push({
+          label: getDayLabel(i),
+          rating: day ? day.rating : null,
+          duration: day ? formatDuration(day.durationMins) : null
+        });
+      }
+
+      const barColors = {
+        great: 'bg-green-400',
+        optimal: 'bg-yellow-400',
+        suboptimal: 'bg-red-400',
+        empty: 'bg-stone-border'
+      };
+
+      chartEl.innerHTML = last7.map(d => {
+        const ratingClass = d.rating || 'empty';
+        const height = d.rating ? (d.rating === 'great' ? 100 : d.rating === 'optimal' ? 70 : 40) : 8;
+        const tooltip = d.rating ? `${d.label}: ${d.rating} (${d.duration})` : `${d.label}: No data`;
+        return `<div class="flex-1 ${barColors[ratingClass]} rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
+          <span class="tooltip">${tooltip}</span>
+        </div>`;
+      }).join('');
+
+      const rated = last7.filter(d => d.rating);
+      if (rated.length) {
+        const counts = { great: 0, optimal: 0, suboptimal: 0 };
+        rated.forEach(d => counts[d.rating]++);
+        const mostCommon = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+        avgEl.textContent = `Mostly ${mostCommon}`;
+      } else {
+        avgEl.textContent = 'No data';
+      }
+    }
+
+    function renderNutritionTrend() {
+      const data = getData('nutrition');
+      const chartEl = document.getElementById('dashNutritionChart');
+      const avgEl = document.getElementById('dashNutritionAvg');
+
+      const last7 = [];
+      for (let i = 6; i >= 0; i--) {
+        const key = getDayKey(i);
+        const day = data[key];
+        const totalCals = day ? day.entries.reduce((s, e) => s + (e.cals || 0), 0) : 0;
+        last7.push({ label: getDayLabel(i), cals: totalCals });
+      }
+
+      const maxCals = Math.max(...last7.map(d => d.cals), 1);
+
+      chartEl.innerHTML = last7.map(d => {
+        const height = maxCals > 0 ? (d.cals / maxCals) * 100 : 8;
+        const tooltip = d.cals ? `${d.label}: ${d.cals} cal` : `${d.label}: No meals`;
+        return `<div class="flex-1 bg-terracotta rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
+          <span class="tooltip">${tooltip}</span>
+        </div>`;
+      }).join('');
+
+      const totalCals = last7.reduce((s, d) => s + d.cals, 0);
+      const avgCals = last7.length ? Math.round(totalCals / 7) : 0;
+      avgEl.textContent = avgCals ? `${avgCals} cal/day avg` : 'No data';
+    }
+
+    function renderActivityTrend() {
+      const data = getData('activity');
+      const chartEl = document.getElementById('dashActivityChart');
+      const avgEl = document.getElementById('dashActivityAvg');
+
+      const last7 = [];
+      for (let i = 6; i >= 0; i--) {
+        const key = getDayKey(i);
+        const day = data[key];
+        const totalMins = day ? day.entries.reduce((s, e) => s + (e.mins || 0), 0) : 0;
+        last7.push({ label: getDayLabel(i), mins: totalMins });
+      }
+
+      const maxMins = Math.max(...last7.map(d => d.mins), 1);
+
+      chartEl.innerHTML = last7.map(d => {
+        const height = maxMins > 0 ? (d.mins / maxMins) * 100 : 8;
+        const tooltip = d.mins ? `${d.label}: ${d.mins} min` : `${d.label}: No activity`;
+        return `<div class="flex-1 bg-teal rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
+          <span class="tooltip">${tooltip}</span>
+        </div>`;
+      }).join('');
+
+      const totalMins = last7.reduce((s, d) => s + d.mins, 0);
+      const avgMins = last7.length ? Math.round(totalMins / 7) : 0;
+      avgEl.textContent = avgMins ? `${avgMins} min/day avg` : 'No data';
+    }
+
+    // Initialize
+    updateTodayTasks();
+    renderDashboard();
+  </script>
+</body>
+</html>

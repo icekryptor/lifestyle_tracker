@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nutrition Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-md mx-auto p-6 pb-12">
+    <!-- Header with back button -->
+    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
+      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl font-medium tracking-tight">Nutrition Tracker</h1>
+        <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+      </div>
+    </header>
+
+    <!-- Daily Summary -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-terracotta mb-4">Daily Summary</h2>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-cream-50 rounded-lg p-3">
+          <div class="text-2xl font-semibold" id="totalCalories">0</div>
+          <div class="text-xs text-stone-muted">Calories</div>
+        </div>
+        <div class="bg-cream-50 rounded-lg p-3">
+          <div class="text-2xl font-semibold" id="mealsLogged">0/4</div>
+          <div class="text-xs text-stone-muted">Meals</div>
+        </div>
+      </div>
+      <div class="grid grid-cols-4 gap-2 mt-3">
+        <div class="text-center">
+          <div class="text-lg font-medium" id="totalProtein">0g</div>
+          <div class="text-xs text-stone-muted">Protein</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-medium" id="totalCarbs">0g</div>
+          <div class="text-xs text-stone-muted">Carbs</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-medium" id="totalFats">0g</div>
+          <div class="text-xs text-stone-muted">Fats</div>
+        </div>
+        <div class="text-center">
+          <div class="text-lg font-medium" id="totalFiber">0g</div>
+          <div class="text-xs text-stone-muted">Fiber</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Breakfast -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <h2 class="text-sm font-medium">🌅 Breakfast</h2>
+          <p class="text-xs text-stone-muted">Carbs, healthy fats & fiber</p>
+        </div>
+        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('breakfast')">+ Add</button>
+      </div>
+      <div id="breakfastContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+    </section>
+
+    <!-- Lunch -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <h2 class="text-sm font-medium">☀️ Lunch</h2>
+          <p class="text-xs text-stone-muted">30% protein, 70% carbs, 1 fruit</p>
+        </div>
+        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('lunch')">+ Add</button>
+      </div>
+      <div id="lunchContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+    </section>
+
+    <!-- Dinner -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <h2 class="text-sm font-medium">🌆 Dinner</h2>
+          <p class="text-xs text-stone-muted">50% protein, 50% carbs + treat</p>
+        </div>
+        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('dinner')">+ Add</button>
+      </div>
+      <div id="dinnerContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+    </section>
+
+    <!-- Supper -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <h2 class="text-sm font-medium">🌙 Supper</h2>
+          <p class="text-xs text-stone-muted">100% protein</p>
+        </div>
+        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('supper')">+ Add</button>
+      </div>
+      <div id="supperContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+    </section>
+
+    <!-- Nutrition History Calendar -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-terracotta">Nutrition History</h2>
+        <div class="flex gap-2">
+          <button id="prevMonth" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <button id="nextMonth" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="text-center text-sm font-medium mb-3" id="calendarMonth"></div>
+      <div class="grid grid-cols-7 gap-1 mb-2">
+        <div class="text-center text-xs font-medium text-stone-muted py-2">S</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">M</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">T</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">W</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">T</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">F</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">S</div>
+      </div>
+      <div class="grid grid-cols-7 gap-1" id="calendarDays"></div>
+    </section>
+  </div>
+
+  <!-- Meal Input Modal -->
+  <div id="mealModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-medium" id="modalTitle">Add Meal</h3>
+        <button id="closeModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Photo Upload -->
+      <div class="mb-4">
+        <label class="text-xs font-medium text-stone-muted block mb-2">MEAL PHOTO (OPTIONAL)</label>
+        <div class="border-2 border-dashed border-stone-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="photoUpload">
+          <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" />
+          <svg class="w-8 h-8 mx-auto text-stone-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <p class="text-xs text-stone-muted">Tap to take photo or upload</p>
+          <img id="photoPreview" class="hidden mt-2 rounded-lg w-full" />
+        </div>
+        <button id="aiRecognize" class="w-full mt-2 text-xs py-2 bg-terracotta/10 text-terracotta rounded-lg font-medium hover:bg-terracotta/20 transition-colors hidden">
+          🤖 AI Recognize Nutrition
+        </button>
+      </div>
+
+      <!-- Manual Entry -->
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">DESCRIPTION</label>
+          <input type="text" id="mealDescription" placeholder="What did you eat?" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+        </div>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">PROTEIN (g)</label>
+            <input type="number" id="mealProtein" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">CARBS (g)</label>
+            <input type="number" id="mealCarbs" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">FATS (g)</label>
+            <input type="number" id="mealFats" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">FIBER (g)</label>
+            <input type="number" id="mealFiber" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">CALORIES</label>
+          <input type="number" id="mealCalories" min="0" placeholder="Auto-calculated" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          <p class="text-xs text-stone-muted mt-1">Leave empty to auto-calculate (4 cal/g protein & carbs, 9 cal/g fat)</p>
+        </div>
+
+        <button id="saveMeal" class="w-full bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Meal</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="nutrition-logic.js"></script>
+  <script>
+    // State
+    let currentMealType = null;
+    let currentCalendarDate = new Date();
+    let uploadedPhoto = null;
+
+    // Update today's date
+    document.getElementById('todayDate').textContent = formatDate(todayKey());
+
+    // Photo upload handling
+    document.getElementById('photoUpload').addEventListener('click', () => {
+      document.getElementById('photoInput').click();
+    });
+
+    document.getElementById('photoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedPhoto = e.target.result;
+          document.getElementById('photoPreview').src = uploadedPhoto;
+          document.getElementById('photoPreview').classList.remove('hidden');
+          document.getElementById('aiRecognize').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // AI Recognition (placeholder for future API integration)
+    document.getElementById('aiRecognize').addEventListener('click', () => {
+      alert('🤖 AI Recognition coming soon!\n\nFor now, please enter nutrition facts manually.\n\nFuture: Integration with OpenAI Vision API or food recognition service.');
+    });
+
+    // Modal functions
+    function openMealModal(mealType) {
+      currentMealType = mealType;
+      const titles = {
+        breakfast: '🌅 Add Breakfast',
+        lunch: '☀️ Add Lunch',
+        dinner: '🌆 Add Dinner',
+        supper: '🌙 Add Supper'
+      };
+      document.getElementById('modalTitle').textContent = titles[mealType];
+      
+      // Load existing meal if present
+      const today = getTodayData('nutrition') || { meals: {} };
+      const meal = today.meals[mealType];
+      
+      if (meal) {
+        document.getElementById('mealDescription').value = meal.description || '';
+        document.getElementById('mealProtein').value = meal.protein || '';
+        document.getElementById('mealCarbs').value = meal.carbs || '';
+        document.getElementById('mealFats').value = meal.fats || '';
+        document.getElementById('mealFiber').value = meal.fiber || '';
+        document.getElementById('mealCalories').value = meal.calories || '';
+        
+        if (meal.photo) {
+          uploadedPhoto = meal.photo;
+          document.getElementById('photoPreview').src = meal.photo;
+          document.getElementById('photoPreview').classList.remove('hidden');
+          document.getElementById('aiRecognize').classList.remove('hidden');
+        }
+      } else {
+        // Clear form
+        document.getElementById('mealDescription').value = '';
+        document.getElementById('mealProtein').value = '';
+        document.getElementById('mealCarbs').value = '';
+        document.getElementById('mealFats').value = '';
+        document.getElementById('mealFiber').value = '';
+        document.getElementById('mealCalories').value = '';
+        document.getElementById('photoPreview').classList.add('hidden');
+        document.getElementById('aiRecognize').classList.add('hidden');
+        uploadedPhoto = null;
+      }
+      
+      document.getElementById('mealModal').classList.remove('hidden');
+      document.getElementById('mealModal').classList.add('flex');
+    }
+
+    function closeMealModal() {
+      document.getElementById('mealModal').classList.add('hidden');
+      document.getElementById('mealModal').classList.remove('flex');
+      currentMealType = null;
+      uploadedPhoto = null;
+    }
+
+    document.getElementById('closeModal').addEventListener('click', closeMealModal);
+
+    document.getElementById('saveMeal').addEventListener('click', () => {
+      if (!currentMealType) return;
+
+      const description = document.getElementById('mealDescription').value.trim();
+      const protein = parseFloat(document.getElementById('mealProtein').value) || 0;
+      const carbs = parseFloat(document.getElementById('mealCarbs').value) || 0;
+      const fats = parseFloat(document.getElementById('mealFats').value) || 0;
+      const fiber = parseFloat(document.getElementById('mealFiber').value) || 0;
+      let calories = parseFloat(document.getElementById('mealCalories').value);
+
+      // Auto-calculate calories if not provided
+      if (!calories || calories === 0) {
+        calories = calculateCalories(protein, carbs, fats);
+      }
+
+      const meal = {
+        description,
+        protein,
+        carbs,
+        fats,
+        fiber,
+        calories,
+        photo: uploadedPhoto,
+        time: timeNow()
+      };
+
+      // Save to storage
+      const data = getData('nutrition');
+      const today = data[todayKey()] || { meals: {} };
+      today.meals[currentMealType] = meal;
+      data[todayKey()] = today;
+      setData('nutrition', data);
+
+      closeMealModal();
+      loadNutrition();
+      renderCalendar();
+    });
+
+    // Load and display nutrition
+    function loadNutrition() {
+      const today = getTodayData('nutrition') || { meals: {} };
+      
+      // Display each meal
+      ['breakfast', 'lunch', 'dinner', 'supper'].forEach(mealType => {
+        const contentEl = document.getElementById(`${mealType}Content`);
+        const meal = today.meals[mealType];
+        
+        if (meal) {
+          contentEl.className = 'meal-content';
+          contentEl.innerHTML = `
+            <div class="flex gap-3">
+              ${meal.photo ? `<img src="${meal.photo}" class="w-16 h-16 rounded-lg object-cover" />` : ''}
+              <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium mb-1">${meal.description || 'Meal'}</div>
+                <div class="text-xs text-stone-muted space-y-0.5">
+                  <div>🔥 ${meal.calories} cal</div>
+                  <div>P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g${meal.fiber ? ' • Fiber: ' + meal.fiber + 'g' : ''}</div>
+                  <div class="text-stone-muted/60">${meal.time}</div>
+                </div>
+              </div>
+              <button onclick="deleteMeal('${mealType}')" class="text-stone-muted hover:text-red-500 text-lg self-start">×</button>
+            </div>
+          `;
+        } else {
+          contentEl.className = 'empty-meal text-sm text-stone-muted';
+          contentEl.textContent = 'No meal logged';
+        }
+      });
+
+      // Update daily summary
+      updateDailySummary(today);
+    }
+
+    function updateDailySummary(dayData) {
+      const meals = dayData.meals || {};
+      const mealCount = Object.keys(meals).length;
+      
+      let totalCals = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0, totalFiber = 0;
+      
+      Object.values(meals).forEach(meal => {
+        totalCals += meal.calories || 0;
+        totalProtein += meal.protein || 0;
+        totalCarbs += meal.carbs || 0;
+        totalFats += meal.fats || 0;
+        totalFiber += meal.fiber || 0;
+      });
+
+      document.getElementById('totalCalories').textContent = Math.round(totalCals);
+      document.getElementById('mealsLogged').textContent = `${mealCount}/4`;
+      document.getElementById('totalProtein').textContent = Math.round(totalProtein) + 'g';
+      document.getElementById('totalCarbs').textContent = Math.round(totalCarbs) + 'g';
+      document.getElementById('totalFats').textContent = Math.round(totalFats) + 'g';
+      document.getElementById('totalFiber').textContent = Math.round(totalFiber) + 'g';
+    }
+
+    function deleteMeal(mealType) {
+      if (!confirm('Delete this meal?')) return;
+      
+      const data = getData('nutrition');
+      const today = data[todayKey()];
+      if (today && today.meals) {
+        delete today.meals[mealType];
+        setData('nutrition', data);
+        loadNutrition();
+        renderCalendar();
+      }
+    }
+
+    // Calendar functions
+    function renderCalendar() {
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
+      
+      document.getElementById('calendarMonth').textContent = 
+        currentCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      const nutritionData = getData('nutrition');
+      const daysEl = document.getElementById('calendarDays');
+      daysEl.innerHTML = '';
+
+      for (let i = 0; i < firstDay; i++) {
+        daysEl.innerHTML += '<div></div>';
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayData = nutritionData[dateKey];
+        const isToday = dateKey === todayKey();
+        
+        let dayClass = 'aspect-square flex flex-col items-center justify-center rounded-lg text-xs transition-colors ';
+        let content = `<div class="font-medium">${day}</div>`;
+
+        if (isToday) {
+          dayClass += 'bg-terracotta/10 border-2 border-terracotta ';
+        } else {
+          dayClass += 'hover:bg-cream-50 ';
+        }
+
+        if (dayData && dayData.meals) {
+          const mealCount = Object.keys(dayData.meals).length;
+          const color = mealCount === 4 ? 'bg-green-400' : mealCount >= 2 ? 'bg-yellow-400' : 'bg-red-400';
+          content += `<div class="w-1.5 h-1.5 ${color} rounded-full mt-0.5"></div>`;
+        }
+
+        daysEl.innerHTML += `<div class="${dayClass}">${content}</div>`;
+      }
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // Initialize
+    loadNutrition();
+    renderCalendar();
+  </script>
+</body>
+</html>

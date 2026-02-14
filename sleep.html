@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sleep Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-md mx-auto p-6 pb-12">
+    <!-- Header with back button -->
+    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
+      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl font-medium tracking-tight">Sleep Tracker</h1>
+        <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+      </div>
+    </header>
+
+    <!-- Today's Sleep Entry -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-lavender mb-4">Today's Sleep</h2>
+
+      <!-- Summary when sleep is already logged -->
+      <div id="sleepSummary" class="hidden">
+        <div class="bg-cream-50 rounded-lg p-5 mb-4">
+          <!-- Overall Score -->
+          <div class="text-center mb-4 pb-4 border-b border-stone-border">
+            <div class="text-3xl font-semibold tracking-tight" id="sleepDurationDisplay"></div>
+            <div id="sleepRatingBadge" class="inline-block px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide mt-2"></div>
+            <div class="text-xs text-stone-muted mt-2" id="sleepTimesDisplay"></div>
+          </div>
+
+          <!-- Detailed Breakdown -->
+          <div class="space-y-3">
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs font-medium text-stone-muted">SLEEP DURATION</span>
+                <span class="text-xs font-semibold" id="durationScore"></span>
+              </div>
+              <div class="h-2 bg-stone-border rounded-full overflow-hidden">
+                <div id="durationBar" class="h-full transition-all duration-500"></div>
+              </div>
+              <p class="text-xs text-stone-muted mt-1" id="durationFeedback"></p>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs font-medium text-stone-muted">BEDTIME (CIRCADIAN)</span>
+                <span class="text-xs font-semibold" id="bedtimeScore"></span>
+              </div>
+              <div class="h-2 bg-stone-border rounded-full overflow-hidden">
+                <div id="bedtimeBar" class="h-full transition-all duration-500"></div>
+              </div>
+              <p class="text-xs text-stone-muted mt-1" id="bedtimeFeedback"></p>
+            </div>
+
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs font-medium text-stone-muted">WAKE TIME (CIRCADIAN)</span>
+                <span class="text-xs font-semibold" id="wakeScore"></span>
+              </div>
+              <div class="h-2 bg-stone-border rounded-full overflow-hidden">
+                <div id="wakeBar" class="h-full transition-all duration-500"></div>
+              </div>
+              <p class="text-xs text-stone-muted mt-1" id="wakeFeedback"></p>
+            </div>
+          </div>
+        </div>
+        <button class="w-full border border-stone-border rounded-lg px-4 py-2 text-sm text-stone-muted hover:border-lavender hover:text-lavender transition-colors" id="sleepReset">Log again</button>
+      </div>
+
+      <!-- Dialog flow when no sleep logged -->
+      <div id="sleepDialog">
+        <!-- Step 0: prompt -->
+        <div class="dialog-step" id="sleepStep0">
+          <p class="text-base mb-4">How did you sleep last night?</p>
+          <button class="w-full bg-sage text-white rounded-lg px-4 py-2.5 font-medium hover:opacity-90 active:opacity-85 transition-opacity" id="sleepStart">Let's log it</button>
+        </div>
+
+        <!-- Step 1: bedtime -->
+        <div class="dialog-step hidden" id="sleepStep1">
+          <p class="text-base mb-4">When did you go to sleep?</p>
+          <div class="mb-4">
+            <input type="time" id="sleepBedtime" value="22:00" class="w-full border border-stone-border rounded-lg px-3 py-3 bg-cream-50 text-center text-lg font-medium focus:outline-none focus:border-lavender" />
+          </div>
+          <button class="w-full bg-sage text-white rounded-lg px-4 py-2.5 font-medium hover:opacity-90 active:opacity-85 transition-opacity" id="sleepNext1">Next</button>
+        </div>
+
+        <!-- Step 2: wake time -->
+        <div class="dialog-step hidden" id="sleepStep2">
+          <p class="text-base mb-4">When did you wake up?</p>
+          <div class="mb-4">
+            <input type="time" id="sleepWakeTime" value="06:30" class="w-full border border-stone-border rounded-lg px-3 py-3 bg-cream-50 text-center text-lg font-medium focus:outline-none focus:border-lavender" />
+          </div>
+          <button class="w-full bg-sage text-white rounded-lg px-4 py-2.5 font-medium hover:opacity-90 active:opacity-85 transition-opacity" id="sleepNext2">See result</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sleep History Calendar -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-lavender">Sleep History</h2>
+        <div class="flex gap-2">
+          <button id="prevMonth" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <button id="nextMonth" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="text-center text-sm font-medium mb-3" id="calendarMonth"></div>
+      <div class="grid grid-cols-7 gap-1 mb-2">
+        <div class="text-center text-xs font-medium text-stone-muted py-2">S</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">M</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">T</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">W</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">T</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">F</div>
+        <div class="text-center text-xs font-medium text-stone-muted py-2">S</div>
+      </div>
+      <div class="grid grid-cols-7 gap-1" id="calendarDays"></div>
+    </section>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+      <div class="bg-white rounded-xl max-w-sm w-full p-5">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-medium" id="editModalTitle">Edit Sleep Entry</h3>
+          <button id="closeModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="space-y-3">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">BEDTIME</label>
+            <input type="time" id="editBedtime" class="w-full border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-center focus:outline-none focus:border-lavender" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">WAKE TIME</label>
+            <input type="time" id="editWakeTime" class="w-full border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-center focus:outline-none focus:border-lavender" />
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button id="deleteEntry" class="flex-1 border border-red-300 text-red-600 rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-red-50 transition-colors">Delete</button>
+            <button id="saveEdit" class="flex-1 bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="sleep-logic.js"></script>
+  <script>
+    // Calendar state
+    let currentCalendarDate = new Date();
+    let editingDate = null;
+
+    // Update today's date
+    document.getElementById('todayDate').textContent = formatDate(todayKey());
+
+    function showSleepStep(step) {
+      document.getElementById('sleepStep0').classList.toggle('hidden', step !== 0);
+      document.getElementById('sleepStep1').classList.toggle('hidden', step !== 1);
+      document.getElementById('sleepStep2').classList.toggle('hidden', step !== 2);
+    }
+
+    function showSleepResult(entry) {
+      document.getElementById('sleepDialog').classList.add('hidden');
+      document.getElementById('sleepSummary').classList.remove('hidden');
+
+      // Duration display
+      document.getElementById('sleepDurationDisplay').textContent = formatDuration(entry.durationMins);
+
+      // Overall badge
+      const badge = document.getElementById('sleepRatingBadge');
+      badge.textContent = RATING_LABELS[entry.rating];
+      
+      const badgeClasses = {
+        great: 'bg-green-100 text-green-800',
+        optimal: 'bg-yellow-100 text-yellow-800',
+        suboptimal: 'bg-red-100 text-red-800'
+      };
+      badge.className = 'inline-block px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide mt-2 ' + badgeClasses[entry.rating];
+
+      document.getElementById('sleepTimesDisplay').textContent = `${entry.bedtime} → ${entry.wakeTime}`;
+
+      // Detailed breakdown
+      displayDetailedBreakdown(entry);
+    }
+
+    function displayDetailedBreakdown(entry) {
+      const breakdown = entry.breakdown;
+
+      // Duration
+      document.getElementById('durationScore').textContent = `${breakdown.duration.score}/100`;
+      document.getElementById('durationBar').style.width = `${breakdown.duration.score}%`;
+      document.getElementById('durationBar').className = `h-full transition-all duration-500 ${getScoreColor(breakdown.duration.score)}`;
+      document.getElementById('durationFeedback').textContent = breakdown.duration.feedback;
+
+      // Bedtime
+      document.getElementById('bedtimeScore').textContent = `${breakdown.bedtime.score}/100`;
+      document.getElementById('bedtimeBar').style.width = `${breakdown.bedtime.score}%`;
+      document.getElementById('bedtimeBar').className = `h-full transition-all duration-500 ${getScoreColor(breakdown.bedtime.score)}`;
+      document.getElementById('bedtimeFeedback').textContent = breakdown.bedtime.feedback;
+
+      // Wake time
+      document.getElementById('wakeScore').textContent = `${breakdown.wake.score}/100`;
+      document.getElementById('wakeBar').style.width = `${breakdown.wake.score}%`;
+      document.getElementById('wakeBar').className = `h-full transition-all duration-500 ${getScoreColor(breakdown.wake.score)}`;
+      document.getElementById('wakeFeedback').textContent = breakdown.wake.feedback;
+    }
+
+    function getScoreColor(score) {
+      if (score >= 80) return 'bg-green-400';
+      if (score >= 60) return 'bg-yellow-400';
+      return 'bg-red-400';
+    }
+
+    function loadSleep() {
+      const today = getTodayData('sleep');
+
+      if (today && today.bedtime) {
+        showSleepResult(today);
+      } else {
+        document.getElementById('sleepDialog').classList.remove('hidden');
+        document.getElementById('sleepSummary').classList.add('hidden');
+        showSleepStep(0);
+      }
+    }
+
+    function initSleepDialog() {
+      document.getElementById('sleepStart').addEventListener('click', () => showSleepStep(1));
+      document.getElementById('sleepNext1').addEventListener('click', () => showSleepStep(2));
+
+      document.getElementById('sleepNext2').addEventListener('click', () => {
+        const bedtime  = document.getElementById('sleepBedtime').value;
+        const wakeTime = document.getElementById('sleepWakeTime').value;
+        if (!bedtime || !wakeTime) return;
+
+        const entry = analyzeSleep(bedtime, wakeTime);
+
+        const data = getData('sleep');
+        data[todayKey()] = entry;
+        setData('sleep', data);
+
+        showSleepResult(entry);
+        renderCalendar();
+      });
+
+      document.getElementById('sleepReset').addEventListener('click', () => {
+        const data = getData('sleep');
+        delete data[todayKey()];
+        setData('sleep', data);
+        document.getElementById('sleepDialog').classList.remove('hidden');
+        document.getElementById('sleepSummary').classList.add('hidden');
+        showSleepStep(0);
+        renderCalendar();
+      });
+    }
+
+    // Calendar functions
+    function renderCalendar() {
+      const year = currentCalendarDate.getFullYear();
+      const month = currentCalendarDate.getMonth();
+      
+      // Update month label
+      document.getElementById('calendarMonth').textContent = 
+        currentCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      const sleepData = getData('sleep');
+      const daysEl = document.getElementById('calendarDays');
+      daysEl.innerHTML = '';
+
+      // Empty cells before month starts
+      for (let i = 0; i < firstDay; i++) {
+        daysEl.innerHTML += '<div></div>';
+      }
+
+      // Days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const entry = sleepData[dateKey];
+        const isToday = dateKey === todayKey();
+        
+        let dayClass = 'aspect-square flex flex-col items-center justify-center rounded-lg text-xs cursor-pointer transition-colors ';
+        let content = `<div class="font-medium">${day}</div>`;
+
+        if (isToday) {
+          dayClass += 'bg-lavender/10 border-2 border-lavender ';
+        } else {
+          dayClass += 'hover:bg-cream-50 ';
+        }
+
+        if (entry && entry.rating) {
+          const ratingColor = {
+            great: 'bg-green-400',
+            optimal: 'bg-yellow-400',
+            suboptimal: 'bg-red-400'
+          }[entry.rating];
+          content += `<div class="w-1.5 h-1.5 ${ratingColor} rounded-full mt-0.5"></div>`;
+        }
+
+        daysEl.innerHTML += `<div class="${dayClass}" data-date="${dateKey}">${content}</div>`;
+      }
+
+      // Add click handlers
+      daysEl.querySelectorAll('[data-date]').forEach(el => {
+        el.addEventListener('click', () => {
+          const date = el.dataset.date;
+          const entry = sleepData[date];
+          if (entry && entry.bedtime) {
+            openEditModal(date, entry);
+          }
+        });
+      });
+    }
+
+    function openEditModal(date, entry) {
+      editingDate = date;
+      document.getElementById('editModalTitle').textContent = 
+        `Edit ${new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      document.getElementById('editBedtime').value = entry.bedtime;
+      document.getElementById('editWakeTime').value = entry.wakeTime;
+      document.getElementById('editModal').classList.remove('hidden');
+      document.getElementById('editModal').classList.add('flex');
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+      document.getElementById('editModal').classList.remove('flex');
+      editingDate = null;
+    }
+
+    // Initialize calendar
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    document.getElementById('closeModal').addEventListener('click', closeEditModal);
+
+    document.getElementById('saveEdit').addEventListener('click', () => {
+      if (!editingDate) return;
+      
+      const bedtime = document.getElementById('editBedtime').value;
+      const wakeTime = document.getElementById('editWakeTime').value;
+      
+      if (!bedtime || !wakeTime) return;
+
+      const entry = analyzeSleep(bedtime, wakeTime);
+      const data = getData('sleep');
+      data[editingDate] = entry;
+      setData('sleep', data);
+
+      // Reload if editing today
+      if (editingDate === todayKey()) {
+        loadSleep();
+      }
+
+      closeEditModal();
+      renderCalendar();
+    });
+
+    document.getElementById('deleteEntry').addEventListener('click', () => {
+      if (!editingDate) return;
+      
+      if (confirm('Delete this sleep entry?')) {
+        const data = getData('sleep');
+        delete data[editingDate];
+        setData('sleep', data);
+
+        // Reload if deleting today
+        if (editingDate === todayKey()) {
+          loadSleep();
+        }
+
+        closeEditModal();
+        renderCalendar();
+      }
+    });
+
+    // Initialize
+    initSleepDialog();
+    loadSleep();
+    renderCalendar();
+  </script>
+</body>
+</html>
