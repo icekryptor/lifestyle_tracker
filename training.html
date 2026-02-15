@@ -55,7 +55,9 @@
     <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
       <div class="flex justify-between items-center mb-3">
         <h2 class="text-xs font-medium uppercase tracking-wider text-sage">My Exercises</h2>
-        <button id="addExerciseBtn" class="text-xs px-2 py-1 rounded bg-sage/10 text-sage font-medium">+ Add Exercise</button>
+        <a href="exercise-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-sage text-white font-medium hover:opacity-90 transition-opacity">
+          View All →
+        </a>
       </div>
       <div id="exercisesLibrary" class="space-y-2"></div>
     </section>
@@ -122,51 +124,6 @@
         <button id="viewWorkoutDetails" class="w-full mt-3 border border-stone-border rounded-lg px-4 py-2 text-sm text-stone-muted hover:border-sage hover:text-sage transition-colors">View Details</button>
       </div>
     </section>
-  </div>
-
-  <!-- Add Exercise Modal -->
-  <div id="exerciseModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-sm w-full p-5">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="font-medium">Add Exercise</h3>
-        <button id="closeExerciseModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-
-      <div class="space-y-3">
-        <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">EXERCISE NAME</label>
-          <input type="text" id="exerciseName" placeholder="e.g. Bench Press" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
-        </div>
-        
-        <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">CATEGORY</label>
-          <select id="exerciseCategory" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-sage">
-            <option value="push">Push (Chest, Shoulders, Triceps)</option>
-            <option value="pull">Pull (Back, Biceps)</option>
-            <option value="legs">Legs (Quads, Hamstrings, Glutes)</option>
-            <option value="core">Core (Abs, Lower Back)</option>
-            <option value="cardio">Cardio</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-
-        <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">EQUIPMENT (OPTIONAL)</label>
-          <input type="text" id="exerciseEquipment" placeholder="e.g. Barbell, Dumbbells" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
-        </div>
-
-        <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">NOTES (OPTIONAL)</label>
-          <textarea id="exerciseNotes" placeholder="Form cues, variations, etc." rows="2" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage"></textarea>
-        </div>
-
-        <button id="saveExercise" class="w-full bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Exercise</button>
-      </div>
-    </div>
   </div>
 
   <!-- Select Exercise Modal (for adding to workout) -->
@@ -238,75 +195,28 @@
       const libraryEl = document.getElementById('exercisesLibrary');
       
       if (exercisesCache.length === 0) {
-        libraryEl.innerHTML = '<p class="text-sm text-stone-muted">No exercises yet. Add your first exercise!</p>';
+        libraryEl.innerHTML = '<p class="text-sm text-stone-muted text-center py-4">No exercises yet. <a href="exercise-library.html" class="text-sage underline">Add your first exercise</a>!</p>';
         return;
       }
       
-      // Group by category
-      const grouped = {};
-      exercisesCache.forEach(ex => {
-        if (!grouped[ex.category]) grouped[ex.category] = [];
-        grouped[ex.category].push(ex);
-      });
+      // Show only 5 most recent exercises
+      const recentExercises = exercisesCache.slice(0, 5);
+      libraryEl.innerHTML = recentExercises.map(ex => {
+        const categoryEmoji = {
+          strength: '💪', cardio: '🏃', flexibility: '🧘',
+          olympic: '🏋️', calisthenics: '🤸', sports: '⚽'
+        }[ex.category] || '💪';
 
-      libraryEl.innerHTML = Object.entries(grouped).map(([category, exercises]) => {
-        const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
         return `
-          <div class="mb-3">
-            <div class="text-xs font-medium text-stone-muted mb-2">${categoryLabel}</div>
-            ${exercises.map(ex => `
-              <div class="flex justify-between items-center p-2 hover:bg-cream-50 rounded-lg transition-colors">
-                <div class="flex-1 min-w-0">
-                  <div class="text-sm font-medium">${ex.name}</div>
-                  ${ex.equipment ? `<div class="text-xs text-stone-muted">${ex.equipment}</div>` : ''}
-                </div>
-                <button onclick="deleteExerciseById('${ex.id}')" class="text-stone-muted hover:text-red-500 text-lg ml-2">×</button>
-              </div>
-            `).join('')}
+          <div class="flex gap-3 p-2 hover:bg-cream-50 rounded-lg transition-colors">
+            <div class="text-xl">${categoryEmoji}</div>
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium truncate">${ex.name}</div>
+              ${ex.equipment ? `<div class="text-xs text-stone-muted">${ex.equipment}</div>` : ''}
+            </div>
           </div>
         `;
       }).join('');
-    }
-
-    function openExerciseModal() {
-      document.getElementById('exerciseName').value = '';
-      document.getElementById('exerciseCategory').value = 'push';
-      document.getElementById('exerciseEquipment').value = '';
-      document.getElementById('exerciseNotes').value = '';
-      document.getElementById('exerciseModal').classList.remove('hidden');
-      document.getElementById('exerciseModal').classList.add('flex');
-    }
-
-    function closeExerciseModal() {
-      document.getElementById('exerciseModal').classList.add('hidden');
-      document.getElementById('exerciseModal').classList.remove('flex');
-    }
-
-    document.getElementById('addExerciseBtn').addEventListener('click', openExerciseModal);
-    document.getElementById('closeExerciseModal').addEventListener('click', closeExerciseModal);
-
-    document.getElementById('saveExercise').addEventListener('click', async () => {
-      const name = document.getElementById('exerciseName').value.trim();
-      const category = document.getElementById('exerciseCategory').value;
-      const equipment = document.getElementById('exerciseEquipment').value.trim();
-      const notes = document.getElementById('exerciseNotes').value.trim();
-
-      if (!name) {
-        alert('Please enter an exercise name');
-        return;
-      }
-
-      const exercise = { name, category, equipment, notes };
-      await addExercise(exercise);
-
-      closeExerciseModal();
-      await loadExercises();
-    });
-
-    async function deleteExerciseById(exerciseId) {
-      if (!confirm('Delete this exercise?')) return;
-      await deleteExercise(exerciseId);
-      await loadExercises();
     }
 
     // ── Workout Functions ──

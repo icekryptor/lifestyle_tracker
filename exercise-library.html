@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exercise Library</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-4xl mx-auto p-6 pb-12">
+    <!-- Header -->
+    <header class="mb-6 pb-4 border-b border-stone-border flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <a href="training.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </a>
+        <div>
+          <h1 class="text-2xl font-medium tracking-tight">Exercise Library</h1>
+          <p class="text-sm text-stone-muted font-light mt-1">Manage your custom exercises</p>
+        </div>
+      </div>
+      <button onclick="openExerciseModal()" class="px-4 py-2 bg-terracotta text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+        + Add Exercise
+      </button>
+    </header>
+
+    <!-- Search and Filters -->
+    <div class="mb-6 space-y-3">
+      <input 
+        type="text" 
+        id="searchExercises" 
+        placeholder="Search exercises..." 
+        class="w-full border border-stone-border rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-terracotta"
+      />
+      
+      <div class="flex gap-2 flex-wrap">
+        <button class="category-filter active bg-terracotta text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors" data-category="all">
+          All
+        </button>
+        <button class="category-filter bg-stone-border/50 text-stone-text px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-stone-border transition-colors" data-category="strength">
+          💪 Strength
+        </button>
+        <button class="category-filter bg-stone-border/50 text-stone-text px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-stone-border transition-colors" data-category="cardio">
+          🏃 Cardio
+        </button>
+        <button class="category-filter bg-stone-border/50 text-stone-text px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-stone-border transition-colors" data-category="flexibility">
+          🧘 Flexibility
+        </button>
+        <button class="category-filter bg-stone-border/50 text-stone-text px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-stone-border transition-colors" data-category="olympic">
+          🏋️ Olympic
+        </button>
+        <button class="category-filter bg-stone-border/50 text-stone-text px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-stone-border transition-colors" data-category="calisthenics">
+          🤸 Calisthenics
+        </button>
+        <button class="category-filter bg-stone-border/50 text-stone-text px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-stone-border transition-colors" data-category="sports">
+          ⚽ Sports
+        </button>
+      </div>
+    </div>
+
+    <!-- Exercises Grid -->
+    <div id="exercisesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+      <div class="text-4xl mb-3">🏋️</div>
+      <h3 class="text-lg font-medium mb-2">No exercises yet</h3>
+      <p class="text-sm text-stone-muted mb-4">Start by adding your first exercise</p>
+      <button onclick="openExerciseModal()" class="px-4 py-2 bg-terracotta text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+        + Add Exercise
+      </button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Exercise Modal -->
+  <div id="exerciseModal" class="hidden fixed inset-0 bg-black/50 items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b border-stone-border p-4 flex justify-between items-center rounded-t-2xl">
+        <h2 class="font-medium" id="exerciseModalTitle">Add Exercise</h2>
+        <button onclick="closeExerciseModal()" class="text-stone-muted hover:text-stone-text">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3">
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">EXERCISE NAME</label>
+          <input type="text" id="exerciseName" placeholder="e.g. Barbell Squat" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">CATEGORY</label>
+          <select id="exerciseCategory" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-terracotta">
+            <option value="strength">💪 Strength</option>
+            <option value="cardio">🏃 Cardio</option>
+            <option value="flexibility">🧘 Flexibility</option>
+            <option value="olympic">🏋️ Olympic Lifting</option>
+            <option value="calisthenics">🤸 Calisthenics</option>
+            <option value="sports">⚽ Sports</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">EQUIPMENT (OPTIONAL)</label>
+          <select id="exerciseEquipment" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-terracotta">
+            <option value="">None</option>
+            <option value="barbell">Barbell</option>
+            <option value="dumbbell">Dumbbell</option>
+            <option value="kettlebell">Kettlebell</option>
+            <option value="machine">Machine</option>
+            <option value="cable">Cable</option>
+            <option value="bodyweight">Bodyweight</option>
+            <option value="bands">Resistance Bands</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">NOTES (OPTIONAL)</label>
+          <textarea id="exerciseNotes" placeholder="Form cues, variations, etc..." rows="3" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta resize-none"></textarea>
+        </div>
+
+        <button id="saveExercise" class="w-full bg-terracotta text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Exercise</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Supabase + DB first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script>
+    let exercisesCache = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let currentEditingExerciseId = null;
+
+    // Load and display exercises
+    async function loadExercises() {
+      exercisesCache = await getExercises();
+      renderExercises();
+    }
+
+    function renderExercises() {
+      const gridEl = document.getElementById('exercisesGrid');
+      const emptyEl = document.getElementById('emptyState');
+      
+      // Filter exercises
+      let filtered = exercisesCache.filter(exercise => {
+        const matchesCategory = currentFilter === 'all' || exercise.category === currentFilter;
+        const matchesSearch = searchQuery === '' || 
+          exercise.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        gridEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      gridEl.classList.remove('hidden');
+      emptyEl.classList.add('hidden');
+
+      gridEl.innerHTML = filtered.map(exercise => `
+        <div class="bg-white rounded-xl border border-stone-border p-4 hover:shadow-md transition-shadow">
+          <div class="flex justify-between items-start mb-2">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-lg">${getCategoryEmoji(exercise.category)}</span>
+                <h3 class="font-medium text-sm truncate">${exercise.name}</h3>
+              </div>
+              <div class="flex flex-wrap gap-1 text-xs">
+                <span class="px-2 py-0.5 bg-stone-border/30 rounded text-stone-muted">${getCategoryLabel(exercise.category)}</span>
+                ${exercise.equipment ? `<span class="px-2 py-0.5 bg-teal/10 text-teal rounded">${exercise.equipment}</span>` : ''}
+              </div>
+            </div>
+            <div class="flex gap-1 ml-2">
+              <button onclick="editExerciseById('${exercise.id}')" class="text-stone-muted hover:text-terracotta">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+              </button>
+              <button onclick="deleteExerciseById('${exercise.id}')" class="text-stone-muted hover:text-red-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          ${exercise.notes ? `
+            <p class="text-xs text-stone-muted mt-2 line-clamp-2">${exercise.notes}</p>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    function getCategoryEmoji(category) {
+      const emojis = {
+        strength: '💪',
+        cardio: '🏃',
+        flexibility: '🧘',
+        olympic: '🏋️',
+        calisthenics: '🤸',
+        sports: '⚽'
+      };
+      return emojis[category] || '💪';
+    }
+
+    function getCategoryLabel(category) {
+      const labels = {
+        strength: 'Strength',
+        cardio: 'Cardio',
+        flexibility: 'Flexibility',
+        olympic: 'Olympic',
+        calisthenics: 'Calisthenics',
+        sports: 'Sports'
+      };
+      return labels[category] || 'Strength';
+    }
+
+    // Category filter
+    document.querySelectorAll('.category-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-filter').forEach(b => {
+          b.classList.remove('active', 'bg-terracotta', 'text-white');
+          b.classList.add('bg-stone-border/50', 'text-stone-text');
+        });
+        btn.classList.add('active', 'bg-terracotta', 'text-white');
+        btn.classList.remove('bg-stone-border/50', 'text-stone-text');
+        
+        currentFilter = btn.dataset.category;
+        renderExercises();
+      });
+    });
+
+    // Search
+    document.getElementById('searchExercises').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderExercises();
+    });
+
+    // Exercise modal
+    function openExerciseModal() {
+      document.getElementById('exerciseModalTitle').textContent = 'Add Exercise';
+      document.getElementById('exerciseName').value = '';
+      document.getElementById('exerciseCategory').value = 'strength';
+      document.getElementById('exerciseEquipment').value = '';
+      document.getElementById('exerciseNotes').value = '';
+      currentEditingExerciseId = null;
+      
+      document.getElementById('exerciseModal').classList.remove('hidden');
+      document.getElementById('exerciseModal').classList.add('flex');
+    }
+
+    window.editExerciseById = function(exerciseId) {
+      const exercise = exercisesCache.find(ex => ex.id === exerciseId);
+      if (!exercise) return;
+
+      currentEditingExerciseId = exerciseId;
+      document.getElementById('exerciseModalTitle').textContent = 'Edit Exercise';
+      document.getElementById('exerciseName').value = exercise.name;
+      document.getElementById('exerciseCategory').value = exercise.category;
+      document.getElementById('exerciseEquipment').value = exercise.equipment || '';
+      document.getElementById('exerciseNotes').value = exercise.notes || '';
+
+      document.getElementById('exerciseModal').classList.remove('hidden');
+      document.getElementById('exerciseModal').classList.add('flex');
+    };
+
+    function closeExerciseModal() {
+      document.getElementById('exerciseModal').classList.add('hidden');
+      document.getElementById('exerciseModal').classList.remove('flex');
+      currentEditingExerciseId = null;
+    }
+
+    // Save exercise
+    document.getElementById('saveExercise').addEventListener('click', async () => {
+      const name = document.getElementById('exerciseName').value.trim();
+      const category = document.getElementById('exerciseCategory').value;
+      const equipment = document.getElementById('exerciseEquipment').value;
+      const notes = document.getElementById('exerciseNotes').value.trim();
+
+      if (!name) {
+        alert('Please enter an exercise name');
+        return;
+      }
+
+      const exercise = { 
+        name, 
+        category, 
+        equipment: equipment || null, 
+        notes: notes || null
+      };
+      
+      let result;
+      if (currentEditingExerciseId) {
+        result = await updateExercise(currentEditingExerciseId, exercise);
+      } else {
+        result = await addExercise(exercise);
+      }
+
+      if (result) {
+        closeExerciseModal();
+        await loadExercises();
+      } else {
+        alert('Failed to save exercise. Please try again.');
+      }
+    });
+
+    // Delete exercise
+    window.deleteExerciseById = async function(exerciseId) {
+      if (!confirm('Delete this exercise? This will not affect your past workout history.')) return;
+      
+      await deleteExercise(exerciseId);
+      await loadExercises();
+    };
+
+    // Load exercises on page load
+    loadExercises();
+  </script>
+</body>
+</html>

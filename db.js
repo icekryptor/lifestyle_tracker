@@ -401,6 +401,31 @@ async function addExercise(exercise) {
   return data[0];
 }
 
+async function updateExercise(exerciseId, exercise) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('exercises')
+    .update({
+      name: exercise.name,
+      category: exercise.category,
+      equipment: exercise.equipment || null,
+      notes: exercise.notes || null,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', exerciseId)
+    .eq('user_id', user.id)
+    .select();
+
+  if (error) {
+    console.error('Error updating exercise:', error);
+    return null;
+  }
+
+  return data[0];
+}
+
 async function deleteExercise(exerciseId) {
   const user = await getCurrentUser();
   if (!user) return;
