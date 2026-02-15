@@ -227,7 +227,17 @@
       if (nutritionData && nutritionData.meals && Object.keys(nutritionData.meals).length > 0) {
         const meals = nutritionData.meals;
         const mealCount = Object.keys(meals).length;
-        const totalCals = Object.values(meals).reduce((s, m) => s + (m.calories || 0), 0);
+        
+        let totalCals = 0;
+        Object.values(meals).forEach(meal => {
+          // Handle both array (new) and object (old) formats
+          if (Array.isArray(meal)) {
+            totalCals += meal.reduce((s, dish) => s + (dish.calories || 0), 0);
+          } else {
+            totalCals += meal.calories || 0;
+          }
+        });
+        
         nutritionTask.classList.remove('border-2', 'border-stone-border');
         nutritionTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         nutritionTitle.innerHTML = '✓ Meals logged';
@@ -324,7 +334,19 @@
       for (let i = 6; i >= 0; i--) {
         const key = getDayKey(i);
         const day = data[key];
-        const totalCals = day && day.meals ? Object.values(day.meals).reduce((s, m) => s + (m.calories || 0), 0) : 0;
+        
+        let totalCals = 0;
+        if (day && day.meals) {
+          Object.values(day.meals).forEach(meal => {
+            // Handle both array (new) and object (old) formats
+            if (Array.isArray(meal)) {
+              totalCals += meal.reduce((s, dish) => s + (dish.calories || 0), 0);
+            } else {
+              totalCals += meal.calories || 0;
+            }
+          });
+        }
+        
         last7.push({ label: getDayLabel(i), cals: totalCals });
       }
 

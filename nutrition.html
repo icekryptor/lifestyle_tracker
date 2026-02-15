@@ -413,7 +413,7 @@
         calories = calculateCalories(protein, carbs, fats);
       }
 
-      const meal = {
+      const dish = {
         description,
         protein,
         carbs,
@@ -424,10 +424,23 @@
         time: timeNow()
       };
 
-      // Save to Supabase
+      // Save to Supabase - meals are now arrays of dishes
       const data = await getData('nutrition');
       const today = data[todayKey()] || { meals: {} };
-      today.meals[currentMealType] = meal;
+      
+      // Initialize meal as array if it doesn't exist
+      if (!today.meals[currentMealType]) {
+        today.meals[currentMealType] = [];
+      }
+      
+      // If it's an old single-object meal, convert to array
+      if (!Array.isArray(today.meals[currentMealType])) {
+        today.meals[currentMealType] = [today.meals[currentMealType]];
+      }
+      
+      // Add dish to meal array
+      today.meals[currentMealType].push(dish);
+      
       await setNutritionData(todayKey(), today);
 
       closeMealModal();
@@ -440,25 +453,47 @@
       await getData('nutrition'); // Refresh cache from Supabase
       const today = getTodayData('nutrition') || { meals: {} };
       
-      // Display each meal
+      // Display each meal (meals are now arrays of dishes)
       ['breakfast', 'lunch', 'dinner', 'supper'].forEach(mealType => {
         const contentEl = document.getElementById(`${mealType}Content`);
-        const meal = today.meals[mealType];
+        let meal = today.meals[mealType];
         
-        if (meal) {
+        // Convert old single-object meals to arrays for backward compatibility
+        if (meal && !Array.isArray(meal)) {
+          meal = [meal];
+        }
+        
+        if (meal && meal.length > 0) {
+          // Calculate meal totals
+          const totalCals = meal.reduce((sum, dish) => sum + (dish.calories || 0), 0);
+          const totalProtein = meal.reduce((sum, dish) => sum + (dish.protein || 0), 0);
+          const totalCarbs = meal.reduce((sum, dish) => sum + (dish.carbs || 0), 0);
+          const totalFats = meal.reduce((sum, dish) => sum + (dish.fats || 0), 0);
+          const totalFiber = meal.reduce((sum, dish) => sum + (dish.fiber || 0), 0);
+          
           contentEl.className = 'meal-content';
           contentEl.innerHTML = `
-            <div class="flex gap-3">
-              ${meal.photo ? `<img src="${meal.photo}" class="w-16 h-16 rounded-lg object-cover" />` : ''}
-              <div class="flex-1 min-w-0">
-                <div class="text-sm font-medium mb-1">${meal.description || 'Meal'}</div>
-                <div class="text-xs text-stone-muted space-y-0.5">
-                  <div>🔥 ${meal.calories} cal</div>
-                  <div>P: ${meal.protein}g • C: ${meal.carbs}g • F: ${meal.fats}g${meal.fiber ? ' • Fiber: ' + meal.fiber + 'g' : ''}</div>
-                  <div class="text-stone-muted/60">${meal.time}</div>
+            <div class="space-y-2">
+              ${meal.map((dish, index) => `
+                <div class="flex gap-3 pb-2 ${index < meal.length - 1 ? 'border-b border-stone-border/30' : ''}">
+                  ${dish.photo ? `<img src="${dish.photo}" class="w-12 h-12 rounded-lg object-cover" />` : ''}
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium">${dish.description || 'Dish'}</div>
+                    <div class="text-xs text-stone-muted">
+                      ${dish.calories} cal • P: ${dish.protein}g • C: ${dish.carbs}g • F: ${dish.fats}g
+                    </div>
+                  </div>
+                  <button onclick="deleteDish('${mealType}', ${index})" class="text-stone-muted hover:text-red-500 text-lg self-start">×</button>
+                </div>
+              `).join('')}
+              
+              <div class="bg-sage/5 rounded-lg p-2 mt-2">
+                <div class="text-xs font-medium text-sage">MEAL TOTAL</div>
+                <div class="text-sm font-semibold">🔥 ${Math.round(totalCals)} cal</div>
+                <div class="text-xs text-stone-muted">
+                  P: ${Math.round(totalProtein)}g • C: ${Math.round(totalCarbs)}g • F: ${Math.round(totalFats)}g${totalFiber ? ' • Fiber: ' + Math.round(totalFiber) + 'g' : ''}
                 </div>
               </div>
-              <button onclick="deleteMeal('${mealType}')" class="text-stone-muted hover:text-red-500 text-lg self-start">×</button>
             </div>
           `;
         } else {
@@ -473,16 +508,30 @@
 
     function updateDailySummary(dayData) {
       const meals = dayData.meals || {};
-      const mealCount = Object.keys(meals).length;
+      const mealCount = Object.keys(meals).filter(key => {
+        const meal = meals[key];
+        return meal && (Array.isArray(meal) ? meal.length > 0 : true);
+      }).length;
       
       let totalCals = 0, totalProtein = 0, totalCarbs = 0, totalFats = 0, totalFiber = 0;
       
       Object.values(meals).forEach(meal => {
-        totalCals += meal.calories || 0;
-        totalProtein += meal.protein || 0;
-        totalCarbs += meal.carbs || 0;
-        totalFats += meal.fats || 0;
-        totalFiber += meal.fiber || 0;
+        // Handle both array (new) and object (old) formats
+        if (Array.isArray(meal)) {
+          meal.forEach(dish => {
+            totalCals += dish.calories || 0;
+            totalProtein += dish.protein || 0;
+            totalCarbs += dish.carbs || 0;
+            totalFats += dish.fats || 0;
+            totalFiber += dish.fiber || 0;
+          });
+        } else {
+          totalCals += meal.calories || 0;
+          totalProtein += meal.protein || 0;
+          totalCarbs += meal.carbs || 0;
+          totalFats += meal.fats || 0;
+          totalFiber += meal.fiber || 0;
+        }
       });
 
       document.getElementById('totalCalories').textContent = Math.round(totalCals);
@@ -493,8 +542,37 @@
       document.getElementById('totalFiber').textContent = Math.round(totalFiber) + 'g';
     }
 
+    async function deleteDish(mealType, dishIndex) {
+      if (!confirm('Delete this dish?')) return;
+      
+      const data = await getData('nutrition');
+      const today = data[todayKey()];
+      if (today && today.meals && today.meals[mealType]) {
+        let meal = today.meals[mealType];
+        
+        // Convert to array if needed
+        if (!Array.isArray(meal)) {
+          meal = [meal];
+        }
+        
+        // Remove the dish
+        meal.splice(dishIndex, 1);
+        
+        // Update or delete the meal
+        if (meal.length === 0) {
+          delete today.meals[mealType];
+        } else {
+          today.meals[mealType] = meal;
+        }
+        
+        await setNutritionData(todayKey(), today);
+        await loadNutrition();
+        await renderCalendar();
+      }
+    }
+
     async function deleteMeal(mealType) {
-      if (!confirm('Delete this meal?')) return;
+      if (!confirm('Delete entire meal?')) return;
       
       const data = await getData('nutrition');
       const today = data[todayKey()];
@@ -672,8 +750,8 @@
       const fats = Math.round(dish.fats * multiplier * 10) / 10;
       const calories = Math.round(dish.calories * multiplier);
       
-      // Create meal object directly and save
-      const meal = {
+      // Create dish object directly and save
+      const dishItem = {
         description: `${dish.name} (${portionSize}g)`,
         protein,
         carbs,
@@ -684,10 +762,23 @@
         time: timeNow()
       };
 
-      // Save to Supabase
+      // Save to Supabase - meals are now arrays of dishes
       const data = await getData('nutrition');
       const today = data[todayKey()] || { meals: {} };
-      today.meals[currentMealType] = meal;
+      
+      // Initialize meal as array if it doesn't exist
+      if (!today.meals[currentMealType]) {
+        today.meals[currentMealType] = [];
+      }
+      
+      // If it's an old single-object meal, convert to array
+      if (!Array.isArray(today.meals[currentMealType])) {
+        today.meals[currentMealType] = [today.meals[currentMealType]];
+      }
+      
+      // Add dish to meal array
+      today.meals[currentMealType].push(dishItem);
+      
       await setNutritionData(todayKey(), today);
 
       // Reset quick add section
