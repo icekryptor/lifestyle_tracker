@@ -192,6 +192,7 @@
   <script src="db.js"></script>
   <script src="app.js"></script>
   <script src="training-logic.js"></script>
+  <script src="seed-data.js"></script>
   <script>
     // Update today's date
     document.getElementById('todayDate').textContent = formatDate(todayKey());
@@ -443,6 +444,8 @@
       const user = await requireAuth();
       if (user) {
         document.getElementById('userEmail').textContent = user.email;
+        // Auto-seed sample data for new users
+        await checkAndSeedNewUser();
         await initDashboard();
       }
     })();

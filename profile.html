@@ -190,6 +190,16 @@
       </div>
     </section>
 
+    <!-- Data Management -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-3">Data Management</h2>
+      
+      <button id="loadSampleData" class="w-full border-2 border-sage text-sage rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-sage/5 transition-colors">
+        📚 Load Sample Data
+      </button>
+      <p class="text-xs text-stone-muted mt-2 text-center">Add 50+ common dishes and 30+ exercises to your library</p>
+    </section>
+
     <!-- Save Button -->
     <button id="saveProfile" class="w-full bg-sage text-white rounded-xl px-6 py-3 text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
       Save Profile
@@ -202,6 +212,7 @@
   <script src="db.js"></script>
   <script src="app.js"></script>
   <script src="profile-logic.js"></script>
+  <script src="seed-data.js"></script>
   <script>
     let currentProfile = null;
 
@@ -292,6 +303,15 @@
 
     // Event listeners
     document.getElementById('saveProfile').addEventListener('click', saveProfile);
+    
+    document.getElementById('loadSampleData').addEventListener('click', async () => {
+      const result = await seedUserData();
+      if (result.success) {
+        alert(result.message);
+      } else {
+        alert(result.message || 'Failed to load sample data');
+      }
+    });
 
     // Recalculate on input change
     ['userWeight', 'userHeight', 'userDob', 'userSex', 'activityLevel', 'targetWeight'].forEach(id => {
