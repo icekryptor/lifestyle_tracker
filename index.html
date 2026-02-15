@@ -37,28 +37,40 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-cream-50 text-stone-text min-h-screen font-sans">
-  <div class="max-w-md mx-auto p-6 pb-12">
+  <!-- Mobile/Desktop Container -->
+  <div class="w-full">
     <!-- Header -->
-    <header class="mb-8 pb-4 border-b border-stone-border">
-      <div class="flex justify-between items-start mb-2">
-        <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
-        <div class="flex gap-2">
-          <a href="profile.html" class="w-9 h-9 rounded-lg border border-stone-border hover:border-sage hover:text-sage transition-colors flex items-center justify-center" title="Profile">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-          </a>
-          <button id="logoutBtn" class="text-xs px-3 py-1.5 rounded-lg border border-stone-border hover:border-red-300 hover:text-red-600 transition-colors">
-            Logout
-          </button>
+    <header class="bg-white border-b border-stone-border sticky top-0 z-10">
+      <div class="max-w-[1920px] mx-auto px-4 lg:px-8 py-4">
+        <div class="flex justify-between items-center">
+          <div>
+            <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
+            <div class="flex gap-4 mt-1">
+              <p class="text-sm text-stone-muted font-light" id="todayDate"></p>
+              <p class="text-xs text-stone-muted/60" id="userEmail"></p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <a href="profile.html" class="w-10 h-10 rounded-lg border border-stone-border hover:border-sage hover:text-sage transition-colors flex items-center justify-center" title="Profile">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </a>
+            <button id="logoutBtn" class="text-sm px-4 py-2 rounded-lg border border-stone-border hover:border-red-300 hover:text-red-600 transition-colors">
+              Logout
+            </button>
+          </div>
         </div>
       </div>
-      <p class="text-sm text-stone-muted font-light" id="todayDate"></p>
-      <p class="text-xs text-stone-muted/60 mt-1" id="userEmail"></p>
     </header>
 
-    <!-- Daily Goal Progress -->
-    <section class="bg-white rounded-xl border border-stone-border p-6 mb-6" id="dailyGoalSection">
+    <!-- Main Dashboard Grid -->
+    <main class="max-w-[1920px] mx-auto px-4 lg:px-8 py-6">
+      <!-- 12-Column Grid Layout -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+
+        <!-- Left Column: Daily Goal Progress (4 cols) -->
+        <section class="lg:col-span-4 bg-white rounded-xl border border-stone-border p-6" id="dailyGoalSection">
       <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Today's Calorie Goal</h3>
       
       <div class="flex items-center justify-between">
@@ -115,12 +127,13 @@
           </div>
         </div>
       </div>
-    </section>
+        </section>
 
-    <!-- Today's Tasks -->
-    <div class="mb-8">
-      <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-3">Today's Tasks</h3>
-      <div class="grid gap-3" id="todayTasks">
+        <!-- Middle Column: Today's Tasks (5 cols) -->
+        <section class="lg:col-span-5 space-y-4">
+          <div class="bg-white rounded-xl border border-stone-border p-6">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Today's Tasks</h3>
+            <div class="grid gap-3" id="todayTasks">
         <!-- Sleep task -->
         <a href="sleep.html" id="sleepTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-lavender transition-colors group">
           <div class="flex items-center justify-between">
@@ -199,51 +212,92 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
-        </a>
-      </div>
-    </div>
+            </a>
+            </div>
+          </div>
+        </section>
 
-    <!-- Dashboard: 7-day trends -->
-    <div class="mb-8">
-      <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-3">Last 7 days</h3>
-      <div class="grid gap-3">
-        <!-- Sleep quality trend -->
-        <div class="bg-white border border-stone-border rounded-xl p-4">
+        <!-- Right Column: Quick Summary (3 cols) -->
+        <section class="lg:col-span-3 space-y-4">
+          <!-- Today's Summary Card -->
+          <div class="bg-gradient-to-br from-sage/10 to-lavender/10 rounded-xl border border-stone-border p-6">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Today's Summary</h3>
+            <div class="space-y-3">
+              <div>
+                <div class="text-2xl font-semibold" id="summaryCalories">0</div>
+                <div class="text-xs text-stone-muted">Calories consumed</div>
+              </div>
+              <div>
+                <div class="text-2xl font-semibold" id="summaryWorkouts">0</div>
+                <div class="text-xs text-stone-muted">Workouts completed</div>
+              </div>
+              <div>
+                <div class="text-2xl font-semibold" id="summarySleep">--</div>
+                <div class="text-xs text-stone-muted">Hours of sleep</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="bg-white rounded-xl border border-stone-border p-6">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Quick Access</h3>
+            <div class="space-y-2">
+              <a href="nutrition.html" class="block py-2 px-3 rounded-lg hover:bg-terracotta/5 hover:text-terracotta transition-colors text-sm">
+                🍽️ Food Library
+              </a>
+              <a href="exercise-library.html" class="block py-2 px-3 rounded-lg hover:bg-sage/5 hover:text-sage transition-colors text-sm">
+                💪 Exercise Library
+              </a>
+              <a href="profile.html" class="block py-2 px-3 rounded-lg hover:bg-lavender/5 hover:text-lavender transition-colors text-sm">
+                👤 My Profile
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 2: 7-Day Trends (Full width, 4 equal columns) -->
+        <section class="lg:col-span-12">
+          <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Last 7 Days Trends</h3>
+        </section>
+
+        <!-- Sleep quality trend (3 cols) -->
+        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Sleep Quality</span>
             <span class="text-xs text-stone-muted" id="dashSleepAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-16 gap-0.5" id="dashSleepChart"></div>
+          <div class="flex items-end justify-between h-24 gap-1" id="dashSleepChart"></div>
         </div>
 
-        <!-- Nutrition trend -->
-        <div class="bg-white border border-stone-border rounded-xl p-4">
+        <!-- Nutrition trend (3 cols) -->
+        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Nutrition</span>
             <span class="text-xs text-stone-muted" id="dashNutritionAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-16 gap-0.5" id="dashNutritionChart"></div>
+          <div class="flex items-end justify-between h-24 gap-1" id="dashNutritionChart"></div>
         </div>
 
-        <!-- Activity trend -->
-        <div class="bg-white border border-stone-border rounded-xl p-4">
+        <!-- Activity trend (3 cols) -->
+        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Activity</span>
             <span class="text-xs text-stone-muted" id="dashActivityAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-16 gap-0.5" id="dashActivityChart"></div>
+          <div class="flex items-end justify-between h-24 gap-1" id="dashActivityChart"></div>
         </div>
 
-        <!-- Training trend (Workout Calories) -->
-        <div class="bg-white border border-stone-border rounded-xl p-4">
+        <!-- Training trend (3 cols) -->
+        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Training Calories</span>
             <span class="text-xs text-stone-muted" id="dashTrainingAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-16 gap-0.5" id="dashTrainingChart"></div>
+          <div class="flex items-end justify-between h-24 gap-1" id="dashTrainingChart"></div>
         </div>
+
       </div>
-    </div>
+    </main>
   </div>
 
   <!-- Load Supabase + DB first -->
@@ -332,6 +386,41 @@
         trainingTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         trainingTitle.innerHTML = '✓ Workout completed';
         trainingDesc.textContent = `${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''} • ${calories} cal burned`;
+      }
+
+      // Update summary card
+      await updateSummaryCard();
+    }
+
+    // Update Today's Summary Card
+    async function updateSummaryCard() {
+      const nutritionData = getTodayData('nutrition');
+      const sleepData = getTodayData('sleep');
+      const todayWorkout = await getWorkoutByDate(todayKey());
+      
+      // Calories
+      let totalCals = 0;
+      if (nutritionData && nutritionData.meals) {
+        Object.values(nutritionData.meals).forEach(meal => {
+          if (Array.isArray(meal)) {
+            totalCals += meal.reduce((s, dish) => s + (dish.calories || 0), 0);
+          } else {
+            totalCals += meal.calories || 0;
+          }
+        });
+      }
+      document.getElementById('summaryCalories').textContent = Math.round(totalCals).toLocaleString();
+      
+      // Workouts
+      const workoutCount = todayWorkout && todayWorkout.exercises ? todayWorkout.exercises.length : 0;
+      document.getElementById('summaryWorkouts').textContent = workoutCount;
+      
+      // Sleep
+      if (sleepData && sleepData.durationMins) {
+        const hours = (sleepData.durationMins / 60).toFixed(1);
+        document.getElementById('summarySleep').textContent = hours + 'h';
+      } else {
+        document.getElementById('summarySleep').textContent = '--';
       }
     }
 
