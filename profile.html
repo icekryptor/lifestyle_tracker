@@ -151,6 +151,19 @@
         </div>
 
         <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">GOAL SPEED</label>
+          <select id="goalSpeed" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-sage">
+            <option value="extreme">🔥 Extreme Weight Loss (-1 kg/week)</option>
+            <option value="fast">⚡ Fast Weight Loss (-0.75 kg/week)</option>
+            <option value="moderate" selected>🎯 Moderate Weight Loss (-0.5 kg/week)</option>
+            <option value="slow">🐢 Slow Weight Loss (-0.25 kg/week)</option>
+            <option value="maintain">⚖️ Maintain Weight (0 kg/week)</option>
+            <option value="gain-slow">💪 Slow Weight Gain (+0.25 kg/week)</option>
+            <option value="gain-fast">🚀 Fast Weight Gain (+0.5 kg/week)</option>
+          </select>
+        </div>
+
+        <div>
           <label class="text-xs font-medium text-stone-muted block mb-1">TARGET BODY FAT (%)</label>
           <input type="number" id="targetBodyFat" placeholder="15" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
         </div>
@@ -228,6 +241,7 @@
         document.getElementById('userSex').value = currentProfile.sex || '';
         document.getElementById('activityLevel').value = currentProfile.activity_level || '1.2';
         document.getElementById('targetWeight').value = currentProfile.target_weight || '';
+        document.getElementById('goalSpeed').value = currentProfile.goal_speed || 'moderate';
         document.getElementById('targetBodyFat').value = currentProfile.target_body_fat || '';
         document.getElementById('currentBodyFat').value = currentProfile.current_body_fat || '';
         document.getElementById('currentWater').value = currentProfile.current_water || '';
@@ -267,8 +281,9 @@
       // Display TDEE
       document.getElementById('tdeeValue').textContent = Math.round(tdee);
 
-      // Calculate target calories and strategy
-      const strategy = calculateCalorieStrategy(weight, targetWeight, tdee);
+      // Calculate target calories and strategy using selected goal speed
+      const goalSpeed = document.getElementById('goalSpeed').value;
+      const strategy = calculateCalorieStrategyBySpeed(tdee, goalSpeed);
       document.getElementById('targetCalories').textContent = Math.round(strategy.targetCalories);
       document.getElementById('calorieStrategy').textContent = strategy.strategyName;
       document.getElementById('deficitInfo').textContent = strategy.deficitInfo;
@@ -290,6 +305,7 @@
         sex: document.getElementById('userSex').value,
         activity_level: parseFloat(document.getElementById('activityLevel').value) || 1.2,
         target_weight: parseFloat(document.getElementById('targetWeight').value) || null,
+        goal_speed: document.getElementById('goalSpeed').value || 'moderate',
         target_body_fat: parseFloat(document.getElementById('targetBodyFat').value) || null,
         current_body_fat: parseFloat(document.getElementById('currentBodyFat').value) || null,
         current_water: parseFloat(document.getElementById('currentWater').value) || null,
@@ -331,7 +347,7 @@
     });
 
     // Recalculate on input change
-    ['userWeight', 'userHeight', 'userDob', 'userSex', 'activityLevel', 'targetWeight'].forEach(id => {
+    ['userWeight', 'userHeight', 'userDob', 'userSex', 'activityLevel', 'targetWeight', 'goalSpeed'].forEach(id => {
       document.getElementById(id).addEventListener('input', calculateAndDisplayMetrics);
       document.getElementById(id).addEventListener('change', calculateAndDisplayMetrics);
     });

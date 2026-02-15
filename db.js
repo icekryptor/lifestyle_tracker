@@ -53,6 +53,7 @@ async function saveUserProfile(profile) {
       sex: profile.sex,
       activity_level: profile.activity_level,
       target_weight: profile.target_weight,
+      goal_speed: profile.goal_speed || 'moderate',
       target_body_fat: profile.target_body_fat,
       current_body_fat: profile.current_body_fat,
       current_water: profile.current_water,

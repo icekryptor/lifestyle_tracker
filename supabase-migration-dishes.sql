@@ -79,12 +79,19 @@ BEGIN
     ALTER TABLE profiles ADD COLUMN activity_level numeric(3,2) DEFAULT 1.2;
   END IF;
   
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.columns 
-    WHERE table_name = 'profiles' AND column_name = 'target_weight'
-  ) THEN
-    ALTER TABLE profiles ADD COLUMN target_weight numeric(5,1);
-  END IF;
+         IF NOT EXISTS (
+           SELECT 1 FROM information_schema.columns
+           WHERE table_name = 'profiles' AND column_name = 'target_weight'
+         ) THEN
+           ALTER TABLE profiles ADD COLUMN target_weight numeric(5,1);
+         END IF;
+
+         IF NOT EXISTS (
+           SELECT 1 FROM information_schema.columns
+           WHERE table_name = 'profiles' AND column_name = 'goal_speed'
+         ) THEN
+           ALTER TABLE profiles ADD COLUMN goal_speed text DEFAULT 'moderate';
+         END IF;
   
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns 

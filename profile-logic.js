@@ -89,7 +89,71 @@ function calculateTDEE(bmr, activityLevel) {
 }
 
 /**
- * Calculate calorie strategy based on weight goal
+ * Calculate calorie strategy based on selected goal speed
+ * 
+ * @param {number} tdee - Total Daily Energy Expenditure
+ * @param {string} goalSpeed - Selected goal speed (extreme, fast, moderate, slow, maintain, gain-slow, gain-fast)
+ * @returns {Object} - Strategy details
+ */
+function calculateCalorieStrategyBySpeed(tdee, goalSpeed) {
+  const strategies = {
+    'extreme': {
+      deficit: -1000,
+      weeklyWeightChange: -1.0,
+      strategyName: 'Extreme Weight Loss',
+      deficitInfo: '1 kg/week loss - Very aggressive, not sustainable long-term'
+    },
+    'fast': {
+      deficit: -750,
+      weeklyWeightChange: -0.75,
+      strategyName: 'Fast Weight Loss',
+      deficitInfo: '0.75 kg/week loss - Aggressive but achievable'
+    },
+    'moderate': {
+      deficit: -500,
+      weeklyWeightChange: -0.5,
+      strategyName: 'Moderate Weight Loss',
+      deficitInfo: '0.5 kg/week loss - Recommended for sustainable fat loss'
+    },
+    'slow': {
+      deficit: -250,
+      weeklyWeightChange: -0.25,
+      strategyName: 'Slow Weight Loss',
+      deficitInfo: '0.25 kg/week loss - Gentle, preserves muscle mass'
+    },
+    'maintain': {
+      deficit: 0,
+      weeklyWeightChange: 0,
+      strategyName: 'Weight Maintenance',
+      deficitInfo: 'Eating at maintenance to stay at current weight'
+    },
+    'gain-slow': {
+      deficit: 250,
+      weeklyWeightChange: 0.25,
+      strategyName: 'Slow Weight Gain',
+      deficitInfo: '0.25 kg/week gain - Recommended for lean muscle gain'
+    },
+    'gain-fast': {
+      deficit: 500,
+      weeklyWeightChange: 0.5,
+      strategyName: 'Fast Weight Gain',
+      deficitInfo: '0.5 kg/week gain - Faster bulking phase'
+    }
+  };
+
+  const strategy = strategies[goalSpeed] || strategies['moderate'];
+
+  return {
+    targetCalories: tdee + strategy.deficit,
+    strategyName: strategy.strategyName,
+    deficitInfo: strategy.deficitInfo,
+    weeklyWeightChange: strategy.weeklyWeightChange,
+    deficit: strategy.deficit
+  };
+}
+
+/**
+ * Calculate calorie strategy based on weight goal (legacy function)
  * 
  * Weight loss rates (per week):
  * - Extreme: 1kg/week (-1000 cal/day) - Not recommended
