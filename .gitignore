@@ -1,6 +1,9 @@
 # Supabase credentials - DO NOT COMMIT
 supabase-config.js
 
+# Vercel build output
+/public/
+
 # Environment files
 .env
 .env.local
