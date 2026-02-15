@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Library - Lifestyle Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-2xl mx-auto p-6 pb-12">
+    <!-- Header with back button -->
+    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
+      <a href="nutrition.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div class="flex-1">
+        <h1 class="text-2xl font-medium tracking-tight">Food Library</h1>
+        <p class="text-sm text-stone-muted font-light mt-1">Your saved dishes & recipes</p>
+      </div>
+      <button id="addDishBtn" class="px-4 py-2 bg-terracotta text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+        + Add Dish
+      </button>
+    </header>
+
+    <!-- Search and Filter -->
+    <div class="mb-6">
+      <div class="relative mb-3">
+        <input type="text" id="searchDishes" placeholder="Search dishes..." class="w-full pl-10 pr-4 py-2.5 border border-stone-border rounded-lg text-sm focus:outline-none focus:border-terracotta" />
+        <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+
+      <!-- Category Filter -->
+      <div class="flex gap-2 overflow-x-auto pb-2">
+        <button class="category-filter active px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-terracotta text-white" data-category="all">
+          All
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="meat">
+          🥩 Meat
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="fish">
+          🐟 Fish
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="dairy">
+          🥛 Dairy
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="grains">
+          🌾 Grains
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="vegetables">
+          🥬 Vegetables
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="fruits">
+          🍎 Fruits
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="pastry">
+          🥐 Pastry
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="snacks">
+          🍿 Snacks
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="drinks">
+          🥤 Drinks
+        </button>
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="other">
+          🍽️ Other
+        </button>
+      </div>
+    </div>
+
+    <!-- Dishes Grid -->
+    <div id="dishesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-12">
+      <svg class="w-16 h-16 mx-auto text-stone-muted/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+      </svg>
+      <p class="text-stone-muted">No dishes found</p>
+      <p class="text-xs text-stone-muted/60 mt-1">Try adjusting your filters or add a new dish</p>
+    </div>
+  </div>
+
+  <!-- Add/Edit Dish Modal -->
+  <div id="dishModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-medium" id="dishModalTitle">Add Dish</h3>
+        <button id="closeDishModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <!-- Photo Upload -->
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-2">DISH PHOTO (OPTIONAL)</label>
+          <div class="border-2 border-dashed border-stone-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="dishPhotoUpload">
+            <input type="file" id="dishPhotoInput" accept="image/*" class="hidden" />
+            <div id="dishPhotoPlaceholder">
+              <svg class="w-8 h-8 mx-auto text-stone-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <p class="text-xs text-stone-muted">Click to upload photo</p>
+            </div>
+            <img id="dishPhotoPreview" class="hidden rounded-lg w-full" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">DISH NAME</label>
+          <input type="text" id="dishName" placeholder="e.g. Grilled Chicken Breast" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">CATEGORY</label>
+          <select id="dishCategory" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-terracotta">
+            <option value="meat">🥩 Meat</option>
+            <option value="fish">🐟 Fish</option>
+            <option value="dairy">🥛 Dairy</option>
+            <option value="grains">🌾 Grains</option>
+            <option value="vegetables">🥬 Vegetables</option>
+            <option value="fruits">🍎 Fruits</option>
+            <option value="pastry">🥐 Pastry</option>
+            <option value="snacks">🍿 Snacks</option>
+            <option value="drinks">🥤 Drinks</option>
+            <option value="other">🍽️ Other</option>
+          </select>
+        </div>
+
+        <div class="bg-cream-50 rounded-lg p-3 border border-stone-border/50">
+          <p class="text-xs font-medium text-stone-muted mb-2">NUTRITION PER 100g</p>
+          
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="text-xs text-stone-muted block mb-1">Protein (g)</label>
+              <input type="number" id="dishProtein" placeholder="0" step="0.1" min="0" class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
+            </div>
+            <div>
+              <label class="text-xs text-stone-muted block mb-1">Carbs (g)</label>
+              <input type="number" id="dishCarbs" placeholder="0" step="0.1" min="0" class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 mt-2">
+            <div>
+              <label class="text-xs text-stone-muted block mb-1">Fats (g)</label>
+              <input type="number" id="dishFats" placeholder="0" step="0.1" min="0" class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
+            </div>
+            <div>
+              <label class="text-xs text-stone-muted block mb-1">Calories</label>
+              <input type="number" id="dishCalories" placeholder="Auto" readonly class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm bg-white focus:outline-none" />
+            </div>
+          </div>
+        </div>
+
+        <button id="saveDish" class="w-full bg-terracotta text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Dish</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Supabase + DB first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script>
+    let dishesCache = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+    let currentDishPhoto = null;
+
+    // Load and display dishes
+    async function loadDishes() {
+      dishesCache = await getDishes();
+      renderDishes();
+    }
+
+    function renderDishes() {
+      const gridEl = document.getElementById('dishesGrid');
+      const emptyEl = document.getElementById('emptyState');
+      
+      // Filter dishes
+      let filtered = dishesCache.filter(dish => {
+        const matchesCategory = currentFilter === 'all' || dish.category === currentFilter;
+        const matchesSearch = searchQuery === '' || 
+          dish.name.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        gridEl.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      gridEl.classList.remove('hidden');
+      emptyEl.classList.add('hidden');
+
+      gridEl.innerHTML = filtered.map(dish => `
+        <div class="bg-white rounded-xl border border-stone-border overflow-hidden hover:shadow-md transition-shadow">
+          ${dish.photo ? `
+            <div class="h-32 bg-cover bg-center" style="background-image: url('${dish.photo}')"></div>
+          ` : `
+            <div class="h-32 bg-gradient-to-br from-cream-50 to-cream-100 flex items-center justify-center">
+              <span class="text-4xl">${getCategoryEmoji(dish.category)}</span>
+            </div>
+          `}
+          <div class="p-4">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex-1 min-w-0">
+                <h3 class="font-medium text-sm truncate">${dish.name}</h3>
+                <span class="text-xs text-stone-muted">${getCategoryLabel(dish.category)}</span>
+              </div>
+              <button onclick="deleteDishById('${dish.id}')" class="text-stone-muted hover:text-red-500 ml-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+            <div class="text-xs text-stone-muted space-y-1">
+              <div class="flex justify-between">
+                <span>Per 100g:</span>
+                <span class="font-medium">${dish.calories} cal</span>
+              </div>
+              <div class="flex justify-between text-xs">
+                <span>P: ${dish.protein}g</span>
+                <span>C: ${dish.carbs}g</span>
+                <span>F: ${dish.fats}g</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function getCategoryEmoji(category) {
+      const emojis = {
+        meat: '🥩', fish: '🐟', dairy: '🥛', grains: '🌾',
+        vegetables: '🥬', fruits: '🍎', pastry: '🥐', 
+        snacks: '🍿', drinks: '🥤', other: '🍽️'
+      };
+      return emojis[category] || '🍽️';
+    }
+
+    function getCategoryLabel(category) {
+      const labels = {
+        meat: 'Meat', fish: 'Fish', dairy: 'Dairy', grains: 'Grains',
+        vegetables: 'Vegetables', fruits: 'Fruits', pastry: 'Pastry',
+        snacks: 'Snacks', drinks: 'Drinks', other: 'Other'
+      };
+      return labels[category] || 'Other';
+    }
+
+    // Category filter
+    document.querySelectorAll('.category-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-filter').forEach(b => {
+          b.classList.remove('active', 'bg-terracotta', 'text-white');
+          b.classList.add('bg-stone-border/50', 'text-stone-text');
+        });
+        btn.classList.add('active', 'bg-terracotta', 'text-white');
+        btn.classList.remove('bg-stone-border/50', 'text-stone-text');
+        
+        currentFilter = btn.dataset.category;
+        renderDishes();
+      });
+    });
+
+    // Search
+    document.getElementById('searchDishes').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderDishes();
+    });
+
+    // Dish modal
+    function openDishModal() {
+      document.getElementById('dishModalTitle').textContent = 'Add Dish';
+      document.getElementById('dishName').value = '';
+      document.getElementById('dishCategory').value = 'meat';
+      document.getElementById('dishProtein').value = '';
+      document.getElementById('dishCarbs').value = '';
+      document.getElementById('dishFats').value = '';
+      document.getElementById('dishCalories').value = '';
+      document.getElementById('dishPhotoPreview').classList.add('hidden');
+      document.getElementById('dishPhotoPlaceholder').classList.remove('hidden');
+      currentDishPhoto = null;
+      document.getElementById('dishModal').classList.remove('hidden');
+      document.getElementById('dishModal').classList.add('flex');
+    }
+
+    function closeDishModal() {
+      document.getElementById('dishModal').classList.add('hidden');
+      document.getElementById('dishModal').classList.remove('flex');
+    }
+
+    // Photo upload
+    document.getElementById('dishPhotoUpload').addEventListener('click', () => {
+      document.getElementById('dishPhotoInput').click();
+    });
+
+    document.getElementById('dishPhotoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          currentDishPhoto = e.target.result;
+          document.getElementById('dishPhotoPreview').src = currentDishPhoto;
+          document.getElementById('dishPhotoPreview').classList.remove('hidden');
+          document.getElementById('dishPhotoPlaceholder').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Auto-calculate calories
+    function updateDishCalories() {
+      const protein = parseFloat(document.getElementById('dishProtein').value) || 0;
+      const carbs = parseFloat(document.getElementById('dishCarbs').value) || 0;
+      const fats = parseFloat(document.getElementById('dishFats').value) || 0;
+      const calories = Math.round((protein * 4) + (carbs * 4) + (fats * 9));
+      document.getElementById('dishCalories').value = calories;
+    }
+
+    ['dishProtein', 'dishCarbs', 'dishFats'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateDishCalories);
+    });
+
+    // Save dish
+    document.getElementById('saveDish').addEventListener('click', async () => {
+      const name = document.getElementById('dishName').value.trim();
+      const category = document.getElementById('dishCategory').value;
+      const protein = parseFloat(document.getElementById('dishProtein').value) || 0;
+      const carbs = parseFloat(document.getElementById('dishCarbs').value) || 0;
+      const fats = parseFloat(document.getElementById('dishFats').value) || 0;
+      const calories = parseInt(document.getElementById('dishCalories').value) || 0;
+
+      if (!name) {
+        alert('Please enter a dish name');
+        return;
+      }
+
+      const dish = { name, category, protein, carbs, fats, calories, photo: currentDishPhoto };
+      await addDish(dish);
+
+      closeDishModal();
+      await loadDishes();
+    });
+
+    async function deleteDishById(dishId) {
+      if (!confirm('Delete this dish?')) return;
+      await deleteDish(dishId);
+      await loadDishes();
+    }
+
+    // Event listeners
+    document.getElementById('addDishBtn').addEventListener('click', openDishModal);
+    document.getElementById('closeDishModal').addEventListener('click', closeDishModal);
+
+    // Init
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        await loadDishes();
+      }
+    })();
+  </script>
+</body>
+</html>
