@@ -29,6 +29,18 @@ drop policy if exists "Users can delete own dishes" on dishes;
 create table if not exists profiles (
   id uuid references auth.users on delete cascade primary key,
   email text,
+  name text,
+  date_of_birth date,
+  height numeric(5,1), -- cm
+  weight numeric(5,1), -- kg
+  sex text, -- 'male' or 'female'
+  activity_level numeric(3,2) default 1.2, -- 1.2 to 1.9
+  target_weight numeric(5,1), -- kg
+  target_body_fat numeric(4,1), -- percentage
+  current_body_fat numeric(4,1), -- percentage (from impedance)
+  current_water numeric(4,1), -- percentage (from impedance)
+  current_muscle numeric(4,1), -- percentage (from impedance)
+  current_bone numeric(4,1), -- percentage (from impedance)
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

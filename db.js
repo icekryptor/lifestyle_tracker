@@ -17,6 +17,58 @@ async function requireAuth() {
   return user;
 }
 
+// ── User Profile ──
+async function getUserProfile() {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null; // No profile yet
+    console.error('Error fetching profile:', error);
+    return null;
+  }
+
+  return data;
+}
+
+async function saveUserProfile(profile) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert({
+      id: user.id,
+      email: user.email,
+      name: profile.name,
+      date_of_birth: profile.date_of_birth,
+      height: profile.height,
+      weight: profile.weight,
+      sex: profile.sex,
+      activity_level: profile.activity_level,
+      target_weight: profile.target_weight,
+      target_body_fat: profile.target_body_fat,
+      current_body_fat: profile.current_body_fat,
+      current_water: profile.current_water,
+      current_muscle: profile.current_muscle,
+      current_bone: profile.current_bone
+    })
+    .select();
+
+  if (error) {
+    console.error('Error saving profile:', error);
+    return null;
+  }
+
+  return data[0];
+}
+
 // ── Sleep Data ──
 async function getSleepData() {
   const user = await getCurrentUser();

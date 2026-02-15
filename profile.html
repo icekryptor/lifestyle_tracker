@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Lifestyle Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-md mx-auto p-6 pb-12">
+    <!-- Header with back button -->
+    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
+      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl font-medium tracking-tight">Profile</h1>
+        <p class="text-sm text-stone-muted font-light mt-1">Body metrics & goals</p>
+      </div>
+    </header>
+
+    <!-- Calculated Metrics Summary -->
+    <section id="metricsSummary" class="bg-gradient-to-br from-sage/10 to-lavender/10 rounded-xl border border-stone-border p-5 mb-4 hidden">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-sage mb-3">Your Metrics</h2>
+      
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div class="bg-white/80 rounded-lg p-3">
+          <div class="text-2xl font-semibold" id="bmiValue">--</div>
+          <div class="text-xs text-stone-muted">BMI</div>
+          <div class="text-xs text-stone-muted/70 mt-1" id="bmiCategory">--</div>
+        </div>
+        <div class="bg-white/80 rounded-lg p-3">
+          <div class="text-2xl font-semibold" id="bmrValue">--</div>
+          <div class="text-xs text-stone-muted">BMR (cal/day)</div>
+          <div class="text-xs text-stone-muted/70 mt-1">Base metabolism</div>
+        </div>
+      </div>
+
+      <div class="bg-white/80 rounded-lg p-3 mb-3">
+        <div class="flex justify-between items-baseline mb-1">
+          <div class="text-xs text-stone-muted">TDEE (with activity)</div>
+          <div class="text-2xl font-semibold" id="tdeeValue">--</div>
+        </div>
+        <div class="text-xs text-stone-muted/70">Total daily energy expenditure</div>
+      </div>
+
+      <div class="bg-white/80 rounded-lg p-3 mb-3">
+        <div class="flex justify-between items-baseline mb-1">
+          <div class="text-xs text-stone-muted">Target Calories</div>
+          <div class="text-2xl font-semibold text-terracotta" id="targetCalories">--</div>
+        </div>
+        <div class="text-xs font-medium mt-1" id="calorieStrategy">--</div>
+        <div class="text-xs text-stone-muted/70 mt-1" id="deficitInfo">--</div>
+      </div>
+
+      <div class="bg-white/80 rounded-lg p-3">
+        <div class="text-xs text-stone-muted mb-1">Goal Timeline</div>
+        <div class="text-lg font-semibold" id="goalTimeline">--</div>
+        <div class="text-xs text-stone-muted/70 mt-1" id="goalProgress">--</div>
+      </div>
+    </section>
+
+    <!-- Basic Information -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-sage mb-3">Basic Information</h2>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">NAME</label>
+          <input type="text" id="userName" placeholder="Your name" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">DATE OF BIRTH</label>
+          <input type="date" id="userDob" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">HEIGHT (CM)</label>
+            <input type="number" id="userHeight" placeholder="170" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">WEIGHT (KG)</label>
+            <input type="number" id="userWeight" placeholder="70" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">SEX</label>
+          <select id="userSex" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-sage">
+            <option value="">Select...</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">ACTIVITY LEVEL</label>
+          <select id="activityLevel" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-sage">
+            <option value="1.2">Sedentary (little to no exercise)</option>
+            <option value="1.375">Lightly active (1-3 days/week)</option>
+            <option value="1.55">Moderately active (3-5 days/week)</option>
+            <option value="1.725">Very active (6-7 days/week)</option>
+            <option value="1.9">Extremely active (physical job + training)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Goals -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-sage mb-3">Goals</h2>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">TARGET WEIGHT (KG)</label>
+          <input type="number" id="targetWeight" placeholder="65" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">TARGET BODY FAT (%)</label>
+          <input type="number" id="targetBodyFat" placeholder="15" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced Measurements (Impedance) -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-sage">Advanced Measurements</h2>
+        <span class="text-xs text-stone-muted/60">Optional</span>
+      </div>
+      <p class="text-xs text-stone-muted mb-3">Requires impedance scale measurement</p>
+      
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">BODY FAT (%)</label>
+            <input type="number" id="currentBodyFat" placeholder="20" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">WATER (%)</label>
+            <input type="number" id="currentWater" placeholder="60" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">MUSCLE MASS (%)</label>
+            <input type="number" id="currentMuscle" placeholder="35" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">BONE MASS (%)</label>
+            <input type="number" id="currentBone" placeholder="4" step="0.1" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Save Button -->
+    <button id="saveProfile" class="w-full bg-sage text-white rounded-xl px-6 py-3 text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
+      Save Profile
+    </button>
+  </div>
+
+  <!-- Load Supabase + DB first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script src="profile-logic.js"></script>
+  <script>
+    let currentProfile = null;
+
+    async function loadProfile() {
+      currentProfile = await getUserProfile();
+      
+      if (currentProfile) {
+        // Fill form
+        document.getElementById('userName').value = currentProfile.name || '';
+        document.getElementById('userDob').value = currentProfile.date_of_birth || '';
+        document.getElementById('userHeight').value = currentProfile.height || '';
+        document.getElementById('userWeight').value = currentProfile.weight || '';
+        document.getElementById('userSex').value = currentProfile.sex || '';
+        document.getElementById('activityLevel').value = currentProfile.activity_level || '1.2';
+        document.getElementById('targetWeight').value = currentProfile.target_weight || '';
+        document.getElementById('targetBodyFat').value = currentProfile.target_body_fat || '';
+        document.getElementById('currentBodyFat').value = currentProfile.current_body_fat || '';
+        document.getElementById('currentWater').value = currentProfile.current_water || '';
+        document.getElementById('currentMuscle').value = currentProfile.current_muscle || '';
+        document.getElementById('currentBone').value = currentProfile.current_bone || '';
+
+        // Calculate and display metrics
+        calculateAndDisplayMetrics();
+      }
+    }
+
+    function calculateAndDisplayMetrics() {
+      const weight = parseFloat(document.getElementById('userWeight').value);
+      const height = parseFloat(document.getElementById('userHeight').value);
+      const dob = document.getElementById('userDob').value;
+      const sex = document.getElementById('userSex').value;
+      const activityLevel = parseFloat(document.getElementById('activityLevel').value);
+      const targetWeight = parseFloat(document.getElementById('targetWeight').value);
+
+      if (!weight || !height || !dob || !sex) {
+        document.getElementById('metricsSummary').classList.add('hidden');
+        return;
+      }
+
+      const age = calculateAge(dob);
+      const bmi = calculateBMI(weight, height);
+      const bmr = calculateBMR(weight, height, age, sex);
+      const tdee = calculateTDEE(bmr, activityLevel);
+
+      // Display BMI
+      document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+      document.getElementById('bmiCategory').textContent = getBMICategory(bmi);
+
+      // Display BMR
+      document.getElementById('bmrValue').textContent = Math.round(bmr);
+
+      // Display TDEE
+      document.getElementById('tdeeValue').textContent = Math.round(tdee);
+
+      // Calculate target calories and strategy
+      const strategy = calculateCalorieStrategy(weight, targetWeight, tdee);
+      document.getElementById('targetCalories').textContent = Math.round(strategy.targetCalories);
+      document.getElementById('calorieStrategy').textContent = strategy.strategyName;
+      document.getElementById('deficitInfo').textContent = strategy.deficitInfo;
+
+      // Calculate timeline
+      const timeline = calculateGoalTimeline(weight, targetWeight, strategy.weeklyWeightChange);
+      document.getElementById('goalTimeline').textContent = timeline.timelineText;
+      document.getElementById('goalProgress').textContent = timeline.progressText;
+
+      document.getElementById('metricsSummary').classList.remove('hidden');
+    }
+
+    async function saveProfile() {
+      const profile = {
+        name: document.getElementById('userName').value.trim(),
+        date_of_birth: document.getElementById('userDob').value,
+        height: parseFloat(document.getElementById('userHeight').value) || null,
+        weight: parseFloat(document.getElementById('userWeight').value) || null,
+        sex: document.getElementById('userSex').value,
+        activity_level: parseFloat(document.getElementById('activityLevel').value) || 1.2,
+        target_weight: parseFloat(document.getElementById('targetWeight').value) || null,
+        target_body_fat: parseFloat(document.getElementById('targetBodyFat').value) || null,
+        current_body_fat: parseFloat(document.getElementById('currentBodyFat').value) || null,
+        current_water: parseFloat(document.getElementById('currentWater').value) || null,
+        current_muscle: parseFloat(document.getElementById('currentMuscle').value) || null,
+        current_bone: parseFloat(document.getElementById('currentBone').value) || null
+      };
+
+      await saveUserProfile(profile);
+      alert('Profile saved successfully!');
+    }
+
+    // Event listeners
+    document.getElementById('saveProfile').addEventListener('click', saveProfile);
+
+    // Recalculate on input change
+    ['userWeight', 'userHeight', 'userDob', 'userSex', 'activityLevel', 'targetWeight'].forEach(id => {
+      document.getElementById(id).addEventListener('input', calculateAndDisplayMetrics);
+      document.getElementById(id).addEventListener('change', calculateAndDisplayMetrics);
+    });
+
+    // Auth check and init
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        await loadProfile();
+      }
+    })();
+  </script>
+</body>
+</html>
