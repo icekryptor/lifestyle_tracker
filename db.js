@@ -270,10 +270,10 @@ async function getDishes() {
   return data.map(d => ({
     id: d.id,
     name: d.name,
-    protein: d.protein,
-    carbs: d.carbs,
-    fats: d.fats,
-    calories: d.calories
+    protein: parseFloat(d.protein) || 0,
+    carbs: parseFloat(d.carbs) || 0,
+    fats: parseFloat(d.fats) || 0,
+    calories: parseInt(d.calories) || 0
   }));
 }
 
