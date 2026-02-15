@@ -92,7 +92,7 @@
       <!-- Workout summary -->
       <div id="workoutSummary" class="hidden">
         <div class="bg-cream-50 rounded-lg p-4">
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-3 gap-3">
             <div>
               <div class="text-2xl font-semibold" id="summaryDuration">0:00</div>
               <div class="text-xs text-stone-muted">Duration</div>
@@ -100,6 +100,10 @@
             <div>
               <div class="text-2xl font-semibold" id="summaryExercises">0</div>
               <div class="text-xs text-stone-muted">Exercises</div>
+            </div>
+            <div>
+              <div class="text-2xl font-semibold" id="summaryVolume">0</div>
+              <div class="text-xs text-stone-muted">Volume</div>
             </div>
           </div>
         </div>
@@ -153,6 +157,51 @@
     </div>
   </div>
 
+  <!-- Select Exercise Modal (for adding to workout) -->
+  <div id="selectExerciseModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5 max-h-[80vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-medium">Select Exercise</h3>
+        <button id="closeSelectModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div id="selectExerciseList" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- Log Set Modal -->
+  <div id="logSetModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-medium" id="logSetExerciseName">Log Set</h3>
+        <button id="closeLogSetModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">WEIGHT (KG)</label>
+            <input type="number" id="setWeight" placeholder="0" step="0.5" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">REPS</label>
+            <input type="number" id="setReps" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+          </div>
+        </div>
+
+        <button id="saveSet" class="w-full bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity">Add Set</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Load Supabase + DB first -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
@@ -163,13 +212,17 @@
     // Update today's date
     document.getElementById('todayDate').textContent = formatDate(todayKey());
 
-    // Exercise cache
+    // State
     let exercisesCache = [];
+    let currentWorkout = null; // { startTime, exercises: [{exerciseId, exerciseName, sets: []}] }
+    let workoutStartTime = null;
+    let workoutTimer = null;
+    let currentExerciseIndex = null; // For logging sets
 
     // ── Exercise Library Functions ──
     
     async function loadExercises() {
-      exercisesCache = await getExercises(); // From db.js
+      exercisesCache = await getExercises();
       const libraryEl = document.getElementById('exercisesLibrary');
       
       if (exercisesCache.length === 0) {
@@ -232,7 +285,7 @@
       }
 
       const exercise = { name, category, equipment, notes };
-      await addExercise(exercise); // From db.js
+      await addExercise(exercise);
 
       closeExerciseModal();
       await loadExercises();
@@ -240,23 +293,65 @@
 
     async function deleteExerciseById(exerciseId) {
       if (!confirm('Delete this exercise?')) return;
-      await deleteExercise(exerciseId); // From db.js
+      await deleteExercise(exerciseId);
       await loadExercises();
     }
 
     // ── Workout Functions ──
     
-    let workoutStartTime = null;
-    let workoutTimer = null;
+    async function loadTodayWorkout() {
+      const today = todayKey();
+      const workout = await getWorkoutByDate(today);
+      
+      if (workout) {
+        showWorkoutSummary(workout);
+      } else {
+        document.getElementById('noWorkout').classList.remove('hidden');
+        document.getElementById('workoutSummary').classList.add('hidden');
+        document.getElementById('workoutInProgress').classList.add('hidden');
+      }
+    }
+
+    function showWorkoutSummary(workout) {
+      document.getElementById('noWorkout').classList.add('hidden');
+      document.getElementById('workoutInProgress').classList.add('hidden');
+      document.getElementById('workoutSummary').classList.remove('hidden');
+
+      const durationMins = workout.duration_mins || 0;
+      const hours = Math.floor(durationMins / 60);
+      const mins = durationMins % 60;
+      const durationText = hours > 0 ? `${hours}:${String(mins).padStart(2, '0')}h` : `${mins}m`;
+
+      document.getElementById('summaryDuration').textContent = durationText;
+      document.getElementById('summaryExercises').textContent = workout.exercises.length;
+      
+      // Calculate total volume
+      let totalVolume = 0;
+      workout.exercises.forEach(ex => {
+        ex.sets.forEach(set => {
+          totalVolume += (set.weight || 0) * (set.reps || 0);
+        });
+      });
+      document.getElementById('summaryVolume').textContent = Math.round(totalVolume) + 'kg';
+    }
 
     function startWorkout() {
+      currentWorkout = {
+        startTime: new Date().toISOString(),
+        exercises: []
+      };
       workoutStartTime = Date.now();
+      
       document.getElementById('noWorkout').classList.add('hidden');
+      document.getElementById('workoutSummary').classList.add('hidden');
       document.getElementById('workoutInProgress').classList.remove('hidden');
+      document.getElementById('startWorkoutBtn').classList.add('hidden');
       
       // Start timer
       updateWorkoutTimer();
       workoutTimer = setInterval(updateWorkoutTimer, 1000);
+      
+      renderWorkoutExercises();
     }
 
     function updateWorkoutTimer() {
@@ -267,27 +362,168 @@
         `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    document.getElementById('startWorkoutBtn').addEventListener('click', startWorkout);
-
-    document.getElementById('addExerciseToWorkout').addEventListener('click', () => {
-      alert('Exercise selection coming in next iteration!');
-    });
-
-    document.getElementById('finishWorkout').addEventListener('click', () => {
-      if (workoutTimer) clearInterval(workoutTimer);
-      alert('Workout saved! Full workout logging coming in next iteration.');
+    function renderWorkoutExercises() {
+      const container = document.getElementById('workoutExercises');
       
-      // For now, just reset
-      document.getElementById('workoutInProgress').classList.add('hidden');
-      document.getElementById('noWorkout').classList.remove('hidden');
+      if (currentWorkout.exercises.length === 0) {
+        container.innerHTML = '<p class="text-sm text-stone-muted text-center py-2">No exercises added yet</p>';
+        return;
+      }
+
+      container.innerHTML = currentWorkout.exercises.map((ex, idx) => `
+        <div class="border border-stone-border rounded-lg p-3">
+          <div class="flex justify-between items-start mb-2">
+            <div class="flex-1">
+              <div class="font-medium text-sm">${ex.exerciseName}</div>
+              <div class="text-xs text-stone-muted">${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''}</div>
+            </div>
+            <button onclick="removeExerciseFromWorkout(${idx})" class="text-stone-muted hover:text-red-500">×</button>
+          </div>
+          
+          ${ex.sets.length > 0 ? `
+            <div class="space-y-1 mb-2">
+              ${ex.sets.map((set, setIdx) => `
+                <div class="flex justify-between items-center text-xs bg-cream-50 px-2 py-1 rounded">
+                  <span>Set ${setIdx + 1}</span>
+                  <span>${set.weight}kg × ${set.reps} reps</span>
+                  <button onclick="removeSet(${idx}, ${setIdx})" class="text-stone-muted hover:text-red-500">×</button>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+          
+          <button onclick="openLogSetModal(${idx})" class="w-full border border-sage/30 text-sage text-xs rounded px-3 py-1.5 hover:bg-sage/5">+ Add Set</button>
+        </div>
+      `).join('');
+    }
+
+    function openSelectExerciseModal() {
+      const listEl = document.getElementById('selectExerciseList');
+      
+      if (exercisesCache.length === 0) {
+        listEl.innerHTML = '<p class="text-sm text-stone-muted">No exercises in library. Add some first!</p>';
+      } else {
+        listEl.innerHTML = exercisesCache.map(ex => `
+          <button onclick="addExerciseToCurrentWorkout('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')" 
+                  class="w-full text-left p-3 hover:bg-cream-50 rounded-lg border border-stone-border transition-colors">
+            <div class="font-medium text-sm">${ex.name}</div>
+            ${ex.equipment ? `<div class="text-xs text-stone-muted">${ex.equipment}</div>` : ''}
+          </button>
+        `).join('');
+      }
+      
+      document.getElementById('selectExerciseModal').classList.remove('hidden');
+      document.getElementById('selectExerciseModal').classList.add('flex');
+    }
+
+    function closeSelectExerciseModal() {
+      document.getElementById('selectExerciseModal').classList.add('hidden');
+      document.getElementById('selectExerciseModal').classList.remove('flex');
+    }
+
+    function addExerciseToCurrentWorkout(exerciseId, exerciseName) {
+      currentWorkout.exercises.push({
+        exerciseId,
+        exerciseName,
+        sets: []
+      });
+      renderWorkoutExercises();
+      closeSelectExerciseModal();
+    }
+
+    function removeExerciseFromWorkout(index) {
+      if (confirm('Remove this exercise from workout?')) {
+        currentWorkout.exercises.splice(index, 1);
+        renderWorkoutExercises();
+      }
+    }
+
+    function openLogSetModal(exerciseIndex) {
+      currentExerciseIndex = exerciseIndex;
+      document.getElementById('logSetExerciseName').textContent = currentWorkout.exercises[exerciseIndex].exerciseName;
+      document.getElementById('setWeight').value = '';
+      document.getElementById('setReps').value = '';
+      document.getElementById('logSetModal').classList.remove('hidden');
+      document.getElementById('logSetModal').classList.add('flex');
+      
+      // Focus weight input
+      setTimeout(() => document.getElementById('setWeight').focus(), 100);
+    }
+
+    function closeLogSetModal() {
+      document.getElementById('logSetModal').classList.add('hidden');
+      document.getElementById('logSetModal').classList.remove('flex');
+      currentExerciseIndex = null;
+    }
+
+    function saveSet() {
+      const weight = parseFloat(document.getElementById('setWeight').value) || 0;
+      const reps = parseInt(document.getElementById('setReps').value) || 0;
+
+      if (weight <= 0 || reps <= 0) {
+        alert('Please enter valid weight and reps');
+        return;
+      }
+
+      currentWorkout.exercises[currentExerciseIndex].sets.push({
+        weight,
+        reps,
+        completed: true
+      });
+
+      renderWorkoutExercises();
+      closeLogSetModal();
+    }
+
+    function removeSet(exerciseIndex, setIndex) {
+      currentWorkout.exercises[exerciseIndex].sets.splice(setIndex, 1);
+      renderWorkoutExercises();
+    }
+
+    async function finishWorkout() {
+      if (currentWorkout.exercises.length === 0) {
+        alert('Add at least one exercise with sets before finishing');
+        return;
+      }
+
+      if (workoutTimer) clearInterval(workoutTimer);
+
+      const endTime = new Date().toISOString();
+      const durationMins = Math.floor((Date.now() - workoutStartTime) / 60000);
+
+      const workout = {
+        date: todayKey(),
+        startTime: currentWorkout.startTime,
+        endTime,
+        durationMins,
+        exercises: currentWorkout.exercises
+      };
+
+      await saveWorkout(workout);
+      
+      // Reset state
+      currentWorkout = null;
       workoutStartTime = null;
-    });
+      
+      // Reload today's workout
+      await loadTodayWorkout();
+      document.getElementById('startWorkoutBtn').classList.remove('hidden');
+    }
+
+    // Event listeners
+    document.getElementById('startWorkoutBtn').addEventListener('click', startWorkout);
+    document.getElementById('addExerciseToWorkout').addEventListener('click', openSelectExerciseModal);
+    document.getElementById('closeSelectModal').addEventListener('click', closeSelectExerciseModal);
+    document.getElementById('closeLogSetModal').addEventListener('click', closeLogSetModal);
+    document.getElementById('saveSet').addEventListener('click', saveSet);
+    document.getElementById('finishWorkout').addEventListener('click', finishWorkout);
 
     // Auth check and init
     (async () => {
       const user = await requireAuth();
       if (user) {
         await loadExercises();
+        await loadTodayWorkout();
       }
     })();
   </script>

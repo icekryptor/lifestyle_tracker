@@ -327,6 +327,105 @@ async function deleteExercise(exerciseId) {
   }
 }
 
+// ── Workout Tracking ──
+async function getWorkouts() {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('workouts')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching workouts:', error);
+    return [];
+  }
+
+  return data;
+}
+
+async function getWorkoutByDate(dateKey) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('workouts')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('date', dateKey)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null; // No rows returned
+    console.error('Error fetching workout:', error);
+    return null;
+  }
+
+  return data;
+}
+
+async function saveWorkout(workout) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const workoutData = {
+    user_id: user.id,
+    date: workout.date,
+    start_time: workout.startTime,
+    end_time: workout.endTime,
+    duration_mins: workout.durationMins,
+    exercises: workout.exercises,
+    notes: workout.notes || null
+  };
+
+  if (workout.id) {
+    // Update existing workout
+    const { data, error } = await supabase
+      .from('workouts')
+      .update(workoutData)
+      .eq('id', workout.id)
+      .eq('user_id', user.id)
+      .select();
+
+    if (error) {
+      console.error('Error updating workout:', error);
+      return null;
+    }
+
+    return data[0];
+  } else {
+    // Insert new workout
+    const { data, error } = await supabase
+      .from('workouts')
+      .insert(workoutData)
+      .select();
+
+    if (error) {
+      console.error('Error saving workout:', error);
+      return null;
+    }
+
+    return data[0];
+  }
+}
+
+async function deleteWorkout(workoutId) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('workouts')
+    .delete()
+    .eq('id', workoutId)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error deleting workout:', error);
+  }
+}
+
 // ── Generic Data Access (for backwards compatibility with existing code) ──
 let dataCache = {
   sleep: {},
