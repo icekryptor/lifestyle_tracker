@@ -1,6 +1,3 @@
-# Supabase credentials - DO NOT COMMIT
-supabase-config.js
-
 # Vercel build output
 /public/
 
