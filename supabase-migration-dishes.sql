@@ -23,6 +23,17 @@ BEGIN
   END IF;
 END $$;
 
+-- Add brand column if it doesn't exist
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'dishes' AND column_name = 'brand'
+  ) THEN
+    ALTER TABLE dishes ADD COLUMN brand text;
+  END IF;
+END $$;
+
 -- Add name, date_of_birth, height, weight, sex, etc. to profiles table if they don't exist
 DO $$ 
 BEGIN

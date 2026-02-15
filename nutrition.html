@@ -216,6 +216,7 @@
               <img id="selectedDishPhoto" class="w-16 h-16 rounded-lg object-cover hidden" />
               <div class="flex-1">
                 <div class="font-medium text-sm" id="selectedDishName"></div>
+                <div class="text-xs text-stone-muted/60" id="selectedDishBrand"></div>
                 <div class="text-xs text-stone-muted" id="selectedDishMacros"></div>
               </div>
             </div>
@@ -659,6 +660,7 @@
             `}
             <div class="flex-1 min-w-0">
               <div class="text-sm font-medium truncate">${dish.name}</div>
+              ${dish.brand ? `<div class="text-xs text-stone-muted/60">${dish.brand}</div>` : ''}
               <div class="text-xs text-stone-muted">
                 ${dish.calories} cal • P: ${dish.protein}g • C: ${dish.carbs}g • F: ${dish.fats}g
               </div>
@@ -711,6 +713,7 @@
           `}
           <div class="flex-1">
             <div class="text-sm font-medium">${dish.name}</div>
+            ${dish.brand ? `<div class="text-xs text-stone-muted/60">${dish.brand}</div>` : ''}
             <div class="text-xs text-stone-muted">${dish.calories} cal/100g</div>
           </div>
         </div>
@@ -734,6 +737,15 @@
 
       // Show selected dish info
       document.getElementById('selectedDishName').textContent = selectedDish.name;
+      
+      const brandEl = document.getElementById('selectedDishBrand');
+      if (selectedDish.brand) {
+        brandEl.textContent = selectedDish.brand;
+        brandEl.classList.remove('hidden');
+      } else {
+        brandEl.classList.add('hidden');
+      }
+      
       document.getElementById('selectedDishMacros').textContent = 
         `Per 100g: ${selectedDish.calories} cal • P: ${selectedDish.protein}g • C: ${selectedDish.carbs}g • F: ${selectedDish.fats}g`;
       

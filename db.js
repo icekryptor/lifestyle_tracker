@@ -270,6 +270,7 @@ async function getDishes() {
   return data.map(d => ({
     id: d.id,
     name: d.name,
+    brand: d.brand || null,
     category: d.category || 'other',
     photo: d.photo || null,
     protein: parseFloat(d.protein) || 0,
@@ -288,6 +289,7 @@ async function addDish(dish) {
     .insert({
       user_id: user.id,
       name: dish.name,
+      brand: dish.brand || null,
       category: dish.category || 'other',
       photo: dish.photo || null,
       protein: dish.protein,

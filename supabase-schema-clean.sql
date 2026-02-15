@@ -84,6 +84,7 @@ create table if not exists dishes (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references auth.users on delete cascade not null,
   name text not null,
+  brand text, -- optional brand/restaurant name
   category text default 'other', -- meat, fish, dairy, grains, vegetables, fruits, pastry, snacks, drinks, other
   photo text, -- base64 or URL
   protein numeric(5,1) not null,

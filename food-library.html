@@ -127,24 +127,50 @@
       </div>
 
       <div class="space-y-3">
-        <!-- Photo Upload -->
+        <!-- Photo Upload/URL -->
         <div>
           <label class="text-xs font-medium text-stone-muted block mb-2">DISH PHOTO (OPTIONAL)</label>
-          <div class="border-2 border-dashed border-stone-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="dishPhotoUpload">
-            <input type="file" id="dishPhotoInput" accept="image/*" class="hidden" />
-            <div id="dishPhotoPlaceholder">
-              <svg class="w-8 h-8 mx-auto text-stone-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-              <p class="text-xs text-stone-muted">Click to upload photo</p>
+          
+          <!-- Photo method tabs -->
+          <div class="flex gap-2 mb-2">
+            <button id="photoUploadTab" class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-terracotta/10 text-terracotta">
+              Upload
+            </button>
+            <button id="photoUrlTab" class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-stone-border/50 text-stone-muted">
+              URL
+            </button>
+          </div>
+
+          <!-- Upload option -->
+          <div id="photoUploadSection">
+            <div class="border-2 border-dashed border-stone-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="dishPhotoUpload">
+              <input type="file" id="dishPhotoInput" accept="image/*" class="hidden" />
+              <div id="dishPhotoPlaceholder">
+                <svg class="w-8 h-8 mx-auto text-stone-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-xs text-stone-muted">Click to upload photo</p>
+              </div>
+              <img id="dishPhotoPreview" class="hidden rounded-lg w-full" />
             </div>
-            <img id="dishPhotoPreview" class="hidden rounded-lg w-full" />
+          </div>
+
+          <!-- URL option -->
+          <div id="photoUrlSection" class="hidden">
+            <input type="url" id="dishPhotoUrl" placeholder="https://example.com/image.jpg" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta mb-2" />
+            <button id="loadPhotoUrl" class="w-full py-2 text-xs border border-stone-border rounded-lg hover:border-terracotta hover:text-terracotta transition-colors">Load Preview</button>
+            <img id="dishPhotoUrlPreview" class="hidden rounded-lg w-full mt-2" />
           </div>
         </div>
 
         <div>
           <label class="text-xs font-medium text-stone-muted block mb-1">DISH NAME</label>
           <input type="text" id="dishName" placeholder="e.g. Grilled Chicken Breast" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">BRAND (OPTIONAL)</label>
+          <input type="text" id="dishBrand" placeholder="e.g. McDonald's, KFC, or leave empty" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
         </div>
 
         <div>
@@ -245,6 +271,7 @@
             <div class="flex justify-between items-start mb-2">
               <div class="flex-1 min-w-0">
                 <h3 class="font-medium text-sm truncate">${dish.name}</h3>
+                ${dish.brand ? `<div class="text-xs text-stone-muted/70 font-light">${dish.brand}</div>` : ''}
                 <span class="text-xs text-stone-muted">${getCategoryLabel(dish.category)}</span>
               </div>
               <button onclick="deleteDishById('${dish.id}')" class="text-stone-muted hover:text-red-500 ml-2">
@@ -312,14 +339,21 @@
     function openDishModal() {
       document.getElementById('dishModalTitle').textContent = 'Add Dish';
       document.getElementById('dishName').value = '';
+      document.getElementById('dishBrand').value = '';
       document.getElementById('dishCategory').value = 'meat';
       document.getElementById('dishProtein').value = '';
       document.getElementById('dishCarbs').value = '';
       document.getElementById('dishFats').value = '';
       document.getElementById('dishCalories').value = '';
+      document.getElementById('dishPhotoUrl').value = '';
       document.getElementById('dishPhotoPreview').classList.add('hidden');
+      document.getElementById('dishPhotoUrlPreview').classList.add('hidden');
       document.getElementById('dishPhotoPlaceholder').classList.remove('hidden');
       currentDishPhoto = null;
+      
+      // Reset to upload tab
+      switchToPhotoUpload();
+      
       document.getElementById('dishModal').classList.remove('hidden');
       document.getElementById('dishModal').classList.add('flex');
     }
@@ -328,6 +362,38 @@
       document.getElementById('dishModal').classList.add('hidden');
       document.getElementById('dishModal').classList.remove('flex');
     }
+
+    // Photo method tabs
+    function switchToPhotoUpload() {
+      document.getElementById('photoUploadTab').classList.remove('bg-stone-border/50', 'text-stone-muted');
+      document.getElementById('photoUploadTab').classList.add('bg-terracotta/10', 'text-terracotta');
+      document.getElementById('photoUrlTab').classList.remove('bg-terracotta/10', 'text-terracotta');
+      document.getElementById('photoUrlTab').classList.add('bg-stone-border/50', 'text-stone-muted');
+      document.getElementById('photoUploadSection').classList.remove('hidden');
+      document.getElementById('photoUrlSection').classList.add('hidden');
+    }
+
+    function switchToPhotoUrl() {
+      document.getElementById('photoUrlTab').classList.remove('bg-stone-border/50', 'text-stone-muted');
+      document.getElementById('photoUrlTab').classList.add('bg-terracotta/10', 'text-terracotta');
+      document.getElementById('photoUploadTab').classList.remove('bg-terracotta/10', 'text-terracotta');
+      document.getElementById('photoUploadTab').classList.add('bg-stone-border/50', 'text-stone-muted');
+      document.getElementById('photoUrlSection').classList.remove('hidden');
+      document.getElementById('photoUploadSection').classList.add('hidden');
+    }
+
+    document.getElementById('photoUploadTab').addEventListener('click', switchToPhotoUpload);
+    document.getElementById('photoUrlTab').addEventListener('click', switchToPhotoUrl);
+
+    // Load photo from URL
+    document.getElementById('loadPhotoUrl').addEventListener('click', () => {
+      const url = document.getElementById('dishPhotoUrl').value.trim();
+      if (url) {
+        currentDishPhoto = url;
+        document.getElementById('dishPhotoUrlPreview').src = url;
+        document.getElementById('dishPhotoUrlPreview').classList.remove('hidden');
+      }
+    });
 
     // Photo upload
     document.getElementById('dishPhotoUpload').addEventListener('click', () => {
@@ -364,6 +430,7 @@
     // Save dish
     document.getElementById('saveDish').addEventListener('click', async () => {
       const name = document.getElementById('dishName').value.trim();
+      const brand = document.getElementById('dishBrand').value.trim();
       const category = document.getElementById('dishCategory').value;
       const protein = parseFloat(document.getElementById('dishProtein').value) || 0;
       const carbs = parseFloat(document.getElementById('dishCarbs').value) || 0;
@@ -380,7 +447,16 @@
         return;
       }
 
-      const dish = { name, category, protein, carbs, fats, calories, photo: currentDishPhoto };
+      const dish = { 
+        name, 
+        brand: brand || null, 
+        category, 
+        protein, 
+        carbs, 
+        fats, 
+        calories, 
+        photo: currentDishPhoto 
+      };
       const result = await addDish(dish);
 
       if (result) {
