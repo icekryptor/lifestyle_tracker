@@ -37,3 +37,14 @@
 .group:hover .tooltip {
   opacity: 1;
 }
+
+/* Line chart hover effects */
+svg .hover-point {
+  cursor: pointer;
+  transition: r 0.2s ease;
+}
+
+svg .hover-point:hover {
+  r: 4;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}

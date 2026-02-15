@@ -255,9 +255,22 @@
           </div>
         </section>
 
-        <!-- Row 2: 7-Day Trends (Full width, 4 equal columns) -->
+        <!-- Row 2: Trends with Date Range Selector -->
         <section class="lg:col-span-12">
-          <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Last 7 Days Trends</h3>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted">Trends</h3>
+            <div class="flex gap-2 items-center">
+              <input type="date" id="dateRangeStart" class="text-xs border border-stone-border rounded-lg px-2 py-1 focus:outline-none focus:border-sage" />
+              <span class="text-xs text-stone-muted">to</span>
+              <input type="date" id="dateRangeEnd" class="text-xs border border-stone-border rounded-lg px-2 py-1 focus:outline-none focus:border-sage" />
+              <button id="applyDateRange" class="text-xs px-3 py-1 bg-sage text-white rounded-lg hover:opacity-90 transition-opacity">
+                Apply
+              </button>
+              <button id="reset7Days" class="text-xs px-3 py-1 border border-stone-border rounded-lg hover:bg-stone-border/30 transition-colors">
+                Last 7 Days
+              </button>
+            </div>
+          </div>
         </section>
 
         <!-- Sleep quality trend (3 cols) -->
@@ -266,7 +279,7 @@
             <span class="text-sm font-medium">Sleep Quality</span>
             <span class="text-xs text-stone-muted" id="dashSleepAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-24 gap-1" id="dashSleepChart"></div>
+          <div class="relative h-32 pt-4" id="dashSleepChart"></div>
         </div>
 
         <!-- Nutrition trend (3 cols) -->
@@ -275,7 +288,7 @@
             <span class="text-sm font-medium">Nutrition</span>
             <span class="text-xs text-stone-muted" id="dashNutritionAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-24 gap-1" id="dashNutritionChart"></div>
+          <div class="relative h-32 pt-4" id="dashNutritionChart"></div>
         </div>
 
         <!-- Activity trend (3 cols) -->
@@ -284,7 +297,7 @@
             <span class="text-sm font-medium">Activity</span>
             <span class="text-xs text-stone-muted" id="dashActivityAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-24 gap-1" id="dashActivityChart"></div>
+          <div class="relative h-32 pt-4" id="dashActivityChart"></div>
         </div>
 
         <!-- Training trend (3 cols) -->
@@ -293,7 +306,7 @@
             <span class="text-sm font-medium">Training Calories</span>
             <span class="text-xs text-stone-muted" id="dashTrainingAvg">—</span>
           </div>
-          <div class="flex items-end justify-between h-24 gap-1" id="dashTrainingChart"></div>
+          <div class="relative h-32 pt-4" id="dashTrainingChart"></div>
         </div>
 
       </div>
@@ -424,6 +437,102 @@
       }
     }
 
+    // Date range state
+    let dateRangeStart = null;
+    let dateRangeEnd = null;
+
+    // Initialize date range to last 7 days
+    function initializeDateRange() {
+      const today = new Date();
+      const sevenDaysAgo = new Date(today);
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+      
+      dateRangeEnd = formatDateForInput(today);
+      dateRangeStart = formatDateForInput(sevenDaysAgo);
+      
+      document.getElementById('dateRangeStart').value = dateRangeStart;
+      document.getElementById('dateRangeEnd').value = dateRangeEnd;
+    }
+
+    function formatDateForInput(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    // Get array of dates between start and end
+    function getDateRange() {
+      const start = new Date(dateRangeStart);
+      const end = new Date(dateRangeEnd);
+      const dates = [];
+      
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        dates.push(new Date(d));
+      }
+      
+      return dates;
+    }
+
+    // Convert date to key format (YYYY-MM-DD)
+    function dateToKey(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    // Get short label for date
+    function getDateLabel(date) {
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${days[date.getDay()]} ${months[date.getMonth()]} ${date.getDate()}`;
+    }
+
+    // Generic line chart renderer
+    function renderLineChart(container, dataPoints, color, unit = '') {
+      if (dataPoints.length === 0) {
+        container.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No data</div>';
+        return;
+      }
+
+      const values = dataPoints.map(d => d.value);
+      const maxValue = Math.max(...values, 1);
+      const minValue = Math.min(...values, 0);
+      const range = maxValue - minValue || 1;
+
+      // Calculate SVG path points
+      const width = 100; // percentage
+      const height = 100; // percentage
+      const points = dataPoints.map((d, i) => {
+        const x = (i / (dataPoints.length - 1 || 1)) * width;
+        const y = height - ((d.value - minValue) / range) * height;
+        return `${x},${y}`;
+      }).join(' ');
+
+      container.innerHTML = `
+        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <!-- Grid lines -->
+          <line x1="0" y1="25" x2="100" y2="25" stroke="#e8e4de" stroke-width="0.5" />
+          <line x1="0" y1="50" x2="100" y2="50" stroke="#e8e4de" stroke-width="0.5" />
+          <line x1="0" y1="75" x2="100" y2="75" stroke="#e8e4de" stroke-width="0.5" />
+          
+          <!-- Line path -->
+          <polyline
+            points="${points}"
+            fill="none"
+            stroke="${color}"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          
+          <!-- Data points -->
+          ${dataPoints.map((d, i) => {
+            const x = (i / (dataPoints.length - 1 || 1)) * 100;
+            const y = 100 - ((d.value - minValue) / range) * 100;
+            return `<circle cx="${x}" cy="${y}" r="2.5" fill="${color}" class="hover-point">
+              <title>${d.label}: ${d.value}${unit}</title>
+            </circle>`;
+          }).join('')}
+        </svg>
+      `;
+    }
+
     // Dashboard rendering
     async function renderDashboard() {
       await renderSleepTrend();
@@ -437,40 +546,30 @@
       const chartEl = document.getElementById('dashSleepChart');
       const avgEl = document.getElementById('dashSleepAvg');
 
-      const last7 = [];
-      for (let i = 6; i >= 0; i--) {
-        const key = getDayKey(i);
+      const dates = getDateRange();
+      const dataPoints = [];
+      const validData = [];
+
+      dates.forEach(date => {
+        const key = dateToKey(date);
         const day = data[key];
-        last7.push({
-          label: getDayLabel(i),
-          rating: day ? day.rating : null,
-          duration: day ? formatDuration(day.durationMins) : null
-        });
-      }
+        
+        if (day && day.durationMins) {
+          const hours = day.durationMins / 60;
+          dataPoints.push({
+            label: getDateLabel(date),
+            value: hours
+          });
+          validData.push(hours);
+        }
+      });
 
-      const barColors = {
-        great: 'bg-green-400',
-        optimal: 'bg-yellow-400',
-        suboptimal: 'bg-red-400',
-        empty: 'bg-stone-border'
-      };
-
-      chartEl.innerHTML = last7.map(d => {
-        const ratingClass = d.rating || 'empty';
-        const height = d.rating ? (d.rating === 'great' ? 100 : d.rating === 'optimal' ? 70 : 40) : 8;
-        const tooltip = d.rating ? `${d.label}: ${d.rating} (${d.duration})` : `${d.label}: No data`;
-        return `<div class="flex-1 ${barColors[ratingClass]} rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
-          <span class="tooltip">${tooltip}</span>
-        </div>`;
-      }).join('');
-
-      const rated = last7.filter(d => d.rating);
-      if (rated.length) {
-        const counts = { great: 0, optimal: 0, suboptimal: 0 };
-        rated.forEach(d => counts[d.rating]++);
-        const mostCommon = Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
-        avgEl.textContent = `Mostly ${mostCommon}`;
+      if (validData.length > 0) {
+        renderLineChart(chartEl, dataPoints, '#8b7d9e', 'h');
+        const avgHours = (validData.reduce((s, v) => s + v, 0) / validData.length).toFixed(1);
+        avgEl.textContent = `${avgHours}h avg (${validData.length} days)`;
       } else {
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No sleep data</div>';
         avgEl.textContent = 'No data';
       }
     }
@@ -480,15 +579,17 @@
       const chartEl = document.getElementById('dashNutritionChart');
       const avgEl = document.getElementById('dashNutritionAvg');
 
-      const last7 = [];
-      for (let i = 6; i >= 0; i--) {
-        const key = getDayKey(i);
+      const dates = getDateRange();
+      const dataPoints = [];
+      const validData = [];
+
+      dates.forEach(date => {
+        const key = dateToKey(date);
         const day = data[key];
         
         let totalCals = 0;
         if (day && day.meals) {
           Object.values(day.meals).forEach(meal => {
-            // Handle both array (new) and object (old) formats
             if (Array.isArray(meal)) {
               totalCals += meal.reduce((s, dish) => s + (dish.calories || 0), 0);
             } else {
@@ -497,22 +598,23 @@
           });
         }
         
-        last7.push({ label: getDayLabel(i), cals: totalCals });
+        if (totalCals > 0) {
+          dataPoints.push({
+            label: getDateLabel(date),
+            value: totalCals
+          });
+          validData.push(totalCals);
+        }
+      });
+
+      if (validData.length > 0) {
+        renderLineChart(chartEl, dataPoints, '#9e8b7d', ' cal');
+        const avgCals = Math.round(validData.reduce((s, v) => s + v, 0) / validData.length);
+        avgEl.textContent = `${avgCals} cal/day avg (${validData.length} days)`;
+      } else {
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No nutrition data</div>';
+        avgEl.textContent = 'No data';
       }
-
-      const maxCals = Math.max(...last7.map(d => d.cals), 1);
-
-      chartEl.innerHTML = last7.map(d => {
-        const height = maxCals > 0 ? (d.cals / maxCals) * 100 : 8;
-        const tooltip = d.cals ? `${d.label}: ${d.cals} cal` : `${d.label}: No meals`;
-        return `<div class="flex-1 bg-terracotta rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
-          <span class="tooltip">${tooltip}</span>
-        </div>`;
-      }).join('');
-
-      const totalCals = last7.reduce((s, d) => s + d.cals, 0);
-      const avgCals = last7.length ? Math.round(totalCals / 7) : 0;
-      avgEl.textContent = avgCals ? `${avgCals} cal/day avg` : 'No data';
     }
 
     async function renderActivityTrend() {
@@ -520,27 +622,34 @@
       const chartEl = document.getElementById('dashActivityChart');
       const avgEl = document.getElementById('dashActivityAvg');
 
-      const last7 = [];
-      for (let i = 6; i >= 0; i--) {
-        const key = getDayKey(i);
+      const dates = getDateRange();
+      const dataPoints = [];
+      const validData = [];
+
+      dates.forEach(date => {
+        const key = dateToKey(date);
         const day = data[key];
+        const steps = day && day.steps ? day.steps : 0;
         const gymMins = day && day.gymSessions ? day.gymSessions.reduce((s, g) => s + (g.minutes || 0), 0) : 0;
-        last7.push({ label: getDayLabel(i), mins: gymMins });
+        const totalActivity = steps + (gymMins * 100); // Weight gym minutes more
+        
+        if (totalActivity > 0) {
+          dataPoints.push({
+            label: getDateLabel(date),
+            value: totalActivity
+          });
+          validData.push(totalActivity);
+        }
+      });
+
+      if (validData.length > 0) {
+        renderLineChart(chartEl, dataPoints, '#7d9e8b', '');
+        const avgActivity = Math.round(validData.reduce((s, v) => s + v, 0) / validData.length);
+        avgEl.textContent = `Activity score ${avgActivity} avg (${validData.length} days)`;
+      } else {
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No activity data</div>';
+        avgEl.textContent = 'No data';
       }
-
-      const maxMins = Math.max(...last7.map(d => d.mins), 1);
-
-      chartEl.innerHTML = last7.map(d => {
-        const height = maxMins > 0 ? (d.mins / maxMins) * 100 : 8;
-        const tooltip = d.mins ? `${d.label}: ${d.mins} min` : `${d.label}: No activity`;
-        return `<div class="flex-1 bg-teal rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
-          <span class="tooltip">${tooltip}</span>
-        </div>`;
-      }).join('');
-
-      const totalMins = last7.reduce((s, d) => s + d.mins, 0);
-      const avgMins = last7.length ? Math.round(totalMins / 7) : 0;
-      avgEl.textContent = avgMins ? `${avgMins} min/day avg` : 'No data';
     }
 
     async function renderTrainingTrend() {
@@ -554,32 +663,34 @@
         workoutsByDate[w.date] = w;
       });
 
-      const last7 = [];
-      for (let i = 6; i >= 0; i--) {
-        const key = getDayKey(i);
+      const dates = getDateRange();
+      const dataPoints = [];
+      const validData = [];
+
+      dates.forEach(date => {
+        const key = dateToKey(date);
         const workout = workoutsByDate[key];
-        let calories = 0;
         
         if (workout && workout.exercises) {
-          calories = calculateWorkoutCalories(workout.exercises);
+          const calories = Math.round(calculateWorkoutCalories(workout.exercises));
+          if (calories > 0) {
+            dataPoints.push({
+              label: getDateLabel(date),
+              value: calories
+            });
+            validData.push(calories);
+          }
         }
-        
-        last7.push({ label: getDayLabel(i), calories: Math.round(calories) });
+      });
+
+      if (validData.length > 0) {
+        renderLineChart(chartEl, dataPoints, '#7d8b6f', ' cal');
+        const avgCals = Math.round(validData.reduce((s, v) => s + v, 0) / validData.length);
+        avgEl.textContent = `${avgCals} cal/day avg (${validData.length} days)`;
+      } else {
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No training data</div>';
+        avgEl.textContent = 'No data';
       }
-
-      const maxCals = Math.max(...last7.map(d => d.calories), 1);
-
-      chartEl.innerHTML = last7.map(d => {
-        const height = maxCals > 0 ? (d.calories / maxCals) * 100 : 8;
-        const tooltip = d.calories ? `${d.label}: ${d.calories} cal` : `${d.label}: No workout`;
-        return `<div class="flex-1 bg-sage rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
-          <span class="tooltip">${tooltip}</span>
-        </div>`;
-      }).join('');
-
-      const totalCals = last7.reduce((s, d) => s + d.calories, 0);
-      const avgCals = last7.length ? Math.round(totalCals / 7) : 0;
-      avgEl.textContent = avgCals ? `${avgCals} cal/day avg` : 'No data';
     }
 
     // Update daily goal progress
@@ -684,8 +795,32 @@
       };
     }
 
+    // Date range controls
+    document.getElementById('applyDateRange').addEventListener('click', async () => {
+      dateRangeStart = document.getElementById('dateRangeStart').value;
+      dateRangeEnd = document.getElementById('dateRangeEnd').value;
+      
+      if (!dateRangeStart || !dateRangeEnd) {
+        alert('Please select both start and end dates');
+        return;
+      }
+      
+      if (new Date(dateRangeStart) > new Date(dateRangeEnd)) {
+        alert('Start date must be before end date');
+        return;
+      }
+      
+      await renderDashboard();
+    });
+
+    document.getElementById('reset7Days').addEventListener('click', async () => {
+      initializeDateRange();
+      await renderDashboard();
+    });
+
     // Initialize - will run after auth check
     async function initDashboard() {
+      initializeDateRange();
       await updateTodayTasks();
       await updateDailyGoalProgress();
       await renderDashboard();
