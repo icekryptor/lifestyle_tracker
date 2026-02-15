@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-cream-50 text-stone-text min-h-screen font-sans">
-  <div class="max-w-md mx-auto p-6 pb-12">
+  <div class="max-w-[1400px] mx-auto p-4 lg:p-8 pb-12">
     <!-- Header with back button -->
     <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
       <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
@@ -51,19 +51,12 @@
       </div>
     </header>
 
-    <!-- My Exercises Library -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
-      <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xs font-medium uppercase tracking-wider text-sage">My Exercises</h2>
-        <a href="exercise-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-sage text-white font-medium hover:opacity-90 transition-opacity">
-          View All →
-        </a>
-      </div>
-      <div id="exercisesLibrary" class="space-y-2"></div>
-    </section>
-
-    <!-- Today's Workout -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+    <!-- Desktop Grid Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+      <!-- Left Column: Workout Area (8 cols) -->
+      <div class="lg:col-span-8 space-y-4">
+        <!-- Today's Workout -->
+        <section class="bg-white rounded-xl border border-stone-border p-5">
       <div class="flex justify-between items-center mb-3">
         <h2 class="text-xs font-medium uppercase tracking-wider text-sage">Today's Workout</h2>
         <button id="startWorkoutBtn" class="text-xs px-2 py-1 rounded bg-sage text-white font-medium">Start Workout</button>
@@ -123,7 +116,22 @@
         </div>
         <button id="viewWorkoutDetails" class="w-full mt-3 border border-stone-border rounded-lg px-4 py-2 text-sm text-stone-muted hover:border-sage hover:text-sage transition-colors">View Details</button>
       </div>
-    </section>
+        </section>
+      </div>
+
+      <!-- Right Column: Exercise Library (4 cols) -->
+      <div class="lg:col-span-4">
+        <section class="bg-white rounded-xl border border-stone-border p-5 sticky top-4">
+          <div class="flex justify-between items-center mb-3">
+            <h2 class="text-xs font-medium uppercase tracking-wider text-sage">My Exercises</h2>
+            <a href="exercise-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-sage text-white font-medium hover:opacity-90 transition-opacity">
+              View All →
+            </a>
+          </div>
+          <div id="exercisesLibrary" class="space-y-2"></div>
+        </section>
+      </div>
+    </div>
   </div>
 
   <!-- Select Exercise Modal (for adding to workout) -->
