@@ -299,6 +299,7 @@ async function addDish(dish) {
 
   if (error) {
     console.error('Error adding dish:', error);
+    console.error('Error details:', error.message, error.details, error.hint);
     return null;
   }
 
