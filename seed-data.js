@@ -125,41 +125,86 @@ async function seedUserData() {
     return { success: false, message: 'Please log in first' };
   }
 
-  // Check if user already has data
-  const existingDishes = await getDishes();
-  const existingExercises = await getExercises();
+  // Check if already seeding (prevent duplicate runs)
+  if (window.isSeeding) {
+    return { success: false, message: 'Already seeding data...' };
+  }
 
-  if (existingDishes.length > 0 || existingExercises.length > 0) {
-    const confirm = window.confirm(
-      `You already have ${existingDishes.length} dishes and ${existingExercises.length} exercises.\n\nDo you want to add sample data anyway?`
-    );
-    if (!confirm) {
-      return { success: false, message: 'Seed cancelled by user' };
+  window.isSeeding = true;
+
+  try {
+    // Check if user already has data
+    const existingDishes = await getDishes();
+    const existingExercises = await getExercises();
+
+    if (existingDishes.length > 0 || existingExercises.length > 0) {
+      const confirm = window.confirm(
+        `You already have ${existingDishes.length} dishes and ${existingExercises.length} exercises.\n\nDo you want to add sample data anyway?`
+      );
+      if (!confirm) {
+        window.isSeeding = false;
+        return { success: false, message: 'Seed cancelled by user' };
+      }
     }
+
+    let dishesAdded = 0;
+    let exercisesAdded = 0;
+    let errors = [];
+
+    console.log('Starting to seed dishes...');
+    // Add sample dishes
+    for (const dish of SAMPLE_DISHES) {
+      try {
+        const calories = Math.round((dish.protein * 4) + (dish.carbs * 4) + (dish.fats * 9));
+        const result = await addDish({ ...dish, calories });
+        if (result) {
+          dishesAdded++;
+        } else {
+          errors.push(`Failed to add dish: ${dish.name}`);
+        }
+      } catch (err) {
+        errors.push(`Error adding dish ${dish.name}: ${err.message}`);
+      }
+    }
+
+    console.log('Starting to seed exercises...');
+    // Add sample exercises
+    for (const exercise of SAMPLE_EXERCISES) {
+      try {
+        const result = await addExercise(exercise);
+        if (result) {
+          exercisesAdded++;
+        } else {
+          errors.push(`Failed to add exercise: ${exercise.name}`);
+        }
+      } catch (err) {
+        errors.push(`Error adding exercise ${exercise.name}: ${err.message}`);
+      }
+    }
+
+    console.log('Seeding complete:', { dishesAdded, exercisesAdded, errors });
+
+    if (errors.length > 0) {
+      console.error('Seeding errors:', errors);
+    }
+
+    window.isSeeding = false;
+
+    return {
+      success: true,
+      message: `Successfully added ${dishesAdded} dishes and ${exercisesAdded} exercises!`,
+      dishesAdded,
+      exercisesAdded,
+      errors
+    };
+  } catch (error) {
+    window.isSeeding = false;
+    console.error('Seed error:', error);
+    return {
+      success: false,
+      message: `Error seeding data: ${error.message}`
+    };
   }
-
-  let dishesAdded = 0;
-  let exercisesAdded = 0;
-
-  // Add sample dishes
-  for (const dish of SAMPLE_DISHES) {
-    const calories = Math.round((dish.protein * 4) + (dish.carbs * 4) + (dish.fats * 9));
-    const result = await addDish({ ...dish, calories });
-    if (result) dishesAdded++;
-  }
-
-  // Add sample exercises
-  for (const exercise of SAMPLE_EXERCISES) {
-    const result = await addExercise(exercise);
-    if (result) exercisesAdded++;
-  }
-
-  return {
-    success: true,
-    message: `Successfully added ${dishesAdded} dishes and ${exercisesAdded} exercises!`,
-    dishesAdded,
-    exercisesAdded
-  };
 }
 
 // Auto-seed for new users (call this on first login)
@@ -167,15 +212,27 @@ async function checkAndSeedNewUser() {
   const user = await getCurrentUser();
   if (!user) return;
 
-  const existingDishes = await getDishes();
-  const existingExercises = await getExercises();
+  // Check if we've already tried to seed for this session
+  if (window.hasCheckedSeed) return;
+  window.hasCheckedSeed = true;
 
-  // If user has no data at all, they're likely new
-  if (existingDishes.length === 0 && existingExercises.length === 0) {
-    console.log('New user detected, seeding sample data...');
-    const result = await seedUserData();
-    if (result.success) {
-      console.log(result.message);
+  try {
+    const existingDishes = await getDishes();
+    const existingExercises = await getExercises();
+
+    // If user has no data at all, they're likely new
+    if (existingDishes.length === 0 && existingExercises.length === 0) {
+      console.log('New user detected, seeding sample data...');
+      const result = await seedUserData();
+      if (result.success) {
+        console.log(result.message);
+        // Reload the page after seeding to show the new data
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
+      }
     }
+  } catch (error) {
+    console.error('Error checking/seeding new user:', error);
   }
 }

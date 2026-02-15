@@ -305,11 +305,28 @@
     document.getElementById('saveProfile').addEventListener('click', saveProfile);
     
     document.getElementById('loadSampleData').addEventListener('click', async () => {
-      const result = await seedUserData();
-      if (result.success) {
-        alert(result.message);
-      } else {
-        alert(result.message || 'Failed to load sample data');
+      const btn = document.getElementById('loadSampleData');
+      const originalText = btn.textContent;
+      
+      btn.disabled = true;
+      btn.textContent = '⏳ Loading...';
+      
+      try {
+        const result = await seedUserData();
+        if (result.success) {
+          alert(result.message);
+          // Reload after a short delay to show the new data
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        } else {
+          alert(result.message || 'Failed to load sample data');
+        }
+      } catch (error) {
+        alert('Error loading sample data: ' + error.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
       }
     });
 
