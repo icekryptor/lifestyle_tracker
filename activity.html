@@ -121,6 +121,10 @@
     </section>
   </div>
 
+  <!-- Load Supabase + DB first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
   <script src="app.js"></script>
   <script src="activity-logic.js"></script>
   <script>
@@ -261,18 +265,13 @@
     async function initActivity() {
       await loadActivity();
     }
-  </script>
 
-  <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-  <script src="db.js"></script>
-  <script>
-    // Auth check
+
+    // Auth check and init
     (async () => {
       const user = await requireAuth();
       if (user) {
-        initActivity();
+        await initActivity();
       }
     })();
   </script>
