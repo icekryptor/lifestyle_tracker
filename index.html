@@ -16,18 +16,29 @@
             sans: ['Outfit', 'sans-serif']
           },
           colors: {
-            cream: {
-              50: '#faf8f5',
-              100: '#f5f2ed'
+            navy: {
+              50: '#e8edf5',
+              100: '#c5d1e3',
+              200: '#a0b3d1',
+              900: '#0f1729',
+              950: '#0a1019'
             },
-            sage: '#7d8b6f',
-            lavender: '#8b7d9e',
-            terracotta: '#9e8b7d',
-            teal: '#7d9e8b',
-            stone: {
-              border: '#e8e4de',
-              text: '#2d2a26',
-              muted: '#6b6560'
+            slate: {
+              700: '#2a3647',
+              800: '#1e2a3a',
+              850: '#1a2332',
+              900: '#0f1729'
+            },
+            indigo: {
+              400: '#a5b4fc',
+              500: '#818cf8',
+              600: '#6366f1',
+              700: '#4f46e5'
+            },
+            dark: {
+              border: '#2d3d54',
+              text: '#e1e7f0',
+              muted: '#8b95a8'
             }
           }
         }
@@ -36,27 +47,27 @@
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+<body class="bg-navy-900 text-dark-text min-h-screen font-sans">
   <!-- Mobile/Desktop Container -->
   <div class="w-full">
     <!-- Header -->
-    <header class="bg-white border-b border-stone-border sticky top-0 z-10">
+    <header class="bg-slate-800 border-b border-dark-border sticky top-0 z-10 backdrop-blur-sm bg-opacity-95">
       <div class="max-w-[1920px] mx-auto px-4 lg:px-8 py-4">
         <div class="flex justify-between items-center">
           <div>
             <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
             <div class="flex gap-4 mt-1">
-              <p class="text-sm text-stone-muted font-light" id="todayDate"></p>
-              <p class="text-xs text-stone-muted/60" id="userEmail"></p>
+              <p class="text-sm text-dark-muted font-light" id="todayDate"></p>
+              <p class="text-xs text-dark-muted/60" id="userEmail"></p>
             </div>
           </div>
           <div class="flex gap-2">
-            <a href="profile.html" class="w-10 h-10 rounded-lg border border-stone-border hover:border-sage hover:text-sage transition-colors flex items-center justify-center" title="Profile">
+            <a href="profile.html" class="w-10 h-10 rounded-lg border border-dark-border hover:border-indigo-500 hover:text-indigo-400 transition-colors flex items-center justify-center" title="Profile">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
               </svg>
             </a>
-            <button id="logoutBtn" class="text-sm px-4 py-2 rounded-lg border border-stone-border hover:border-red-300 hover:text-red-600 transition-colors">
+            <button id="logoutBtn" class="text-sm px-4 py-2 rounded-lg border border-dark-border hover:border-red-400 hover:text-red-400 transition-colors">
               Logout
             </button>
           </div>
@@ -70,8 +81,8 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
 
         <!-- Left Column: Daily Goal Progress (4 cols) -->
-        <section class="lg:col-span-4 bg-white rounded-xl border border-stone-border p-6" id="dailyGoalSection">
-      <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Today's Calorie Goal</h3>
+        <section class="lg:col-span-4 bg-slate-800 rounded-xl border border-dark-border p-6" id="dailyGoalSection">
+      <h3 class="text-xs font-medium uppercase tracking-wider text-dark-muted mb-4">Today's Calorie Goal</h3>
       
       <div class="flex items-center justify-between">
         <!-- Circular Progress -->
@@ -82,7 +93,7 @@
               cx="60"
               cy="60"
               r="52"
-              stroke="#e8e4de"
+              stroke="#2d3d54"
               stroke-width="8"
               fill="none"
             />
@@ -92,38 +103,38 @@
               cx="60"
               cy="60"
               r="52"
-              stroke="#9e8b7d"
+              stroke="#818cf8"
               stroke-width="8"
               fill="none"
               stroke-dasharray="326.73"
               stroke-dashoffset="326.73"
               stroke-linecap="round"
-              style="transition: stroke-dashoffset 0.5s ease"
+              style="transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease"
             />
           </svg>
           <!-- Center text -->
           <div class="absolute inset-0 flex flex-col items-center justify-center">
             <span class="text-2xl font-semibold" id="goalPercentage">0%</span>
-            <span class="text-xs text-stone-muted">of goal</span>
+            <span class="text-xs text-dark-muted">of goal</span>
           </div>
         </div>
 
         <!-- Goal Details -->
         <div class="flex-1 ml-6 space-y-2">
           <div class="flex justify-between text-sm">
-            <span class="text-stone-muted">Consumed:</span>
+            <span class="text-dark-muted">Consumed:</span>
             <span class="font-medium" id="caloriesConsumed">0 cal</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-stone-muted">Goal:</span>
+            <span class="text-dark-muted">Goal:</span>
             <span class="font-medium" id="caloriesGoal">-- cal</span>
           </div>
           <div class="flex justify-between text-sm">
-            <span class="text-stone-muted">Remaining:</span>
+            <span class="text-dark-muted">Remaining:</span>
             <span class="font-medium" id="caloriesRemaining">-- cal</span>
           </div>
-          <div class="mt-3 pt-3 border-t border-stone-border">
-            <div class="text-xs text-stone-muted/70" id="goalStrategyText">Set your goals in Profile</div>
+          <div class="mt-3 pt-3 border-t border-dark-border">
+            <div class="text-xs text-dark-muted/70" id="goalStrategyText">Set your goals in Profile</div>
           </div>
         </div>
       </div>
@@ -131,84 +142,84 @@
 
         <!-- Middle Column: Today's Tasks (5 cols) -->
         <section class="lg:col-span-5 space-y-4">
-          <div class="bg-white rounded-xl border border-stone-border p-6">
-            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Today's Tasks</h3>
+          <div class="bg-slate-800 rounded-xl border border-dark-border p-6">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-dark-muted mb-4">Today's Tasks</h3>
             <div class="grid gap-3" id="todayTasks">
         <!-- Sleep task -->
-        <a href="sleep.html" id="sleepTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-lavender transition-colors group">
+        <a href="sleep.html" id="sleepTask" class="block bg-slate-800 border-2 border-dark-border rounded-xl p-4 hover:border-lavender transition-colors group">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-lavender/10 flex items-center justify-center text-lavender">
+              <div class="w-10 h-10 rounded-full bg-lavender/10 flex items-center justify-center text-indigo-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
                 </svg>
               </div>
               <div>
                 <div class="font-medium text-sm" id="sleepTaskTitle">Log your sleep</div>
-                <div class="text-xs text-stone-muted" id="sleepTaskDesc">Track last night's rest</div>
+                <div class="text-xs text-dark-muted" id="sleepTaskDesc">Track last night's rest</div>
               </div>
             </div>
-            <svg class="w-5 h-5 text-stone-muted group-hover:text-lavender transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-dark-muted group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
         </a>
 
         <!-- Nutrition task -->
-        <a href="nutrition.html" id="nutritionTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-terracotta transition-colors group">
+        <a href="nutrition.html" id="nutritionTask" class="block bg-slate-800 border-2 border-dark-border rounded-xl p-4 hover:border-terracotta transition-colors group">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-terracotta/10 flex items-center justify-center text-terracotta">
+              <div class="w-10 h-10 rounded-full bg-indigo-600/10 flex items-center justify-center text-indigo-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
               </div>
               <div>
                 <div class="font-medium text-sm" id="nutritionTaskTitle">Log your meals</div>
-                <div class="text-xs text-stone-muted" id="nutritionTaskDesc">Track what you eat today</div>
+                <div class="text-xs text-dark-muted" id="nutritionTaskDesc">Track what you eat today</div>
               </div>
             </div>
-            <svg class="w-5 h-5 text-stone-muted group-hover:text-terracotta transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-dark-muted group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
         </a>
 
         <!-- Activity task -->
-        <a href="activity.html" id="activityTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-teal transition-colors group">
+        <a href="activity.html" id="activityTask" class="block bg-slate-800 border-2 border-dark-border rounded-xl p-4 hover:border-teal transition-colors group">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-teal/10 flex items-center justify-center text-teal">
+              <div class="w-10 h-10 rounded-full bg-teal/10 flex items-center justify-center text-indigo-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                 </svg>
               </div>
               <div>
                 <div class="font-medium text-sm" id="activityTaskTitle">Log your activity</div>
-                <div class="text-xs text-stone-muted" id="activityTaskDesc">Track your exercise</div>
+                <div class="text-xs text-dark-muted" id="activityTaskDesc">Track your exercise</div>
               </div>
             </div>
-            <svg class="w-5 h-5 text-stone-muted group-hover:text-teal transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-dark-muted group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
         </a>
 
         <!-- Training task -->
-        <a href="training.html" id="trainingTask" class="block bg-white border-2 border-stone-border rounded-xl p-4 hover:border-sage transition-colors group">
+        <a href="training.html" id="trainingTask" class="block bg-slate-800 border-2 border-dark-border rounded-xl p-4 hover:border-indigo-500 transition-colors group">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-sage/10 flex items-center justify-center text-sage">
+              <div class="w-10 h-10 rounded-full bg-indigo-600/10 flex items-center justify-center text-indigo-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
                 </svg>
               </div>
               <div>
                 <div class="font-medium text-sm" id="trainingTaskTitle">Training Diary</div>
-                <div class="text-xs text-stone-muted" id="trainingTaskDesc">Log your workouts</div>
+                <div class="text-xs text-dark-muted" id="trainingTaskDesc">Log your workouts</div>
               </div>
             </div>
-            <svg class="w-5 h-5 text-stone-muted group-hover:text-sage transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-dark-muted group-hover:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
           </div>
@@ -220,35 +231,35 @@
         <!-- Right Column: Quick Summary (3 cols) -->
         <section class="lg:col-span-3 space-y-4">
           <!-- Today's Summary Card -->
-          <div class="bg-gradient-to-br from-sage/10 to-lavender/10 rounded-xl border border-stone-border p-6">
-            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Today's Summary</h3>
+          <div class="bg-gradient-to-br from-indigo-500/10 to-indigo-600/10 rounded-xl border border-dark-border p-6">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-dark-muted mb-4">Today's Summary</h3>
             <div class="space-y-3">
               <div>
                 <div class="text-2xl font-semibold" id="summaryCalories">0</div>
-                <div class="text-xs text-stone-muted">Calories consumed</div>
+                <div class="text-xs text-dark-muted">Calories consumed</div>
               </div>
               <div>
                 <div class="text-2xl font-semibold" id="summaryWorkouts">0</div>
-                <div class="text-xs text-stone-muted">Workouts completed</div>
+                <div class="text-xs text-dark-muted">Workouts completed</div>
               </div>
               <div>
                 <div class="text-2xl font-semibold" id="summarySleep">--</div>
-                <div class="text-xs text-stone-muted">Hours of sleep</div>
+                <div class="text-xs text-dark-muted">Hours of sleep</div>
               </div>
             </div>
           </div>
 
           <!-- Quick Links -->
-          <div class="bg-white rounded-xl border border-stone-border p-6">
-            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted mb-4">Quick Access</h3>
+          <div class="bg-slate-800 rounded-xl border border-dark-border p-6">
+            <h3 class="text-xs font-medium uppercase tracking-wider text-dark-muted mb-4">Quick Access</h3>
             <div class="space-y-2">
-              <a href="nutrition.html" class="block py-2 px-3 rounded-lg hover:bg-terracotta/5 hover:text-terracotta transition-colors text-sm">
+              <a href="nutrition.html" class="block py-2 px-3 rounded-lg hover:bg-indigo-600/5 hover:text-indigo-400 transition-colors text-sm">
                 🍽️ Food Library
               </a>
-              <a href="exercise-library.html" class="block py-2 px-3 rounded-lg hover:bg-sage/5 hover:text-sage transition-colors text-sm">
+              <a href="exercise-library.html" class="block py-2 px-3 rounded-lg hover:bg-indigo-600/5 hover:text-indigo-400 transition-colors text-sm">
                 💪 Exercise Library
               </a>
-              <a href="profile.html" class="block py-2 px-3 rounded-lg hover:bg-lavender/5 hover:text-lavender transition-colors text-sm">
+              <a href="profile.html" class="block py-2 px-3 rounded-lg hover:bg-lavender/5 hover:text-indigo-400 transition-colors text-sm">
                 👤 My Profile
               </a>
             </div>
@@ -258,15 +269,15 @@
         <!-- Row 2: Trends with Date Range Selector -->
         <section class="lg:col-span-12">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xs font-medium uppercase tracking-wider text-stone-muted">Trends</h3>
+            <h3 class="text-xs font-medium uppercase tracking-wider text-dark-muted">Trends</h3>
             <div class="flex gap-2 items-center">
-              <input type="date" id="dateRangeStart" class="text-xs border border-stone-border rounded-lg px-2 py-1 focus:outline-none focus:border-sage" />
-              <span class="text-xs text-stone-muted">to</span>
-              <input type="date" id="dateRangeEnd" class="text-xs border border-stone-border rounded-lg px-2 py-1 focus:outline-none focus:border-sage" />
-              <button id="applyDateRange" class="text-xs px-3 py-1 bg-sage text-white rounded-lg hover:opacity-90 transition-opacity">
+              <input type="date" id="dateRangeStart" class="text-xs border border-dark-border rounded-lg px-2 py-1 focus:outline-none focus:border-indigo-500" />
+              <span class="text-xs text-dark-muted">to</span>
+              <input type="date" id="dateRangeEnd" class="text-xs border border-dark-border rounded-lg px-2 py-1 focus:outline-none focus:border-indigo-500" />
+              <button id="applyDateRange" class="text-xs px-3 py-1 bg-indigo-600 text-white rounded-lg hover:opacity-90 transition-opacity">
                 Apply
               </button>
-              <button id="reset7Days" class="text-xs px-3 py-1 border border-stone-border rounded-lg hover:bg-stone-border/30 transition-colors">
+              <button id="reset7Days" class="text-xs px-3 py-1 border border-dark-border rounded-lg hover:bg-slate-700/30 transition-colors">
                 Last 7 Days
               </button>
             </div>
@@ -274,37 +285,37 @@
         </section>
 
         <!-- Sleep quality trend (3 cols) -->
-        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
+        <div class="lg:col-span-3 bg-slate-800 border border-dark-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Sleep Quality</span>
-            <span class="text-xs text-stone-muted" id="dashSleepAvg">—</span>
+            <span class="text-xs text-dark-muted" id="dashSleepAvg">—</span>
           </div>
           <div class="relative h-32 pt-4" id="dashSleepChart"></div>
         </div>
 
         <!-- Nutrition trend (3 cols) -->
-        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
+        <div class="lg:col-span-3 bg-slate-800 border border-dark-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Nutrition</span>
-            <span class="text-xs text-stone-muted" id="dashNutritionAvg">—</span>
+            <span class="text-xs text-dark-muted" id="dashNutritionAvg">—</span>
           </div>
           <div class="relative h-32 pt-4" id="dashNutritionChart"></div>
         </div>
 
         <!-- Activity trend (3 cols) -->
-        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
+        <div class="lg:col-span-3 bg-slate-800 border border-dark-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Activity</span>
-            <span class="text-xs text-stone-muted" id="dashActivityAvg">—</span>
+            <span class="text-xs text-dark-muted" id="dashActivityAvg">—</span>
           </div>
           <div class="relative h-32 pt-4" id="dashActivityChart"></div>
         </div>
 
         <!-- Training trend (3 cols) -->
-        <div class="lg:col-span-3 bg-white border border-stone-border rounded-xl p-5">
+        <div class="lg:col-span-3 bg-slate-800 border border-dark-border rounded-xl p-5">
           <div class="flex justify-between items-baseline mb-3">
             <span class="text-sm font-medium">Training Calories</span>
-            <span class="text-xs text-stone-muted" id="dashTrainingAvg">—</span>
+            <span class="text-xs text-dark-muted" id="dashTrainingAvg">—</span>
           </div>
           <div class="relative h-32 pt-4" id="dashTrainingChart"></div>
         </div>
@@ -341,7 +352,7 @@
       const sleepDesc = document.getElementById('sleepTaskDesc');
       
       if (sleepData && sleepData.bedtime) {
-        sleepTask.classList.remove('border-2', 'border-stone-border');
+        sleepTask.classList.remove('border-2', 'border-dark-border');
         sleepTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         sleepTitle.innerHTML = '✓ Sleep logged';
         sleepDesc.textContent = `${formatDuration(sleepData.durationMins)} • ${sleepData.rating}`;
@@ -366,7 +377,7 @@
           }
         });
         
-        nutritionTask.classList.remove('border-2', 'border-stone-border');
+        nutritionTask.classList.remove('border-2', 'border-dark-border');
         nutritionTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         nutritionTitle.innerHTML = '✓ Meals logged';
         nutritionDesc.textContent = `${mealCount} meal(s)${totalCals ? ' • ' + totalCals + ' cal' : ''}`;
@@ -380,7 +391,7 @@
       if (activityData && (activityData.steps > 0 || (activityData.gymSessions && activityData.gymSessions.length > 0))) {
         const steps = activityData.steps || 0;
         const gymMins = (activityData.gymSessions || []).reduce((s, g) => s + (g.minutes || 0), 0);
-        activityTask.classList.remove('border-2', 'border-stone-border');
+        activityTask.classList.remove('border-2', 'border-dark-border');
         activityTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         activityTitle.innerHTML = '✓ Activity logged';
         activityDesc.textContent = `${steps.toLocaleString()} steps${gymMins ? ' • ' + gymMins + ' min gym' : ''}`;
@@ -395,7 +406,7 @@
       if (todayWorkout && todayWorkout.exercises && todayWorkout.exercises.length > 0) {
         const calories = Math.round(calculateWorkoutCalories(todayWorkout.exercises));
         const exerciseCount = todayWorkout.exercises.length;
-        trainingTask.classList.remove('border-2', 'border-stone-border');
+        trainingTask.classList.remove('border-2', 'border-dark-border');
         trainingTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         trainingTitle.innerHTML = '✓ Workout completed';
         trainingDesc.textContent = `${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''} • ${calories} cal burned`;
@@ -486,7 +497,7 @@
     // Generic line chart renderer
     function renderLineChart(container, dataPoints, color, unit = '') {
       if (dataPoints.length === 0) {
-        container.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No data</div>';
+        container.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-dark-muted">No data</div>';
         return;
       }
 
@@ -507,9 +518,9 @@
       container.innerHTML = `
         <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
           <!-- Grid lines -->
-          <line x1="0" y1="25" x2="100" y2="25" stroke="#e8e4de" stroke-width="0.5" />
-          <line x1="0" y1="50" x2="100" y2="50" stroke="#e8e4de" stroke-width="0.5" />
-          <line x1="0" y1="75" x2="100" y2="75" stroke="#e8e4de" stroke-width="0.5" />
+          <line x1="0" y1="25" x2="100" y2="25" stroke="#2d3d54" stroke-width="0.5" />
+          <line x1="0" y1="50" x2="100" y2="50" stroke="#2d3d54" stroke-width="0.5" />
+          <line x1="0" y1="75" x2="100" y2="75" stroke="#2d3d54" stroke-width="0.5" />
           
           <!-- Line path -->
           <polyline
@@ -565,11 +576,11 @@
       });
 
       if (validData.length > 0) {
-        renderLineChart(chartEl, dataPoints, '#8b7d9e', 'h');
+        renderLineChart(chartEl, dataPoints, '#818cf8', 'h');
         const avgHours = (validData.reduce((s, v) => s + v, 0) / validData.length).toFixed(1);
         avgEl.textContent = `${avgHours}h avg (${validData.length} days)`;
       } else {
-        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No sleep data</div>';
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-dark-muted">No sleep data</div>';
         avgEl.textContent = 'No data';
       }
     }
@@ -608,11 +619,11 @@
       });
 
       if (validData.length > 0) {
-        renderLineChart(chartEl, dataPoints, '#9e8b7d', ' cal');
+        renderLineChart(chartEl, dataPoints, '#a5b4fc', ' cal');
         const avgCals = Math.round(validData.reduce((s, v) => s + v, 0) / validData.length);
         avgEl.textContent = `${avgCals} cal/day avg (${validData.length} days)`;
       } else {
-        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No nutrition data</div>';
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-dark-muted">No nutrition data</div>';
         avgEl.textContent = 'No data';
       }
     }
@@ -643,11 +654,11 @@
       });
 
       if (validData.length > 0) {
-        renderLineChart(chartEl, dataPoints, '#7d9e8b', '');
+        renderLineChart(chartEl, dataPoints, '#6366f1', '');
         const avgActivity = Math.round(validData.reduce((s, v) => s + v, 0) / validData.length);
         avgEl.textContent = `Activity score ${avgActivity} avg (${validData.length} days)`;
       } else {
-        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No activity data</div>';
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-dark-muted">No activity data</div>';
         avgEl.textContent = 'No data';
       }
     }
@@ -684,11 +695,11 @@
       });
 
       if (validData.length > 0) {
-        renderLineChart(chartEl, dataPoints, '#7d8b6f', ' cal');
+        renderLineChart(chartEl, dataPoints, '#818cf8', ' cal');
         const avgCals = Math.round(validData.reduce((s, v) => s + v, 0) / validData.length);
         avgEl.textContent = `${avgCals} cal/day avg (${validData.length} days)`;
       } else {
-        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-stone-muted">No training data</div>';
+        chartEl.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-dark-muted">No training data</div>';
         avgEl.textContent = 'No data';
       }
     }
@@ -746,11 +757,11 @@
       
       // Change color based on progress
       if (percentage >= 100) {
-        circle.style.stroke = '#7d8b6f'; // sage - goal met
+        circle.style.stroke = '#6366f1'; // indigo - goal met
       } else if (percentage >= 80) {
-        circle.style.stroke = '#9e8b7d'; // terracotta - close to goal
+        circle.style.stroke = '#818cf8'; // lighter indigo - close to goal
       } else {
-        circle.style.stroke = '#9e8b7d'; // terracotta
+        circle.style.stroke = '#a5b4fc'; // light indigo - needs work
       }
     }
 

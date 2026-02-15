@@ -16,18 +16,29 @@
             sans: ['Outfit', 'sans-serif']
           },
           colors: {
-            cream: {
-              50: '#faf8f5',
-              100: '#f5f2ed'
+            navy: {
+              50: '#e8edf5',
+              100: '#c5d1e3'
             },
-            sage: '#7d8b6f',
-            lavender: '#8b7d9e',
-            terracotta: '#9e8b7d',
-            teal: '#7d9e8b',
-            stone: {
-              border: '#e8e4de',
-              text: '#2d2a26',
-              muted: '#6b6560'
+            slate: {
+              700: '#2a3647',
+              800: '#1e2a3a',
+              850: '#1a2332',
+              900: '#0f1729'
+            },
+            indigo: {
+              400: '#a5b4fc',
+              500: '#818cf8',
+              600: '#6366f1',
+              700: '#4f46e5'
+            },
+            
+            
+            
+            dark: {
+              border: '#2d3d54',
+              text: '#e1e7f0',
+              muted: '#8b95a8'
             }
           }
         }
@@ -36,18 +47,18 @@
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+<body class="bg-slate-850 text-dark-text min-h-screen font-sans">
   <div class="max-w-[1400px] mx-auto p-4 lg:p-8 pb-12">
     <!-- Header with back button -->
-    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
-      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+    <header class="mb-8 pb-4 border-b border-dark-border flex items-center gap-4">
+      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-slate-700/50 flex items-center justify-center transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </a>
       <div>
         <h1 class="text-2xl font-medium tracking-tight">Nutrition Tracker</h1>
-        <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+        <p class="text-sm text-dark-muted font-light mt-1" id="todayDate"></p>
       </div>
     </header>
 
@@ -57,43 +68,43 @@
       <!-- Left Column: Meals (8 cols) -->
       <div class="lg:col-span-8 space-y-4">
         <!-- Daily Summary -->
-        <section class="bg-white rounded-xl border border-stone-border p-5">
-      <h2 class="text-xs font-medium uppercase tracking-wider text-terracotta mb-4">Daily Summary</h2>
+        <section class="bg-slate-800 rounded-xl border border-dark-border p-5">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-indigo-400 mb-4">Daily Summary</h2>
       <div class="grid grid-cols-2 gap-3">
-        <div class="bg-cream-50 rounded-lg p-3">
+        <div class="bg-slate-850 rounded-lg p-3">
           <div class="text-2xl font-semibold" id="totalCalories">0</div>
-          <div class="text-xs text-stone-muted">Calories</div>
+          <div class="text-xs text-dark-muted">Calories</div>
         </div>
-        <div class="bg-cream-50 rounded-lg p-3">
+        <div class="bg-slate-850 rounded-lg p-3">
           <div class="text-2xl font-semibold" id="mealsLogged">0/4</div>
-          <div class="text-xs text-stone-muted">Meals</div>
+          <div class="text-xs text-dark-muted">Meals</div>
         </div>
       </div>
       <div class="grid grid-cols-4 gap-2 mt-3">
         <div class="text-center">
           <div class="text-lg font-medium" id="totalProtein">0g</div>
-          <div class="text-xs text-stone-muted">Protein</div>
+          <div class="text-xs text-dark-muted">Protein</div>
         </div>
         <div class="text-center">
           <div class="text-lg font-medium" id="totalCarbs">0g</div>
-          <div class="text-xs text-stone-muted">Carbs</div>
+          <div class="text-xs text-dark-muted">Carbs</div>
         </div>
         <div class="text-center">
           <div class="text-lg font-medium" id="totalFats">0g</div>
-          <div class="text-xs text-stone-muted">Fats</div>
+          <div class="text-xs text-dark-muted">Fats</div>
         </div>
         <div class="text-center">
           <div class="text-lg font-medium" id="totalFiber">0g</div>
-          <div class="text-xs text-stone-muted">Fiber</div>
+          <div class="text-xs text-dark-muted">Fiber</div>
         </div>
       </div>
     </section>
 
     <!-- Food Library Preview -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+    <section class="bg-slate-800 rounded-xl border border-dark-border p-5 mb-4">
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xs font-medium uppercase tracking-wider text-terracotta">Food Library</h2>
-        <a href="food-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-terracotta text-white font-medium hover:opacity-90 transition-opacity">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-indigo-400">Food Library</h2>
+        <a href="food-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium hover:opacity-90 transition-opacity">
           View All →
         </a>
       </div>
@@ -101,67 +112,67 @@
     </section>
 
     <!-- Breakfast -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+    <section class="bg-slate-800 rounded-xl border border-dark-border p-5 mb-4">
       <div class="flex justify-between items-start mb-3">
         <div>
           <h2 class="text-sm font-medium">🌅 Breakfast</h2>
-          <p class="text-xs text-stone-muted">Carbs, healthy fats & fiber</p>
+          <p class="text-xs text-dark-muted">Carbs, healthy fats & fiber</p>
         </div>
-        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('breakfast')">+ Add</button>
+        <button class="text-xs px-2 py-1 rounded bg-indigo-600/10 text-indigo-400 font-medium" onclick="openMealModal('breakfast')">+ Add</button>
       </div>
-      <div id="breakfastContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+      <div id="breakfastContent" class="empty-meal text-sm text-dark-muted">No meal logged</div>
     </section>
 
     <!-- Lunch -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+    <section class="bg-slate-800 rounded-xl border border-dark-border p-5 mb-4">
       <div class="flex justify-between items-start mb-3">
         <div>
           <h2 class="text-sm font-medium">☀️ Lunch</h2>
-          <p class="text-xs text-stone-muted">30% protein, 70% carbs, 1 fruit</p>
+          <p class="text-xs text-dark-muted">30% protein, 70% carbs, 1 fruit</p>
         </div>
-        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('lunch')">+ Add</button>
+        <button class="text-xs px-2 py-1 rounded bg-indigo-600/10 text-indigo-400 font-medium" onclick="openMealModal('lunch')">+ Add</button>
       </div>
-      <div id="lunchContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+      <div id="lunchContent" class="empty-meal text-sm text-dark-muted">No meal logged</div>
     </section>
 
     <!-- Dinner -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+    <section class="bg-slate-800 rounded-xl border border-dark-border p-5 mb-4">
       <div class="flex justify-between items-start mb-3">
         <div>
           <h2 class="text-sm font-medium">🌆 Dinner</h2>
-          <p class="text-xs text-stone-muted">50% protein, 50% carbs + treat</p>
+          <p class="text-xs text-dark-muted">50% protein, 50% carbs + treat</p>
         </div>
-        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('dinner')">+ Add</button>
+        <button class="text-xs px-2 py-1 rounded bg-indigo-600/10 text-indigo-400 font-medium" onclick="openMealModal('dinner')">+ Add</button>
       </div>
-      <div id="dinnerContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+      <div id="dinnerContent" class="empty-meal text-sm text-dark-muted">No meal logged</div>
     </section>
 
     <!-- Supper -->
-    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+    <section class="bg-slate-800 rounded-xl border border-dark-border p-5 mb-4">
       <div class="flex justify-between items-start mb-3">
         <div>
           <h2 class="text-sm font-medium">🌙 Supper</h2>
-          <p class="text-xs text-stone-muted">100% protein</p>
+          <p class="text-xs text-dark-muted">100% protein</p>
         </div>
-        <button class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium" onclick="openMealModal('supper')">+ Add</button>
+        <button class="text-xs px-2 py-1 rounded bg-indigo-600/10 text-indigo-400 font-medium" onclick="openMealModal('supper')">+ Add</button>
       </div>
-      <div id="supperContent" class="empty-meal text-sm text-stone-muted">No meal logged</div>
+      <div id="supperContent" class="empty-meal text-sm text-dark-muted">No meal logged</div>
         </section>
       </div>
 
       <!-- Right Column: Calendar (4 cols) -->
       <div class="lg:col-span-4">
         <!-- Nutrition History Calendar -->
-        <section class="bg-white rounded-xl border border-stone-border p-5 sticky top-4">
+        <section class="bg-slate-800 rounded-xl border border-dark-border p-5 sticky top-4">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xs font-medium uppercase tracking-wider text-terracotta">Nutrition History</h2>
+        <h2 class="text-xs font-medium uppercase tracking-wider text-indigo-400">Nutrition History</h2>
         <div class="flex gap-2">
-          <button id="prevMonth" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <button id="prevMonth" class="w-8 h-8 rounded-lg hover:bg-slate-850 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
             </svg>
           </button>
-          <button id="nextMonth" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <button id="nextMonth" class="w-8 h-8 rounded-lg hover:bg-slate-850 flex items-center justify-center">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
             </svg>
@@ -170,13 +181,13 @@
       </div>
       <div class="text-center text-sm font-medium mb-3" id="calendarMonth"></div>
       <div class="grid grid-cols-7 gap-1 mb-2">
-        <div class="text-center text-xs font-medium text-stone-muted py-2">S</div>
-        <div class="text-center text-xs font-medium text-stone-muted py-2">M</div>
-        <div class="text-center text-xs font-medium text-stone-muted py-2">T</div>
-        <div class="text-center text-xs font-medium text-stone-muted py-2">W</div>
-        <div class="text-center text-xs font-medium text-stone-muted py-2">T</div>
-        <div class="text-center text-xs font-medium text-stone-muted py-2">F</div>
-        <div class="text-center text-xs font-medium text-stone-muted py-2">S</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">S</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">M</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">T</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">W</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">T</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">F</div>
+        <div class="text-center text-xs font-medium text-dark-muted py-2">S</div>
       </div>
       <div class="grid grid-cols-7 gap-1" id="calendarDays"></div>
         </section>
@@ -185,11 +196,11 @@
   </div>
 
   <!-- Meal Input Modal -->
-  <div id="mealModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto">
+  <div id="mealModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 rounded-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-medium" id="modalTitle">Add Meal</h3>
-        <button id="closeModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+        <button id="closeModal" class="w-8 h-8 rounded-lg hover:bg-slate-850 flex items-center justify-center">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -197,11 +208,11 @@
       </div>
 
       <!-- Tab Navigation -->
-      <div class="flex gap-2 mb-4 border-b border-stone-border">
-        <button id="quickAddTab" class="flex-1 py-2 text-sm font-medium border-b-2 border-terracotta text-terracotta transition-colors">
+      <div class="flex gap-2 mb-4 border-b border-dark-border">
+        <button id="quickAddTab" class="flex-1 py-2 text-sm font-medium border-b-2 border-indigo-500 text-indigo-400 transition-colors">
           Quick Add
         </button>
-        <button id="manualEntryTab" class="flex-1 py-2 text-sm font-medium border-b-2 border-transparent text-stone-muted hover:text-stone-text transition-colors">
+        <button id="manualEntryTab" class="flex-1 py-2 text-sm font-medium border-b-2 border-transparent text-dark-muted hover:text-dark-text transition-colors">
           Manual Entry
         </button>
       </div>
@@ -210,38 +221,38 @@
       <div id="quickAddContent">
         <div class="space-y-3">
           <div class="relative">
-            <label class="text-xs font-medium text-stone-muted block mb-2">SEARCH DISH</label>
+            <label class="text-xs font-medium text-dark-muted block mb-2">SEARCH DISH</label>
             <input 
               type="text" 
               id="dishAutocomplete" 
               placeholder="Start typing dish name..." 
               autocomplete="off"
-              class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta"
+              class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500"
             />
-            <div id="autocompleteResults" class="hidden absolute z-10 w-full mt-1 bg-white border border-stone-border rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
+            <div id="autocompleteResults" class="hidden absolute z-10 w-full mt-1 bg-slate-800 border border-dark-border rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
           </div>
           
-          <div id="selectedDishInfo" class="hidden bg-cream-50 rounded-lg p-3 border border-stone-border">
+          <div id="selectedDishInfo" class="hidden bg-slate-850 rounded-lg p-3 border border-dark-border">
             <div class="flex gap-3">
               <img id="selectedDishPhoto" class="w-16 h-16 rounded-lg object-cover hidden" />
               <div class="flex-1">
                 <div class="font-medium text-sm" id="selectedDishName"></div>
-                <div class="text-xs text-stone-muted/60" id="selectedDishBrand"></div>
-                <div class="text-xs text-stone-muted" id="selectedDishMacros"></div>
+                <div class="text-xs text-dark-muted/60" id="selectedDishBrand"></div>
+                <div class="text-xs text-dark-muted" id="selectedDishMacros"></div>
               </div>
             </div>
           </div>
           
           <div id="portionSection" class="hidden">
-            <label class="text-xs font-medium text-stone-muted block mb-1">PORTION SIZE (g)</label>
-            <input type="number" id="portionSize" min="1" placeholder="100" value="100" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta mb-3" />
-            <button id="addDishToMeal" class="w-full bg-terracotta text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity">
+            <label class="text-xs font-medium text-dark-muted block mb-1">PORTION SIZE (g)</label>
+            <input type="number" id="portionSize" min="1" placeholder="100" value="100" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 mb-3" />
+            <button id="addDishToMeal" class="w-full bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity">
               Add to Meal
             </button>
           </div>
 
-          <div class="mt-4 p-3 bg-cream-50 rounded-lg border border-stone-border/50">
-            <p class="text-xs text-stone-muted">
+          <div class="mt-4 p-3 bg-slate-850 rounded-lg border border-dark-border/50">
+            <p class="text-xs text-dark-muted">
               💡 <strong>Tip:</strong> Type to search your dishes. Macros will be calculated automatically based on portion size!
             </p>
           </div>
@@ -252,56 +263,56 @@
       <div id="manualEntryContent" class="hidden">
         <!-- Photo Upload -->
         <div class="mb-4">
-          <label class="text-xs font-medium text-stone-muted block mb-2">MEAL PHOTO (OPTIONAL)</label>
-          <div class="border-2 border-dashed border-stone-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="photoUpload">
+          <label class="text-xs font-medium text-dark-muted block mb-2">MEAL PHOTO (OPTIONAL)</label>
+          <div class="border-2 border-dashed border-dark-border rounded-lg p-4 text-center cursor-pointer hover:border-indigo-500 transition-colors" id="photoUpload">
             <input type="file" id="photoInput" accept="image/*" capture="environment" class="hidden" />
-            <svg class="w-8 h-8 mx-auto text-stone-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-8 h-8 mx-auto text-dark-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
             </svg>
-            <p class="text-xs text-stone-muted">Tap to take photo or upload</p>
+            <p class="text-xs text-dark-muted">Tap to take photo or upload</p>
             <img id="photoPreview" class="hidden mt-2 rounded-lg w-full" />
           </div>
-          <button id="aiRecognize" class="w-full mt-2 text-xs py-2 bg-terracotta/10 text-terracotta rounded-lg font-medium hover:bg-terracotta/20 transition-colors hidden">
+          <button id="aiRecognize" class="w-full mt-2 text-xs py-2 bg-indigo-600/10 text-indigo-400 rounded-lg font-medium hover:bg-indigo-600/20 transition-colors hidden">
             🤖 AI Recognize Nutrition
           </button>
         </div>
 
         <div class="space-y-3">
           <div>
-            <label class="text-xs font-medium text-stone-muted block mb-1">DESCRIPTION</label>
-            <input type="text" id="mealDescription" placeholder="What did you eat?" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+            <label class="text-xs font-medium text-dark-muted block mb-1">DESCRIPTION</label>
+            <input type="text" id="mealDescription" placeholder="What did you eat?" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-xs font-medium text-stone-muted block mb-1">PROTEIN (g)</label>
-              <input type="number" id="mealProtein" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs font-medium text-dark-muted block mb-1">PROTEIN (g)</label>
+              <input type="number" id="mealProtein" min="0" placeholder="0" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
             </div>
             <div>
-              <label class="text-xs font-medium text-stone-muted block mb-1">CARBS (g)</label>
-              <input type="number" id="mealCarbs" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs font-medium text-dark-muted block mb-1">CARBS (g)</label>
+              <input type="number" id="mealCarbs" min="0" placeholder="0" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-xs font-medium text-stone-muted block mb-1">FATS (g)</label>
-              <input type="number" id="mealFats" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs font-medium text-dark-muted block mb-1">FATS (g)</label>
+              <input type="number" id="mealFats" min="0" placeholder="0" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
             </div>
             <div>
-              <label class="text-xs font-medium text-stone-muted block mb-1">FIBER (g)</label>
-              <input type="number" id="mealFiber" min="0" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs font-medium text-dark-muted block mb-1">FIBER (g)</label>
+              <input type="number" id="mealFiber" min="0" placeholder="0" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
             </div>
           </div>
 
           <div>
-            <label class="text-xs font-medium text-stone-muted block mb-1">CALORIES</label>
-            <input type="number" id="mealCalories" min="0" placeholder="Auto-calculated" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
-            <p class="text-xs text-stone-muted mt-1">Leave empty to auto-calculate (4 cal/g protein & carbs, 9 cal/g fat)</p>
+            <label class="text-xs font-medium text-dark-muted block mb-1">CALORIES</label>
+            <input type="number" id="mealCalories" min="0" placeholder="Auto-calculated" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
+            <p class="text-xs text-dark-muted mt-1">Leave empty to auto-calculate (4 cal/g protein & carbs, 9 cal/g fat)</p>
           </div>
 
-          <button id="saveMeal" class="w-full bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Meal</button>
+          <button id="saveMeal" class="w-full bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Meal</button>
         </div>
       </div>
     </div>
@@ -400,19 +411,19 @@
 
     // Tab switching
     function switchToQuickAdd() {
-      document.getElementById('quickAddTab').classList.add('border-terracotta', 'text-terracotta');
-      document.getElementById('quickAddTab').classList.remove('border-transparent', 'text-stone-muted');
-      document.getElementById('manualEntryTab').classList.remove('border-terracotta', 'text-terracotta');
-      document.getElementById('manualEntryTab').classList.add('border-transparent', 'text-stone-muted');
+      document.getElementById('quickAddTab').classList.add('border-indigo-500', 'text-indigo-400');
+      document.getElementById('quickAddTab').classList.remove('border-transparent', 'text-dark-muted');
+      document.getElementById('manualEntryTab').classList.remove('border-indigo-500', 'text-indigo-400');
+      document.getElementById('manualEntryTab').classList.add('border-transparent', 'text-dark-muted');
       document.getElementById('quickAddContent').classList.remove('hidden');
       document.getElementById('manualEntryContent').classList.add('hidden');
     }
 
     function switchToManualEntry() {
-      document.getElementById('manualEntryTab').classList.add('border-terracotta', 'text-terracotta');
-      document.getElementById('manualEntryTab').classList.remove('border-transparent', 'text-stone-muted');
-      document.getElementById('quickAddTab').classList.remove('border-terracotta', 'text-terracotta');
-      document.getElementById('quickAddTab').classList.add('border-transparent', 'text-stone-muted');
+      document.getElementById('manualEntryTab').classList.add('border-indigo-500', 'text-indigo-400');
+      document.getElementById('manualEntryTab').classList.remove('border-transparent', 'text-dark-muted');
+      document.getElementById('quickAddTab').classList.remove('border-indigo-500', 'text-indigo-400');
+      document.getElementById('quickAddTab').classList.add('border-transparent', 'text-dark-muted');
       document.getElementById('manualEntryContent').classList.remove('hidden');
       document.getElementById('quickAddContent').classList.add('hidden');
     }
@@ -504,36 +515,36 @@
           contentEl.innerHTML = `
             <div class="space-y-2">
               ${meal.map((dish, index) => `
-                <div class="flex gap-3 pb-2 ${index < meal.length - 1 ? 'border-b border-stone-border/30' : ''}">
+                <div class="flex gap-3 pb-2 ${index < meal.length - 1 ? 'border-b border-dark-border/30' : ''}">
                   ${dish.photo ? `<img src="${dish.photo}" class="w-12 h-12 rounded-lg object-cover" />` : ''}
                   <div class="flex-1 min-w-0">
                     <div class="text-sm font-medium">${dish.description || 'Dish'}</div>
-                    <div class="text-xs text-stone-muted">
+                    <div class="text-xs text-dark-muted">
                       ${dish.calories} cal • P: ${dish.protein}g • C: ${dish.carbs}g • F: ${dish.fats}g
                     </div>
                   </div>
                   <div class="flex gap-1">
-                    <button onclick="editMealDish('${mealType}', ${index})" class="text-stone-muted hover:text-terracotta" title="Edit">
+                    <button onclick="editMealDish('${mealType}', ${index})" class="text-dark-muted hover:text-indigo-400" title="Edit">
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                       </svg>
                     </button>
-                    <button onclick="deleteDish('${mealType}', ${index})" class="text-stone-muted hover:text-red-500 text-lg" title="Delete">×</button>
+                    <button onclick="deleteDish('${mealType}', ${index})" class="text-dark-muted hover:text-red-500 text-lg" title="Delete">×</button>
                   </div>
                 </div>
               `).join('')}
               
-              <div class="bg-sage/5 rounded-lg p-2 mt-2">
-                <div class="text-xs font-medium text-sage">MEAL TOTAL</div>
+              <div class="bg-indigo-600/5 rounded-lg p-2 mt-2">
+                <div class="text-xs font-medium text-indigo-400">MEAL TOTAL</div>
                 <div class="text-sm font-semibold">🔥 ${Math.round(totalCals)} cal</div>
-                <div class="text-xs text-stone-muted">
+                <div class="text-xs text-dark-muted">
                   P: ${Math.round(totalProtein)}g • C: ${Math.round(totalCarbs)}g • F: ${Math.round(totalFats)}g${totalFiber ? ' • Fiber: ' + Math.round(totalFiber) + 'g' : ''}
                 </div>
               </div>
             </div>
           `;
         } else {
-          contentEl.className = 'empty-meal text-sm text-stone-muted';
+          contentEl.className = 'empty-meal text-sm text-dark-muted';
           contentEl.textContent = 'No meal logged';
         }
       });
@@ -686,9 +697,9 @@
         let content = `<div class="font-medium">${day}</div>`;
 
         if (isToday) {
-          dayClass += 'bg-terracotta/10 border-2 border-terracotta ';
+          dayClass += 'bg-indigo-600/10 border-2 border-indigo-500 ';
         } else {
-          dayClass += 'hover:bg-cream-50 ';
+          dayClass += 'hover:bg-slate-700/30 ';
         }
 
         if (dayData && dayData.meals) {
@@ -721,12 +732,12 @@
       const previewEl = document.getElementById('dishesPreview');
       
       if (dishesCache.length === 0) {
-        previewEl.innerHTML = '<p class="text-sm text-stone-muted text-center py-4">No dishes yet. Add your first dish!</p>';
+        previewEl.innerHTML = '<p class="text-sm text-dark-muted text-center py-4">No dishes yet. Add your first dish!</p>';
       } else {
         // Show only 3 most recent dishes
         const recentDishes = dishesCache.slice(0, 3);
         previewEl.innerHTML = recentDishes.map((dish) => `
-          <div class="flex gap-3 p-2 hover:bg-cream-50 rounded-lg transition-colors">
+          <div class="flex gap-3 p-2 hover:bg-slate-850 rounded-lg transition-colors">
             ${dish.photo ? `
               <img src="${dish.photo}" class="w-12 h-12 rounded-lg object-cover" />
             ` : `
@@ -736,8 +747,8 @@
             `}
             <div class="flex-1 min-w-0">
               <div class="text-sm font-medium truncate">${dish.name}</div>
-              ${dish.brand ? `<div class="text-xs text-stone-muted/60">${dish.brand}</div>` : ''}
-              <div class="text-xs text-stone-muted">
+              ${dish.brand ? `<div class="text-xs text-dark-muted/60">${dish.brand}</div>` : ''}
+              <div class="text-xs text-dark-muted">
                 ${dish.calories} cal • P: ${dish.protein}g • C: ${dish.carbs}g • F: ${dish.fats}g
               </div>
             </div>
@@ -779,7 +790,7 @@
       }
 
       autocompleteResults.innerHTML = matches.map(dish => `
-        <div class="p-3 hover:bg-cream-50 cursor-pointer border-b border-stone-border last:border-0 flex gap-2" onclick="selectDish('${dish.id}')">
+        <div class="p-3 hover:bg-slate-850 cursor-pointer border-b border-dark-border last:border-0 flex gap-2" onclick="selectDish('${dish.id}')">
           ${dish.photo ? `
             <img src="${dish.photo}" class="w-10 h-10 rounded object-cover" />
           ` : `
@@ -789,8 +800,8 @@
           `}
           <div class="flex-1">
             <div class="text-sm font-medium">${dish.name}</div>
-            ${dish.brand ? `<div class="text-xs text-stone-muted/60">${dish.brand}</div>` : ''}
-            <div class="text-xs text-stone-muted">${dish.calories} cal/100g</div>
+            ${dish.brand ? `<div class="text-xs text-dark-muted/60">${dish.brand}</div>` : ''}
+            <div class="text-xs text-dark-muted">${dish.calories} cal/100g</div>
           </div>
         </div>
       `).join('');

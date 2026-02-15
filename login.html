@@ -16,18 +16,29 @@
             sans: ['Outfit', 'sans-serif']
           },
           colors: {
-            cream: {
-              50: '#faf8f5',
-              100: '#f5f2ed'
+            navy: {
+              50: '#e8edf5',
+              100: '#c5d1e3',
+              200: '#a0b3d1',
+              900: '#0f1729',
+              950: '#0a1019'
             },
-            sage: '#7d8b6f',
-            lavender: '#8b7d9e',
-            terracotta: '#9e8b7d',
-            teal: '#7d9e8b',
-            stone: {
-              border: '#e8e4de',
-              text: '#2d2a26',
-              muted: '#6b6560'
+            slate: {
+              700: '#2a3647',
+              800: '#1e2a3a',
+              850: '#1a2332',
+              900: '#0f1729'
+            },
+            indigo: {
+              400: '#a5b4fc',
+              500: '#818cf8',
+              600: '#6366f1',
+              700: '#4f46e5'
+            },
+            dark: {
+              border: '#2d3d54',
+              text: '#e1e7f0',
+              muted: '#8b95a8'
             }
           }
         }
@@ -36,13 +47,13 @@
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-cream-50 text-stone-text min-h-screen font-sans flex items-center justify-center">
+<body class="bg-slate-850 text-dark-text min-h-screen font-sans flex items-center justify-center">
   <div class="max-w-md w-full mx-auto p-6">
     <!-- Login Card -->
-    <div class="bg-white rounded-xl border border-stone-border p-8">
+    <div class="bg-slate-800 rounded-xl border border-dark-border p-8">
       <div class="text-center mb-8">
         <h1 class="text-3xl font-medium tracking-tight mb-2">Lifestyle Tracker</h1>
-        <p class="text-sm text-stone-muted">Track your sleep, nutrition & activity</p>
+        <p class="text-sm text-dark-muted">Track your sleep, nutrition & activity</p>
       </div>
 
       <!-- Auth Forms -->
@@ -55,24 +66,24 @@
               type="email" 
               id="loginEmail" 
               placeholder="Email" 
-              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+              class="w-full border border-dark-border rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500"
             />
             <input 
               type="password" 
               id="loginPassword" 
               placeholder="Password" 
-              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+              class="w-full border border-dark-border rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500"
             />
           </div>
           <button 
             id="loginBtn" 
-            class="w-full bg-sage text-white rounded-lg px-4 py-3 font-medium hover:opacity-90 transition-opacity mb-3"
+            class="w-full bg-indigo-600 text-white rounded-lg px-4 py-3 font-medium hover:opacity-90 transition-opacity mb-3"
           >
             Sign In
           </button>
-          <p class="text-sm text-center text-stone-muted">
+          <p class="text-sm text-center text-dark-muted">
             Don't have an account? 
-            <button id="showSignup" class="text-sage font-medium">Sign Up</button>
+            <button id="showSignup" class="text-indigo-400 font-medium">Sign Up</button>
           </p>
         </div>
 
@@ -84,24 +95,24 @@
               type="email" 
               id="signupEmail" 
               placeholder="Email" 
-              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+              class="w-full border border-dark-border rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500"
             />
             <input 
               type="password" 
               id="signupPassword" 
               placeholder="Password (min 6 characters)" 
-              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+              class="w-full border border-dark-border rounded-lg px-4 py-3 focus:outline-none focus:border-indigo-500"
             />
           </div>
           <button 
             id="signupBtn" 
-            class="w-full bg-sage text-white rounded-lg px-4 py-3 font-medium hover:opacity-90 transition-opacity mb-3"
+            class="w-full bg-indigo-600 text-white rounded-lg px-4 py-3 font-medium hover:opacity-90 transition-opacity mb-3"
           >
             Create Account
           </button>
-          <p class="text-sm text-center text-stone-muted">
+          <p class="text-sm text-center text-dark-muted">
             Already have an account? 
-            <button id="showLogin" class="text-sage font-medium">Sign In</button>
+            <button id="showLogin" class="text-indigo-400 font-medium">Sign In</button>
           </p>
         </div>
       </div>
@@ -111,13 +122,13 @@
 
       <!-- Loading State -->
       <div id="loading" class="hidden text-center py-8">
-        <div class="inline-block w-8 h-8 border-4 border-sage border-t-transparent rounded-full animate-spin"></div>
-        <p class="text-sm text-stone-muted mt-2">Loading...</p>
+        <div class="inline-block w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-sm text-dark-muted mt-2">Loading...</p>
       </div>
     </div>
 
     <!-- Info -->
-    <div class="mt-6 text-center text-xs text-stone-muted">
+    <div class="mt-6 text-center text-xs text-dark-muted">
       <p>Your data is securely stored and encrypted</p>
       <p class="mt-1">Access from any device, anywhere</p>
     </div>

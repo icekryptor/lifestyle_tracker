@@ -16,18 +16,29 @@
             sans: ['Outfit', 'sans-serif']
           },
           colors: {
-            cream: {
-              50: '#faf8f5',
-              100: '#f5f2ed'
+            navy: {
+              50: '#e8edf5',
+              100: '#c5d1e3'
             },
-            sage: '#7d8b6f',
-            lavender: '#8b7d9e',
-            terracotta: '#9e8b7d',
-            teal: '#7d9e8b',
-            stone: {
-              border: '#e8e4de',
-              text: '#2d2a26',
-              muted: '#6b6560'
+            slate: {
+              700: '#2a3647',
+              800: '#1e2a3a',
+              850: '#1a2332',
+              900: '#0f1729'
+            },
+            indigo: {
+              400: '#a5b4fc',
+              500: '#818cf8',
+              600: '#6366f1',
+              700: '#4f46e5'
+            },
+            
+            
+            
+            dark: {
+              border: '#2d3d54',
+              text: '#e1e7f0',
+              muted: '#8b95a8'
             }
           }
         }
@@ -36,20 +47,20 @@
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+<body class="bg-slate-850 text-dark-text min-h-screen font-sans">
   <div class="max-w-[1600px] mx-auto p-4 lg:p-8 pb-12">
     <!-- Header with back button -->
-    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
-      <a href="nutrition.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+    <header class="mb-8 pb-4 border-b border-dark-border flex items-center gap-4">
+      <a href="nutrition.html" class="w-8 h-8 rounded-full hover:bg-slate-700/50 flex items-center justify-center transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </a>
       <div class="flex-1">
         <h1 class="text-2xl font-medium tracking-tight">Food Library</h1>
-        <p class="text-sm text-stone-muted font-light mt-1">Your saved dishes & recipes</p>
+        <p class="text-sm text-dark-muted font-light mt-1">Your saved dishes & recipes</p>
       </div>
-      <button id="addDishBtn" class="px-4 py-2 bg-terracotta text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+      <button id="addDishBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
         + Add Dish
       </button>
     </header>
@@ -57,45 +68,45 @@
     <!-- Search and Filter -->
     <div class="mb-6">
       <div class="relative mb-3">
-        <input type="text" id="searchDishes" placeholder="Search dishes..." class="w-full pl-10 pr-4 py-2.5 border border-stone-border rounded-lg text-sm focus:outline-none focus:border-terracotta" />
-        <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-stone-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <input type="text" id="searchDishes" placeholder="Search dishes..." class="w-full pl-10 pr-4 py-2.5 border border-dark-border rounded-lg text-sm focus:outline-none focus:border-terracotta" />
+        <svg class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-dark-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
         </svg>
       </div>
 
       <!-- Category Filter -->
       <div class="flex gap-2 overflow-x-auto pb-2">
-        <button class="category-filter active px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-terracotta text-white" data-category="all">
+        <button class="category-filter active px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-indigo-600 text-white" data-category="all">
           All
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="meat">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="meat">
           🥩 Meat
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="fish">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="fish">
           🐟 Fish
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="dairy">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="dairy">
           🥛 Dairy
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="grains">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="grains">
           🌾 Grains
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="vegetables">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="vegetables">
           🥬 Vegetables
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="fruits">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="fruits">
           🍎 Fruits
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="pastry">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="pastry">
           🥐 Pastry
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="snacks">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="snacks">
           🍿 Snacks
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="drinks">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="drinks">
           🥤 Drinks
         </button>
-        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-stone-text hover:bg-stone-border" data-category="other">
+        <button class="category-filter px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors bg-stone-border/50 text-dark-text hover:bg-slate-700" data-category="other">
           🍽️ Other
         </button>
       </div>
@@ -106,20 +117,20 @@
 
     <!-- Empty State -->
     <div id="emptyState" class="hidden text-center py-12">
-      <svg class="w-16 h-16 mx-auto text-stone-muted/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-16 h-16 mx-auto text-dark-muted/30 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
       </svg>
-      <p class="text-stone-muted">No dishes found</p>
-      <p class="text-xs text-stone-muted/60 mt-1">Try adjusting your filters or add a new dish</p>
+      <p class="text-dark-muted">No dishes found</p>
+      <p class="text-xs text-dark-muted/60 mt-1">Try adjusting your filters or add a new dish</p>
     </div>
   </div>
 
   <!-- Add/Edit Dish Modal -->
-  <div id="dishModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto">
+  <div id="dishModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 rounded-xl max-w-md w-full p-5 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-medium" id="dishModalTitle">Add Dish</h3>
-        <button id="closeDishModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+        <button id="closeDishModal" class="w-8 h-8 rounded-lg hover:bg-slate-850 flex items-center justify-center">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -129,27 +140,27 @@
       <div class="space-y-3">
         <!-- Photo Upload/URL -->
         <div>
-          <label class="text-xs font-medium text-stone-muted block mb-2">DISH PHOTO (OPTIONAL)</label>
+          <label class="text-xs font-medium text-dark-muted block mb-2">DISH PHOTO (OPTIONAL)</label>
           
           <!-- Photo method tabs -->
           <div class="flex gap-2 mb-2">
-            <button id="photoUploadTab" class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-terracotta/10 text-terracotta">
+            <button id="photoUploadTab" class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-indigo-600/10 text-indigo-400">
               Upload
             </button>
-            <button id="photoUrlTab" class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-stone-border/50 text-stone-muted">
+            <button id="photoUrlTab" class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-stone-border/50 text-dark-muted">
               URL
             </button>
           </div>
 
           <!-- Upload option -->
           <div id="photoUploadSection">
-            <div class="border-2 border-dashed border-stone-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="dishPhotoUpload">
+            <div class="border-2 border-dashed border-dark-border rounded-lg p-4 text-center cursor-pointer hover:border-terracotta transition-colors" id="dishPhotoUpload">
               <input type="file" id="dishPhotoInput" accept="image/*" class="hidden" />
               <div id="dishPhotoPlaceholder">
-                <svg class="w-8 h-8 mx-auto text-stone-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-8 h-8 mx-auto text-dark-muted mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
-                <p class="text-xs text-stone-muted">Click to upload photo</p>
+                <p class="text-xs text-dark-muted">Click to upload photo</p>
               </div>
               <img id="dishPhotoPreview" class="hidden rounded-lg w-full" />
             </div>
@@ -157,25 +168,25 @@
 
           <!-- URL option -->
           <div id="photoUrlSection" class="hidden">
-            <input type="url" id="dishPhotoUrl" placeholder="https://example.com/image.jpg" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta mb-2" />
-            <button id="loadPhotoUrl" class="w-full py-2 text-xs border border-stone-border rounded-lg hover:border-terracotta hover:text-terracotta transition-colors">Load Preview</button>
+            <input type="url" id="dishPhotoUrl" placeholder="https://example.com/image.jpg" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta mb-2" />
+            <button id="loadPhotoUrl" class="w-full py-2 text-xs border border-dark-border rounded-lg hover:border-terracotta hover:text-indigo-400 transition-colors">Load Preview</button>
             <img id="dishPhotoUrlPreview" class="hidden rounded-lg w-full mt-2" />
           </div>
         </div>
 
         <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">DISH NAME</label>
-          <input type="text" id="dishName" placeholder="e.g. Grilled Chicken Breast" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          <label class="text-xs font-medium text-dark-muted block mb-1">DISH NAME</label>
+          <input type="text" id="dishName" placeholder="e.g. Grilled Chicken Breast" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
         </div>
 
         <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">BRAND (OPTIONAL)</label>
-          <input type="text" id="dishBrand" placeholder="e.g. McDonald's, KFC, or leave empty" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          <label class="text-xs font-medium text-dark-muted block mb-1">BRAND (OPTIONAL)</label>
+          <input type="text" id="dishBrand" placeholder="e.g. McDonald's, KFC, or leave empty" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
         </div>
 
         <div>
-          <label class="text-xs font-medium text-stone-muted block mb-1">CATEGORY</label>
-          <select id="dishCategory" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-terracotta">
+          <label class="text-xs font-medium text-dark-muted block mb-1">CATEGORY</label>
+          <select id="dishCategory" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm bg-slate-850 focus:outline-none focus:border-terracotta">
             <option value="meat">🥩 Meat</option>
             <option value="fish">🐟 Fish</option>
             <option value="dairy">🥛 Dairy</option>
@@ -189,33 +200,33 @@
           </select>
         </div>
 
-        <div class="bg-cream-50 rounded-lg p-3 border border-stone-border/50">
-          <p class="text-xs font-medium text-stone-muted mb-2">NUTRITION PER 100g</p>
+        <div class="bg-slate-850 rounded-lg p-3 border border-dark-border/50">
+          <p class="text-xs font-medium text-dark-muted mb-2">NUTRITION PER 100g</p>
           
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="text-xs text-stone-muted block mb-1">Protein (g)</label>
-              <input type="number" id="dishProtein" placeholder="0" step="0.1" min="0" class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs text-dark-muted block mb-1">Protein (g)</label>
+              <input type="number" id="dishProtein" placeholder="0" step="0.1" min="0" class="w-full border border-dark-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
             </div>
             <div>
-              <label class="text-xs text-stone-muted block mb-1">Carbs (g)</label>
-              <input type="number" id="dishCarbs" placeholder="0" step="0.1" min="0" class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs text-dark-muted block mb-1">Carbs (g)</label>
+              <input type="number" id="dishCarbs" placeholder="0" step="0.1" min="0" class="w-full border border-dark-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2 mt-2">
             <div>
-              <label class="text-xs text-stone-muted block mb-1">Fats (g)</label>
-              <input type="number" id="dishFats" placeholder="0" step="0.1" min="0" class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
+              <label class="text-xs text-dark-muted block mb-1">Fats (g)</label>
+              <input type="number" id="dishFats" placeholder="0" step="0.1" min="0" class="w-full border border-dark-border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-terracotta" />
             </div>
             <div>
-              <label class="text-xs text-stone-muted block mb-1">Calories</label>
-              <input type="number" id="dishCalories" placeholder="Auto" readonly class="w-full border border-stone-border rounded-lg px-2 py-1.5 text-sm bg-white focus:outline-none" />
+              <label class="text-xs text-dark-muted block mb-1">Calories</label>
+              <input type="number" id="dishCalories" placeholder="Auto" readonly class="w-full border border-dark-border rounded-lg px-2 py-1.5 text-sm bg-slate-800 focus:outline-none" />
             </div>
           </div>
         </div>
 
-        <button id="saveDish" class="w-full bg-terracotta text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Dish</button>
+        <button id="saveDish" class="w-full bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Dish</button>
       </div>
     </div>
   </div>
@@ -260,7 +271,7 @@
       emptyEl.classList.add('hidden');
 
       gridEl.innerHTML = filtered.map(dish => `
-        <div class="bg-white rounded-xl border border-stone-border overflow-hidden hover:shadow-md transition-shadow">
+        <div class="bg-slate-800 rounded-xl border border-dark-border overflow-hidden hover:shadow-md transition-shadow">
           ${dish.photo ? `
             <div class="h-32 bg-cover bg-center" style="background-image: url('${dish.photo}')"></div>
           ` : `
@@ -272,23 +283,23 @@
             <div class="flex justify-between items-start mb-2">
               <div class="flex-1 min-w-0">
                 <h3 class="font-medium text-sm truncate">${dish.name}</h3>
-                ${dish.brand ? `<div class="text-xs text-stone-muted/70 font-light">${dish.brand}</div>` : ''}
-                <span class="text-xs text-stone-muted">${getCategoryLabel(dish.category)}</span>
+                ${dish.brand ? `<div class="text-xs text-dark-muted/70 font-light">${dish.brand}</div>` : ''}
+                <span class="text-xs text-dark-muted">${getCategoryLabel(dish.category)}</span>
               </div>
               <div class="flex gap-1">
-                <button onclick="editDishById('${dish.id}')" class="text-stone-muted hover:text-terracotta">
+                <button onclick="editDishById('${dish.id}')" class="text-dark-muted hover:text-indigo-400">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                   </svg>
                 </button>
-                <button onclick="deleteDishById('${dish.id}')" class="text-stone-muted hover:text-red-500">
+                <button onclick="deleteDishById('${dish.id}')" class="text-dark-muted hover:text-red-500">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                   </svg>
                 </button>
               </div>
             </div>
-            <div class="text-xs text-stone-muted space-y-1">
+            <div class="text-xs text-dark-muted space-y-1">
               <div class="flex justify-between">
                 <span>Per 100g:</span>
                 <span class="font-medium">${dish.calories} cal</span>
@@ -326,11 +337,11 @@
     document.querySelectorAll('.category-filter').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.category-filter').forEach(b => {
-          b.classList.remove('active', 'bg-terracotta', 'text-white');
-          b.classList.add('bg-stone-border/50', 'text-stone-text');
+          b.classList.remove('active', 'bg-indigo-600', 'text-white');
+          b.classList.add('bg-stone-border/50', 'text-dark-text');
         });
-        btn.classList.add('active', 'bg-terracotta', 'text-white');
-        btn.classList.remove('bg-stone-border/50', 'text-stone-text');
+        btn.classList.add('active', 'bg-indigo-600', 'text-white');
+        btn.classList.remove('bg-stone-border/50', 'text-dark-text');
         
         currentFilter = btn.dataset.category;
         renderDishes();
@@ -416,19 +427,19 @@
 
     // Photo method tabs
     function switchToPhotoUpload() {
-      document.getElementById('photoUploadTab').classList.remove('bg-stone-border/50', 'text-stone-muted');
-      document.getElementById('photoUploadTab').classList.add('bg-terracotta/10', 'text-terracotta');
-      document.getElementById('photoUrlTab').classList.remove('bg-terracotta/10', 'text-terracotta');
-      document.getElementById('photoUrlTab').classList.add('bg-stone-border/50', 'text-stone-muted');
+      document.getElementById('photoUploadTab').classList.remove('bg-stone-border/50', 'text-dark-muted');
+      document.getElementById('photoUploadTab').classList.add('bg-indigo-600/10', 'text-indigo-400');
+      document.getElementById('photoUrlTab').classList.remove('bg-indigo-600/10', 'text-indigo-400');
+      document.getElementById('photoUrlTab').classList.add('bg-stone-border/50', 'text-dark-muted');
       document.getElementById('photoUploadSection').classList.remove('hidden');
       document.getElementById('photoUrlSection').classList.add('hidden');
     }
 
     function switchToPhotoUrl() {
-      document.getElementById('photoUrlTab').classList.remove('bg-stone-border/50', 'text-stone-muted');
-      document.getElementById('photoUrlTab').classList.add('bg-terracotta/10', 'text-terracotta');
-      document.getElementById('photoUploadTab').classList.remove('bg-terracotta/10', 'text-terracotta');
-      document.getElementById('photoUploadTab').classList.add('bg-stone-border/50', 'text-stone-muted');
+      document.getElementById('photoUrlTab').classList.remove('bg-stone-border/50', 'text-dark-muted');
+      document.getElementById('photoUrlTab').classList.add('bg-indigo-600/10', 'text-indigo-400');
+      document.getElementById('photoUploadTab').classList.remove('bg-indigo-600/10', 'text-indigo-400');
+      document.getElementById('photoUploadTab').classList.add('bg-stone-border/50', 'text-dark-muted');
       document.getElementById('photoUrlSection').classList.remove('hidden');
       document.getElementById('photoUploadSection').classList.add('hidden');
     }

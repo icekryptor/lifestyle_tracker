@@ -16,18 +16,29 @@
             sans: ['Outfit', 'sans-serif']
           },
           colors: {
-            cream: {
-              50: '#faf8f5',
-              100: '#f5f2ed'
+            navy: {
+              50: '#e8edf5',
+              100: '#c5d1e3'
             },
-            sage: '#7d8b6f',
-            lavender: '#8b7d9e',
-            terracotta: '#9e8b7d',
-            teal: '#7d9e8b',
-            stone: {
-              border: '#e8e4de',
-              text: '#2d2a26',
-              muted: '#6b6560'
+            slate: {
+              700: '#2a3647',
+              800: '#1e2a3a',
+              850: '#1a2332',
+              900: '#0f1729'
+            },
+            indigo: {
+              400: '#a5b4fc',
+              500: '#818cf8',
+              600: '#6366f1',
+              700: '#4f46e5'
+            },
+            
+            
+            
+            dark: {
+              border: '#2d3d54',
+              text: '#e1e7f0',
+              muted: '#8b95a8'
             }
           }
         }
@@ -36,18 +47,18 @@
   </script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+<body class="bg-slate-850 text-dark-text min-h-screen font-sans">
   <div class="max-w-[1400px] mx-auto p-4 lg:p-8 pb-12">
     <!-- Header with back button -->
-    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
-      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+    <header class="mb-8 pb-4 border-b border-dark-border flex items-center gap-4">
+      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-slate-700/50 flex items-center justify-center transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
         </svg>
       </a>
       <div>
         <h1 class="text-2xl font-medium tracking-tight">Training Diary</h1>
-        <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+        <p class="text-sm text-dark-muted font-light mt-1" id="todayDate"></p>
       </div>
     </header>
 
@@ -56,23 +67,23 @@
       <!-- Left Column: Workout Area (8 cols) -->
       <div class="lg:col-span-8 space-y-4">
         <!-- Today's Workout -->
-        <section class="bg-white rounded-xl border border-stone-border p-5">
+        <section class="bg-slate-800 rounded-xl border border-dark-border p-5">
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xs font-medium uppercase tracking-wider text-sage">Today's Workout</h2>
-        <button id="startWorkoutBtn" class="text-xs px-2 py-1 rounded bg-sage text-white font-medium">Start Workout</button>
+        <h2 class="text-xs font-medium uppercase tracking-wider text-indigo-400">Today's Workout</h2>
+        <button id="startWorkoutBtn" class="text-xs px-2 py-1 rounded bg-indigo-600 text-white font-medium">Start Workout</button>
       </div>
       
       <!-- Workout in progress -->
       <div id="workoutInProgress" class="hidden">
-        <div class="bg-cream-50 rounded-lg p-4 mb-3">
+        <div class="bg-slate-850 rounded-lg p-4 mb-3">
           <div class="grid grid-cols-2 gap-4">
             <div>
-              <span class="text-xs text-stone-muted block">DURATION</span>
+              <span class="text-xs text-dark-muted block">DURATION</span>
               <span class="text-lg font-semibold" id="workoutTimer">00:00</span>
             </div>
             <div>
-              <span class="text-xs text-stone-muted block">CALORIES</span>
-              <span class="text-lg font-semibold text-terracotta" id="workoutCalories">0</span>
+              <span class="text-xs text-dark-muted block">CALORIES</span>
+              <span class="text-lg font-semibold text-indigo-400" id="workoutCalories">0</span>
             </div>
           </div>
         </div>
@@ -80,51 +91,51 @@
         <div id="workoutExercises" class="space-y-3 mb-3"></div>
         
         <div class="flex gap-2">
-          <button id="addExerciseToWorkout" class="flex-1 border border-sage text-sage rounded-lg px-4 py-2 text-sm font-medium hover:bg-sage/5">+ Add Exercise</button>
-          <button id="finishWorkout" class="flex-1 bg-sage text-white rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">Finish</button>
+          <button id="addExerciseToWorkout" class="flex-1 border border-indigo-500 text-indigo-400 rounded-lg px-4 py-2 text-sm font-medium hover:bg-indigo-600/5">+ Add Exercise</button>
+          <button id="finishWorkout" class="flex-1 bg-indigo-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">Finish</button>
         </div>
       </div>
 
       <!-- No workout -->
       <div id="noWorkout">
-        <p class="text-sm text-stone-muted">No workout logged today</p>
+        <p class="text-sm text-dark-muted">No workout logged today</p>
       </div>
 
       <!-- Workout summary -->
       <div id="workoutSummary" class="hidden">
-        <div class="bg-cream-50 rounded-lg p-4">
+        <div class="bg-slate-850 rounded-lg p-4">
           <div class="grid grid-cols-2 gap-3 mb-3">
             <div>
               <div class="text-2xl font-semibold" id="summaryDuration">0:00</div>
-              <div class="text-xs text-stone-muted">Duration</div>
+              <div class="text-xs text-dark-muted">Duration</div>
             </div>
             <div>
               <div class="text-2xl font-semibold" id="summaryExercises">0</div>
-              <div class="text-xs text-stone-muted">Exercises</div>
+              <div class="text-xs text-dark-muted">Exercises</div>
             </div>
           </div>
           <div class="grid grid-cols-2 gap-3">
             <div>
               <div class="text-2xl font-semibold" id="summaryVolume">0</div>
-              <div class="text-xs text-stone-muted">Volume (kg)</div>
+              <div class="text-xs text-dark-muted">Volume (kg)</div>
             </div>
             <div>
-              <div class="text-2xl font-semibold text-terracotta" id="summaryCalories">0</div>
-              <div class="text-xs text-stone-muted">Calories</div>
+              <div class="text-2xl font-semibold text-indigo-400" id="summaryCalories">0</div>
+              <div class="text-xs text-dark-muted">Calories</div>
             </div>
           </div>
         </div>
-        <button id="viewWorkoutDetails" class="w-full mt-3 border border-stone-border rounded-lg px-4 py-2 text-sm text-stone-muted hover:border-sage hover:text-sage transition-colors">View Details</button>
+        <button id="viewWorkoutDetails" class="w-full mt-3 border border-dark-border rounded-lg px-4 py-2 text-sm text-dark-muted hover:border-indigo-500 hover:text-indigo-400 transition-colors">View Details</button>
       </div>
         </section>
       </div>
 
       <!-- Right Column: Exercise Library (4 cols) -->
       <div class="lg:col-span-4">
-        <section class="bg-white rounded-xl border border-stone-border p-5 sticky top-4">
+        <section class="bg-slate-800 rounded-xl border border-dark-border p-5 sticky top-4">
           <div class="flex justify-between items-center mb-3">
-            <h2 class="text-xs font-medium uppercase tracking-wider text-sage">My Exercises</h2>
-            <a href="exercise-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-sage text-white font-medium hover:opacity-90 transition-opacity">
+            <h2 class="text-xs font-medium uppercase tracking-wider text-indigo-400">My Exercises</h2>
+            <a href="exercise-library.html" class="text-xs px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-medium hover:opacity-90 transition-opacity">
               View All →
             </a>
           </div>
@@ -135,11 +146,11 @@
   </div>
 
   <!-- Select Exercise Modal (for adding to workout) -->
-  <div id="selectExerciseModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-sm w-full p-5 max-h-[80vh] overflow-y-auto">
+  <div id="selectExerciseModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 rounded-xl max-w-sm w-full p-5 max-h-[80vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-medium">Select Exercise</h3>
-        <button id="closeSelectModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+        <button id="closeSelectModal" class="w-8 h-8 rounded-lg hover:bg-slate-850 flex items-center justify-center">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -151,11 +162,11 @@
   </div>
 
   <!-- Log Set Modal -->
-  <div id="logSetModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
-    <div class="bg-white rounded-xl max-w-sm w-full p-5">
+  <div id="logSetModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center p-4 z-50">
+    <div class="bg-slate-800 rounded-xl max-w-sm w-full p-5">
       <div class="flex justify-between items-center mb-4">
         <h3 class="font-medium" id="logSetExerciseName">Log Set</h3>
-        <button id="closeLogSetModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+        <button id="closeLogSetModal" class="w-8 h-8 rounded-lg hover:bg-slate-850 flex items-center justify-center">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
           </svg>
@@ -165,16 +176,16 @@
       <div class="space-y-3">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="text-xs font-medium text-stone-muted block mb-1">WEIGHT (KG)</label>
-            <input type="number" id="setWeight" placeholder="0" step="0.5" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+            <label class="text-xs font-medium text-dark-muted block mb-1">WEIGHT (KG)</label>
+            <input type="number" id="setWeight" placeholder="0" step="0.5" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
           </div>
           <div>
-            <label class="text-xs font-medium text-stone-muted block mb-1">REPS</label>
-            <input type="number" id="setReps" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+            <label class="text-xs font-medium text-dark-muted block mb-1">REPS</label>
+            <input type="number" id="setReps" placeholder="0" class="w-full border border-dark-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500" />
           </div>
         </div>
 
-        <button id="saveSet" class="w-full bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity">Add Set</button>
+        <button id="saveSet" class="w-full bg-indigo-600 text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity">Add Set</button>
       </div>
     </div>
   </div>
@@ -203,7 +214,7 @@
       const libraryEl = document.getElementById('exercisesLibrary');
       
       if (exercisesCache.length === 0) {
-        libraryEl.innerHTML = '<p class="text-sm text-stone-muted text-center py-4">No exercises yet. <a href="exercise-library.html" class="text-sage underline">Add your first exercise</a>!</p>';
+        libraryEl.innerHTML = '<p class="text-sm text-dark-muted text-center py-4">No exercises yet. <a href="exercise-library.html" class="text-indigo-400 underline">Add your first exercise</a>!</p>';
         return;
       }
       
@@ -216,11 +227,11 @@
         }[ex.category] || '💪';
 
         return `
-          <div class="flex gap-3 p-2 hover:bg-cream-50 rounded-lg transition-colors">
+          <div class="flex gap-3 p-2 hover:bg-slate-850 rounded-lg transition-colors">
             <div class="text-xl">${categoryEmoji}</div>
             <div class="flex-1 min-w-0">
               <div class="text-sm font-medium truncate">${ex.name}</div>
-              ${ex.equipment ? `<div class="text-xs text-stone-muted">${ex.equipment}</div>` : ''}
+              ${ex.equipment ? `<div class="text-xs text-dark-muted">${ex.equipment}</div>` : ''}
             </div>
           </div>
         `;
@@ -302,7 +313,7 @@
       const container = document.getElementById('workoutExercises');
       
       if (currentWorkout.exercises.length === 0) {
-        container.innerHTML = '<p class="text-sm text-stone-muted text-center py-2">No exercises added yet</p>';
+        container.innerHTML = '<p class="text-sm text-dark-muted text-center py-2">No exercises added yet</p>';
         updateWorkoutCalories();
         return;
       }
@@ -310,28 +321,28 @@
       container.innerHTML = currentWorkout.exercises.map((ex, idx) => {
         const exerciseCalories = calculateExerciseCalories(ex.sets, ex.exerciseName);
         return `
-          <div class="border border-stone-border rounded-lg p-3">
+          <div class="border border-dark-border rounded-lg p-3">
             <div class="flex justify-between items-start mb-2">
               <div class="flex-1">
                 <div class="font-medium text-sm">${ex.exerciseName}</div>
-                <div class="text-xs text-stone-muted">${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''} • ${Math.round(exerciseCalories)} cal</div>
+                <div class="text-xs text-dark-muted">${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''} • ${Math.round(exerciseCalories)} cal</div>
               </div>
-              <button onclick="removeExerciseFromWorkout(${idx})" class="text-stone-muted hover:text-red-500">×</button>
+              <button onclick="removeExerciseFromWorkout(${idx})" class="text-dark-muted hover:text-red-500">×</button>
             </div>
             
             ${ex.sets.length > 0 ? `
               <div class="space-y-1 mb-2">
                 ${ex.sets.map((set, setIdx) => `
-                  <div class="flex justify-between items-center text-xs bg-cream-50 px-2 py-1 rounded">
+                  <div class="flex justify-between items-center text-xs bg-slate-850 px-2 py-1 rounded">
                     <span>Set ${setIdx + 1}</span>
                     <span>${set.weight}kg × ${set.reps} reps</span>
-                    <button onclick="removeSet(${idx}, ${setIdx})" class="text-stone-muted hover:text-red-500">×</button>
+                    <button onclick="removeSet(${idx}, ${setIdx})" class="text-dark-muted hover:text-red-500">×</button>
                   </div>
                 `).join('')}
               </div>
             ` : ''}
             
-            <button onclick="openLogSetModal(${idx})" class="w-full border border-sage/30 text-sage text-xs rounded px-3 py-1.5 hover:bg-sage/5">+ Add Set</button>
+            <button onclick="openLogSetModal(${idx})" class="w-full border border-indigo-500/30 text-indigo-400 text-xs rounded px-3 py-1.5 hover:bg-indigo-600/5">+ Add Set</button>
           </div>
         `;
       }).join('');
@@ -349,13 +360,13 @@
       const listEl = document.getElementById('selectExerciseList');
       
       if (exercisesCache.length === 0) {
-        listEl.innerHTML = '<p class="text-sm text-stone-muted">No exercises in library. Add some first!</p>';
+        listEl.innerHTML = '<p class="text-sm text-dark-muted">No exercises in library. Add some first!</p>';
       } else {
         listEl.innerHTML = exercisesCache.map(ex => `
           <button onclick="addExerciseToCurrentWorkout('${ex.id}', '${ex.name.replace(/'/g, "\\'")}')" 
-                  class="w-full text-left p-3 hover:bg-cream-50 rounded-lg border border-stone-border transition-colors">
+                  class="w-full text-left p-3 hover:bg-slate-850 rounded-lg border border-dark-border transition-colors">
             <div class="font-medium text-sm">${ex.name}</div>
-            ${ex.equipment ? `<div class="text-xs text-stone-muted">${ex.equipment}</div>` : ''}
+            ${ex.equipment ? `<div class="text-xs text-dark-muted">${ex.equipment}</div>` : ''}
           </button>
         `).join('');
       }
