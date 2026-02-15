@@ -353,7 +353,7 @@
       
       if (sleepData && sleepData.bedtime) {
         sleepTask.classList.remove('border-2', 'border-dark-border');
-        sleepTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        sleepTask.classList.add('border', 'border-indigo-500/50', 'bg-indigo-600/10');
         sleepTitle.innerHTML = '✓ Sleep logged';
         sleepDesc.textContent = `${formatDuration(sleepData.durationMins)} • ${sleepData.rating}`;
       }
@@ -378,7 +378,7 @@
         });
         
         nutritionTask.classList.remove('border-2', 'border-dark-border');
-        nutritionTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        nutritionTask.classList.add('border', 'border-indigo-500/50', 'bg-indigo-600/10');
         nutritionTitle.innerHTML = '✓ Meals logged';
         nutritionDesc.textContent = `${mealCount} meal(s)${totalCals ? ' • ' + totalCals + ' cal' : ''}`;
       }
@@ -392,7 +392,7 @@
         const steps = activityData.steps || 0;
         const gymMins = (activityData.gymSessions || []).reduce((s, g) => s + (g.minutes || 0), 0);
         activityTask.classList.remove('border-2', 'border-dark-border');
-        activityTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        activityTask.classList.add('border', 'border-indigo-500/50', 'bg-indigo-600/10');
         activityTitle.innerHTML = '✓ Activity logged';
         activityDesc.textContent = `${steps.toLocaleString()} steps${gymMins ? ' • ' + gymMins + ' min gym' : ''}`;
       }
@@ -407,7 +407,7 @@
         const calories = Math.round(calculateWorkoutCalories(todayWorkout.exercises));
         const exerciseCount = todayWorkout.exercises.length;
         trainingTask.classList.remove('border-2', 'border-dark-border');
-        trainingTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        trainingTask.classList.add('border', 'border-indigo-500/50', 'bg-indigo-600/10');
         trainingTitle.innerHTML = '✓ Workout completed';
         trainingDesc.textContent = `${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''} • ${calories} cal burned`;
       }
