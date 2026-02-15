@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Lifestyle Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans flex items-center justify-center">
+  <div class="max-w-md w-full mx-auto p-6">
+    <!-- Login Card -->
+    <div class="bg-white rounded-xl border border-stone-border p-8">
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-medium tracking-tight mb-2">Lifestyle Tracker</h1>
+        <p class="text-sm text-stone-muted">Track your sleep, nutrition & activity</p>
+      </div>
+
+      <!-- Auth Forms -->
+      <div id="authForms">
+        <!-- Login Form -->
+        <div id="loginForm">
+          <h2 class="text-xl font-medium mb-4">Sign In</h2>
+          <div class="space-y-3 mb-4">
+            <input 
+              type="email" 
+              id="loginEmail" 
+              placeholder="Email" 
+              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+            />
+            <input 
+              type="password" 
+              id="loginPassword" 
+              placeholder="Password" 
+              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+            />
+          </div>
+          <button 
+            id="loginBtn" 
+            class="w-full bg-sage text-white rounded-lg px-4 py-3 font-medium hover:opacity-90 transition-opacity mb-3"
+          >
+            Sign In
+          </button>
+          <p class="text-sm text-center text-stone-muted">
+            Don't have an account? 
+            <button id="showSignup" class="text-sage font-medium">Sign Up</button>
+          </p>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="hidden">
+          <h2 class="text-xl font-medium mb-4">Create Account</h2>
+          <div class="space-y-3 mb-4">
+            <input 
+              type="email" 
+              id="signupEmail" 
+              placeholder="Email" 
+              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+            />
+            <input 
+              type="password" 
+              id="signupPassword" 
+              placeholder="Password (min 6 characters)" 
+              class="w-full border border-stone-border rounded-lg px-4 py-3 focus:outline-none focus:border-sage"
+            />
+          </div>
+          <button 
+            id="signupBtn" 
+            class="w-full bg-sage text-white rounded-lg px-4 py-3 font-medium hover:opacity-90 transition-opacity mb-3"
+          >
+            Create Account
+          </button>
+          <p class="text-sm text-center text-stone-muted">
+            Already have an account? 
+            <button id="showLogin" class="text-sage font-medium">Sign In</button>
+          </p>
+        </div>
+      </div>
+
+      <!-- Status Messages -->
+      <div id="statusMessage" class="hidden mt-4 p-3 rounded-lg text-sm"></div>
+
+      <!-- Loading State -->
+      <div id="loading" class="hidden text-center py-8">
+        <div class="inline-block w-8 h-8 border-4 border-sage border-t-transparent rounded-full animate-spin"></div>
+        <p class="text-sm text-stone-muted mt-2">Loading...</p>
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="mt-6 text-center text-xs text-stone-muted">
+      <p>Your data is securely stored and encrypted</p>
+      <p class="mt-1">Access from any device, anywhere</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    // Verify Supabase loaded
+    if (typeof supabase === 'undefined') {
+      document.getElementById('authForms').innerHTML = '<p class="text-red-600 text-sm">Failed to load Supabase. Check your internet connection and reload the page.</p>';
+    }
+
+    // Check if already logged in
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Toggle between login and signup
+    document.getElementById('showSignup').addEventListener('click', () => {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('signupForm').classList.remove('hidden');
+      clearStatus();
+    });
+
+    document.getElementById('showLogin').addEventListener('click', () => {
+      document.getElementById('signupForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      clearStatus();
+    });
+
+    // Status message helpers
+    function showStatus(message, type = 'info') {
+      const statusEl = document.getElementById('statusMessage');
+      statusEl.textContent = message;
+      statusEl.className = 'mt-4 p-3 rounded-lg text-sm ';
+      
+      if (type === 'error') {
+        statusEl.className += 'bg-red-100 text-red-800';
+      } else if (type === 'success') {
+        statusEl.className += 'bg-green-100 text-green-800';
+      } else {
+        statusEl.className += 'bg-blue-100 text-blue-800';
+      }
+      
+      statusEl.classList.remove('hidden');
+    }
+
+    function clearStatus() {
+      document.getElementById('statusMessage').classList.add('hidden');
+    }
+
+    function showLoading(show = true) {
+      document.getElementById('authForms').classList.toggle('hidden', show);
+      document.getElementById('loading').classList.toggle('hidden', !show);
+    }
+
+    // Login
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        showStatus('Please enter email and password', 'error');
+        return;
+      }
+
+      showLoading(true);
+      clearStatus();
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      showLoading(false);
+
+      if (error) {
+        showStatus(error.message, 'error');
+      } else {
+        showStatus('Login successful! Redirecting...', 'success');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 1000);
+      }
+    });
+
+    // Signup
+    document.getElementById('signupBtn').addEventListener('click', async () => {
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      if (!email || !password) {
+        showStatus('Please enter email and password', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showStatus('Password must be at least 6 characters', 'error');
+        return;
+      }
+
+      showLoading(true);
+      clearStatus();
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password
+      });
+
+      showLoading(false);
+
+      if (error) {
+        showStatus(error.message, 'error');
+      } else {
+        showStatus('Account created! Check your email to confirm (or sign in directly)', 'success');
+        // Auto-login after signup (Supabase allows this even before email confirmation)
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 2000);
+      }
+    });
+
+    // Enter key support
+    document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('loginBtn').click();
+    });
+
+    document.getElementById('signupPassword').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') document.getElementById('signupBtn').click();
+    });
+  </script>
+</body>
+</html>

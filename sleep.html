@@ -259,7 +259,8 @@
       return 'bg-red-400';
     }
 
-    function loadSleep() {
+    async function loadSleep() {
+      await getData('sleep'); // Load data into cache
       const today = getTodayData('sleep');
 
       if (today && today.bedtime) {
@@ -275,34 +276,30 @@
       document.getElementById('sleepStart').addEventListener('click', () => showSleepStep(1));
       document.getElementById('sleepNext1').addEventListener('click', () => showSleepStep(2));
 
-      document.getElementById('sleepNext2').addEventListener('click', () => {
+      document.getElementById('sleepNext2').addEventListener('click', async () => {
         const bedtime  = document.getElementById('sleepBedtime').value;
         const wakeTime = document.getElementById('sleepWakeTime').value;
         if (!bedtime || !wakeTime) return;
 
         const entry = analyzeSleep(bedtime, wakeTime);
 
-        const data = getData('sleep');
-        data[todayKey()] = entry;
-        setData('sleep', data);
+        await setSleepData(todayKey(), entry); // Save to Supabase
 
         showSleepResult(entry);
-        renderCalendar();
+        await renderCalendar();
       });
 
-      document.getElementById('sleepReset').addEventListener('click', () => {
-        const data = getData('sleep');
-        delete data[todayKey()];
-        setData('sleep', data);
+      document.getElementById('sleepReset').addEventListener('click', async () => {
+        await deleteSleepData(todayKey()); // Delete from Supabase
         document.getElementById('sleepDialog').classList.remove('hidden');
         document.getElementById('sleepSummary').classList.add('hidden');
         showSleepStep(0);
-        renderCalendar();
+        await renderCalendar();
       });
     }
 
     // Calendar functions
-    function renderCalendar() {
+    async function renderCalendar() {
       const year = currentCalendarDate.getFullYear();
       const month = currentCalendarDate.getMonth();
       
@@ -313,7 +310,7 @@
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      const sleepData = getData('sleep');
+      const sleepData = await getData('sleep'); // Load from Supabase
       const daysEl = document.getElementById('calendarDays');
       daysEl.innerHTML = '';
 
@@ -378,19 +375,19 @@
     }
 
     // Initialize calendar
-    document.getElementById('prevMonth').addEventListener('click', () => {
+    document.getElementById('prevMonth').addEventListener('click', async () => {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-      renderCalendar();
+      await renderCalendar();
     });
 
-    document.getElementById('nextMonth').addEventListener('click', () => {
+    document.getElementById('nextMonth').addEventListener('click', async () => {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-      renderCalendar();
+      await renderCalendar();
     });
 
     document.getElementById('closeModal').addEventListener('click', closeEditModal);
 
-    document.getElementById('saveEdit').addEventListener('click', () => {
+    document.getElementById('saveEdit').addEventListener('click', async () => {
       if (!editingDate) return;
       
       const bedtime = document.getElementById('editBedtime').value;
@@ -399,41 +396,53 @@
       if (!bedtime || !wakeTime) return;
 
       const entry = analyzeSleep(bedtime, wakeTime);
-      const data = getData('sleep');
-      data[editingDate] = entry;
-      setData('sleep', data);
+      await setSleepData(editingDate, entry); // Save to Supabase
 
       // Reload if editing today
       if (editingDate === todayKey()) {
-        loadSleep();
+        await loadSleep();
       }
 
       closeEditModal();
-      renderCalendar();
+      await renderCalendar();
     });
 
-    document.getElementById('deleteEntry').addEventListener('click', () => {
+    document.getElementById('deleteEntry').addEventListener('click', async () => {
       if (!editingDate) return;
       
       if (confirm('Delete this sleep entry?')) {
-        const data = getData('sleep');
-        delete data[editingDate];
-        setData('sleep', data);
+        await deleteSleepData(editingDate); // Delete from Supabase
 
         // Reload if deleting today
         if (editingDate === todayKey()) {
-          loadSleep();
+          await loadSleep();
         }
 
         closeEditModal();
-        renderCalendar();
+        await renderCalendar();
       }
     });
 
-    // Initialize
-    initSleepDialog();
-    loadSleep();
-    renderCalendar();
+    // Initialize - will run after auth check
+    async function initSleep() {
+      initSleepDialog();
+      await loadSleep();
+      await renderCalendar();
+    }
+  </script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    // Auth check
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        initSleep();
+      }
+    })();
   </script>
 </body>
 </html>

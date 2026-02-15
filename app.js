@@ -35,22 +35,26 @@ function timeNow() {
 }
 
 // Storage utilities
-function getData(key) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEYS[key]);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
+// NOTE: getData, setData, getTodayData are provided by db.js (async Supabase versions)
+// These fallbacks are only used if db.js hasn't loaded yet (e.g. login page)
+if (typeof getData === 'undefined') {
+  function getData(key) {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS[key]);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
   }
-}
 
-function setData(key, data) {
-  localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(data));
-}
+  function setData(key, data) {
+    localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(data));
+  }
 
-function getTodayData(key) {
-  const data = getData(key);
-  return data[todayKey()] || null;
+  function getTodayData(key) {
+    const data = getData(key);
+    return data[todayKey()] || null;
+  }
 }
 
 // Sleep utilities

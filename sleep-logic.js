@@ -120,20 +120,25 @@ function analyzeBedtime(bedtime) {
     score = 60;
     feedback = 'Acceptable, but closer to 21:30-22:30 optimizes melatonin response.';
   }
-  // Early: Before 20:00
+  // Late: 00:00-02:00 (0-120)
+  else if (mins <= 120) {
+    score = 40;
+    feedback = 'Past midnight disrupts cortisol\'s natural rise pattern for morning alertness.';
+  }
+  // Very late: 02:00-04:00 (120-240)
+  else if (mins > 120 && mins < 240) {
+    score = 20;
+    feedback = 'Very late. You\'re missing the deepest sleep window (first 3-4 hours).';
+  }
+  // Early: Before 20:00 but after very late night (240-1200)
   else if (mins < 1200) {
     score = 50;
     feedback = 'Too early. Melatonin hasn\'t peaked yet; you may struggle to fall asleep.';
   }
-  // Late: 00:00-02:00 (0-120 or 1440+)
-  else if (mins <= 120 || mins > 1440) {
-    score = 40;
-    feedback = 'Past midnight disrupts cortisol\'s natural rise pattern for morning alertness.';
-  }
-  // Very late: After 02:00 (120+)
+  // Extremely late: 04:00-20:00 (shouldn't happen often, but handle it)
   else {
-    score = 20;
-    feedback = 'Very late. You\'re missing the deepest sleep window (first 3-4 hours).';
+    score = 30;
+    feedback = 'Extremely late. This will significantly disrupt your circadian rhythm.';
   }
 
   return { score, feedback };

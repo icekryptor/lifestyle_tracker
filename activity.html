@@ -51,82 +51,230 @@
       </div>
     </header>
 
-    <!-- Activity Section -->
+    <!-- Daily Summary -->
     <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
-      <h2 class="text-xs font-medium uppercase tracking-wider text-teal mb-4">Physical activity</h2>
+      <h2 class="text-xs font-medium uppercase tracking-wider text-teal mb-4">Today's Activity</h2>
+      <div class="bg-cream-50 rounded-lg p-4">
+        <div class="text-center">
+          <div class="text-3xl font-semibold tracking-tight" id="totalCalories">0</div>
+          <div class="text-xs text-stone-muted mt-1">CALORIES BURNED</div>
+        </div>
+        <div class="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-stone-border">
+          <div class="text-center">
+            <div class="text-lg font-medium" id="totalSteps">0</div>
+            <div class="text-xs text-stone-muted">STEPS</div>
+          </div>
+          <div class="text-center">
+            <div class="text-lg font-medium" id="totalGymMins">0</div>
+            <div class="text-xs text-stone-muted">GYM MINS</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Steps Section -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-teal mb-4">Daily Steps</h2>
+      
+      <!-- Steps input -->
+      <div id="stepsInput">
+        <div class="flex gap-2 mb-3">
+          <input type="number" id="stepsCount" min="0" placeholder="Enter steps" class="flex-1 border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-center text-lg font-medium focus:outline-none focus:border-teal" />
+        </div>
+        <button class="w-full bg-teal text-white rounded-lg px-4 py-2.5 font-medium hover:opacity-90 active:opacity-85 transition-opacity text-sm" id="logSteps">Log Steps</button>
+      </div>
+
+      <!-- Steps summary -->
+      <div id="stepsSummary" class="hidden">
+        <div class="bg-cream-50 rounded-lg p-4 mb-3">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-2xl font-semibold" id="stepsDisplay">0</span>
+            <span class="text-sm text-stone-muted" id="stepsCalories">0 cal</span>
+          </div>
+          <div class="h-2 bg-stone-border rounded-full overflow-hidden mb-2">
+            <div id="stepsProgress" class="h-full bg-teal transition-all duration-500" style="width: 0%"></div>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-stone-muted" id="stepsFeedback">Keep walking!</span>
+            <span class="text-xs font-medium text-stone-muted" id="stepsPercentage">0%</span>
+          </div>
+        </div>
+        <button class="w-full border border-stone-border rounded-lg px-4 py-2 text-sm text-stone-muted hover:border-teal hover:text-teal transition-colors" id="editSteps">Update steps</button>
+      </div>
+    </section>
+
+    <!-- Gym Sessions -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <h2 class="text-xs font-medium uppercase tracking-wider text-teal mb-4">Gym Sessions</h2>
+      
       <div class="flex gap-2 mb-3">
-        <input type="text" id="activityName" placeholder="e.g. Running" class="flex-1 min-w-0 border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-sm focus:outline-none focus:border-sage" />
-        <input type="number" id="activityMins" min="1" placeholder="Min" class="w-20 border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-sm focus:outline-none focus:border-sage" />
+        <input type="number" id="gymMinutes" min="1" placeholder="Minutes" class="flex-1 border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-center font-medium focus:outline-none focus:border-teal" />
+        <select id="gymIntensity" class="border border-stone-border rounded-lg px-3 py-2.5 bg-cream-50 text-sm focus:outline-none focus:border-teal">
+          <option value="light">Light</option>
+          <option value="moderate" selected>Moderate</option>
+          <option value="intense">Intense</option>
+        </select>
       </div>
-      <div class="mb-3">
-        <button class="bg-sage text-white rounded-lg px-4 py-2.5 font-medium hover:opacity-90 active:opacity-85 transition-opacity text-sm" id="logActivity">Log</button>
-      </div>
-      <p class="text-lg font-medium mt-2" id="activityToday"><span class="text-stone-muted font-normal">No activity today</span></p>
-      <ul class="mt-3" id="activityList"></ul>
+      <button class="w-full bg-teal text-white rounded-lg px-4 py-2.5 font-medium hover:opacity-90 active:opacity-85 transition-opacity text-sm mb-4" id="logGym">Log Session</button>
+      
+      <div id="gymList"></div>
     </section>
   </div>
 
   <script src="app.js"></script>
+  <script src="activity-logic.js"></script>
   <script>
     // Update today's date
     document.getElementById('todayDate').textContent = formatDate(todayKey());
 
-    function loadActivity() {
-      const today = getTodayData('activity') || { entries: [], totalMins: 0 };
-      const totalMins = today.entries.reduce((s, e) => s + (e.mins || 0), 0);
-      const listEl = document.getElementById('activityList');
-      const todayEl = document.getElementById('activityToday');
-
-      if (today.entries.length) {
-        todayEl.innerHTML = `${totalMins} min total`;
-        todayEl.className = 'text-lg font-medium mt-2';
+    async function loadActivity() {
+      const data = await getData('activity');
+      const today = data[todayKey()] || { steps: 0, gymSessions: [] };
+      
+      // Load steps
+      if (today.steps > 0) {
+        showStepsSummary(today.steps);
       } else {
-        todayEl.innerHTML = '<span class="text-stone-muted font-normal">No activity today</span>';
-        todayEl.className = 'text-lg font-medium mt-2';
+        showStepsInput();
       }
+      
+      // Load gym sessions
+      loadGymSessions(today.gymSessions || []);
+      
+      // Update summary
+      updateSummary(today);
+    }
 
-      listEl.innerHTML = today.entries.map((e, i) =>
-        `<li class="flex justify-between items-center py-2 border-b border-stone-border last:border-b-0 text-sm">
-          <span>${e.name || 'Activity'} · ${e.mins} min</span>
-          <span class="text-xs text-stone-muted">${e.time}</span>
-          <button class="text-stone-muted hover:text-red-500 text-base ml-2" data-i="${i}" aria-label="Remove">×</button>
-        </li>`
-      ).join('');
+    function showStepsInput() {
+      document.getElementById('stepsInput').classList.remove('hidden');
+      document.getElementById('stepsSummary').classList.add('hidden');
+    }
 
+    function showStepsSummary(steps) {
+      document.getElementById('stepsInput').classList.add('hidden');
+      document.getElementById('stepsSummary').classList.remove('hidden');
+      
+      const analysis = analyzeSteps(steps);
+      document.getElementById('stepsDisplay').textContent = steps.toLocaleString();
+      document.getElementById('stepsCalories').textContent = `${analysis.calories} cal`;
+      document.getElementById('stepsProgress').style.width = `${Math.min(analysis.percentage, 100)}%`;
+      document.getElementById('stepsFeedback').textContent = analysis.feedback;
+      document.getElementById('stepsPercentage').textContent = `${analysis.percentage}%`;
+    }
+
+    async function logSteps() {
+      const steps = parseInt(document.getElementById('stepsCount').value, 10);
+      if (isNaN(steps) || steps < 0) return;
+      
+      const data = await getData('activity');
+      const today = data[todayKey()] || { steps: 0, gymSessions: [] };
+      today.steps = steps;
+      await setActivityData(todayKey(), today);
+      
+      document.getElementById('stepsCount').value = '';
+      await loadActivity();
+    }
+
+    async function editSteps() {
+      const data = await getData('activity');
+      const today = data[todayKey()];
+      if (today && today.steps) {
+        document.getElementById('stepsCount').value = today.steps;
+      }
+      showStepsInput();
+    }
+
+    async function logGymSession() {
+      const minutes = parseInt(document.getElementById('gymMinutes').value, 10);
+      const intensity = document.getElementById('gymIntensity').value;
+      
+      if (isNaN(minutes) || minutes < 1) return;
+      
+      const calories = calculateGymCalories(minutes, intensity);
+      const session = {
+        minutes,
+        intensity,
+        calories,
+        time: timeNow()
+      };
+      
+      const data = await getData('activity');
+      const today = data[todayKey()] || { steps: 0, gymSessions: [] };
+      if (!today.gymSessions) today.gymSessions = [];
+      today.gymSessions.push(session);
+      await setActivityData(todayKey(), today);
+      
+      document.getElementById('gymMinutes').value = '';
+      await loadActivity();
+    }
+
+    function loadGymSessions(sessions) {
+      const listEl = document.getElementById('gymList');
+      
+      if (sessions.length === 0) {
+        listEl.innerHTML = '<p class="text-sm text-stone-muted">No gym sessions logged today</p>';
+        return;
+      }
+      
+      listEl.innerHTML = sessions.map((s, i) => `
+        <div class="flex justify-between items-center py-2 border-b border-stone-border last:border-b-0">
+          <div class="flex-1">
+            <div class="text-sm font-medium">${s.minutes} min · ${s.intensity}</div>
+            <div class="text-xs text-stone-muted">${s.calories} cal · ${s.time}</div>
+          </div>
+          <button class="text-stone-muted hover:text-red-500 text-lg ml-2" data-i="${i}" aria-label="Remove">×</button>
+        </div>
+      `).join('');
+      
       listEl.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => removeActivityEntry(parseInt(btn.dataset.i, 10)));
+        btn.addEventListener('click', () => removeGymSession(parseInt(btn.dataset.i, 10)));
       });
     }
 
-    function logActivity() {
-      const name = document.getElementById('activityName').value.trim() || 'Activity';
-      const mins = parseInt(document.getElementById('activityMins').value, 10);
-      if (isNaN(mins) || mins < 1) return;
-      
-      const data = getData('activity');
-      const today = data[todayKey()] || { entries: [] };
-      today.entries.push({ name, mins, time: timeNow() });
-      data[todayKey()] = today;
-      setData('activity', data);
-      
-      document.getElementById('activityName').value = '';
-      document.getElementById('activityMins').value = '';
-      loadActivity();
+    async function removeGymSession(index) {
+      const data = await getData('activity');
+      const today = data[todayKey()];
+      if (!today || !today.gymSessions || !today.gymSessions[index]) return;
+      today.gymSessions.splice(index, 1);
+      await setActivityData(todayKey(), today);
+      await loadActivity();
     }
 
-    function removeActivityEntry(index) {
-      const data = getData('activity');
-      const today = data[todayKey()];
-      if (!today || !today.entries[index]) return;
-      today.entries.splice(index, 1);
-      data[todayKey()] = today;
-      setData('activity', data);
-      loadActivity();
+    function updateSummary(today) {
+      const summary = calculateDailySummary(today);
+      document.getElementById('totalCalories').textContent = summary.totalCalories;
+      document.getElementById('totalSteps').textContent = summary.steps.toLocaleString();
+      document.getElementById('totalGymMins').textContent = summary.gymMinutes;
     }
 
     // Initialize
-    document.getElementById('logActivity').addEventListener('click', logActivity);
-    loadActivity();
+    document.getElementById('logSteps').addEventListener('click', logSteps);
+    document.getElementById('editSteps').addEventListener('click', editSteps);
+    document.getElementById('logGym').addEventListener('click', logGymSession);
+    
+    // Allow Enter key for steps
+    document.getElementById('stepsCount').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') logSteps();
+    });
+    
+    // Initialize - will run after auth check
+    async function initActivity() {
+      await loadActivity();
+    }
+  </script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    // Auth check
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        initActivity();
+      }
+    })();
   </script>
 </body>
 </html>

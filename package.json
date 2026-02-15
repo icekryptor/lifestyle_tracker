@@ -1,0 +1,23 @@
+{
+  "name": "lifestyle_tracker",
+  "version": "1.0.0",
+  "description": "A personal lifestyle tracking app for monitoring sleep, nutrition, and physical activity with cloud sync via Supabase.",
+  "main": "activity-logic.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/icekryptor/lifestyle_tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/icekryptor/lifestyle_tracker/issues"
+  },
+  "homepage": "https://github.com/icekryptor/lifestyle_tracker#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.2.3"
+  }
+}

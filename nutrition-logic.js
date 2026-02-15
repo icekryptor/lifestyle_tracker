@@ -5,6 +5,16 @@
  * Protein: 4 cal/g
  * Carbs: 4 cal/g
  * Fats: 9 cal/g
+ * 
+ * TODO: AI Integration for auto-filling dish nutrition
+ * Future enhancement: Use OpenAI API or food database API (like USDA FoodData Central)
+ * to automatically lookup nutritional information by dish name
+ * 
+ * Example integration:
+ * - User enters "Grilled Chicken Breast"
+ * - API call retrieves standard nutrition per 100g
+ * - Auto-fills protein, carbs, fats, calories
+ * - User can adjust if needed
  */
 function calculateCalories(protein, carbs, fats) {
   return (protein * 4) + (carbs * 4) + (fats * 9);

@@ -84,6 +84,15 @@
       </div>
     </section>
 
+    <!-- My Dishes Library -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-terracotta">My Dishes</h2>
+        <button id="addDishBtn" class="text-xs px-2 py-1 rounded bg-terracotta/10 text-terracotta font-medium">+ Add Dish</button>
+      </div>
+      <div id="dishesLibrary" class="space-y-2"></div>
+    </section>
+
     <!-- Breakfast -->
     <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
       <div class="flex justify-between items-start mb-3">
@@ -163,6 +172,56 @@
     </section>
   </div>
 
+  <!-- Add Dish Modal -->
+  <div id="dishModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-medium">Add New Dish</h3>
+        <button id="closeDishModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">DISH NAME</label>
+          <input type="text" id="dishName" placeholder="e.g. Grilled Chicken Breast" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+        </div>
+        
+        <p class="text-xs text-stone-muted bg-cream-50 p-2 rounded">Enter nutrition values per 100g of this dish</p>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">PROTEIN (g/100g)</label>
+            <input type="number" id="dishProtein" min="0" step="0.1" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          </div>
+          <div>
+            <label class="text-xs font-medium text-stone-muted block mb-1">CARBS (g/100g)</label>
+            <input type="number" id="dishCarbs" min="0" step="0.1" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">FATS (g/100g)</label>
+          <input type="number" id="dishFats" min="0" step="0.1" placeholder="0" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">CALORIES (per 100g)</label>
+          <div class="relative">
+            <input type="number" id="dishCalories" readonly placeholder="Auto-calculated" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none" />
+            <span class="absolute right-3 top-2.5 text-xs text-stone-muted">auto</span>
+          </div>
+          <p class="text-xs text-stone-muted mt-1">Calculated: 4 cal/g protein & carbs, 9 cal/g fat</p>
+        </div>
+
+        <button id="saveDish" class="w-full bg-terracotta text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Dish</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Meal Input Modal -->
   <div id="mealModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
     <div class="bg-white rounded-xl max-w-sm w-full p-5 max-h-[90vh] overflow-y-auto">
@@ -190,6 +249,19 @@
         <button id="aiRecognize" class="w-full mt-2 text-xs py-2 bg-terracotta/10 text-terracotta rounded-lg font-medium hover:bg-terracotta/20 transition-colors hidden">
           🤖 AI Recognize Nutrition
         </button>
+      </div>
+
+      <!-- Quick Add from Dishes -->
+      <div class="mb-4 pb-4 border-b border-stone-border" id="quickAddSection">
+        <label class="text-xs font-medium text-stone-muted block mb-2">QUICK ADD FROM MY DISHES</label>
+        <select id="quickDishSelect" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-terracotta mb-2">
+          <option value="">-- Select a dish --</option>
+        </select>
+        <div id="portionSection" class="hidden">
+          <label class="text-xs font-medium text-stone-muted block mb-1">PORTION SIZE (g)</label>
+          <input type="number" id="portionSize" min="1" placeholder="100" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-terracotta mb-2" />
+          <button id="addDishToMeal" class="w-full bg-terracotta/20 text-terracotta rounded-lg px-3 py-2 text-sm font-medium hover:bg-terracotta/30 transition-colors">Add to Meal</button>
+        </div>
       </div>
 
       <!-- Manual Entry -->
@@ -322,7 +394,7 @@
 
     document.getElementById('closeModal').addEventListener('click', closeMealModal);
 
-    document.getElementById('saveMeal').addEventListener('click', () => {
+    document.getElementById('saveMeal').addEventListener('click', async () => {
       if (!currentMealType) return;
 
       const description = document.getElementById('mealDescription').value.trim();
@@ -348,20 +420,20 @@
         time: timeNow()
       };
 
-      // Save to storage
-      const data = getData('nutrition');
+      // Save to Supabase
+      const data = await getData('nutrition');
       const today = data[todayKey()] || { meals: {} };
       today.meals[currentMealType] = meal;
-      data[todayKey()] = today;
-      setData('nutrition', data);
+      await setNutritionData(todayKey(), today);
 
       closeMealModal();
-      loadNutrition();
-      renderCalendar();
+      await loadNutrition();
+      await renderCalendar();
     });
 
     // Load and display nutrition
-    function loadNutrition() {
+    async function loadNutrition() {
+      await getData('nutrition'); // Refresh cache from Supabase
       const today = getTodayData('nutrition') || { meals: {} };
       
       // Display each meal
@@ -417,21 +489,21 @@
       document.getElementById('totalFiber').textContent = Math.round(totalFiber) + 'g';
     }
 
-    function deleteMeal(mealType) {
+    async function deleteMeal(mealType) {
       if (!confirm('Delete this meal?')) return;
       
-      const data = getData('nutrition');
+      const data = await getData('nutrition');
       const today = data[todayKey()];
       if (today && today.meals) {
         delete today.meals[mealType];
-        setData('nutrition', data);
-        loadNutrition();
-        renderCalendar();
+        await setNutritionData(todayKey(), today);
+        await loadNutrition();
+        await renderCalendar();
       }
     }
 
     // Calendar functions
-    function renderCalendar() {
+    async function renderCalendar() {
       const year = currentCalendarDate.getFullYear();
       const month = currentCalendarDate.getMonth();
       
@@ -441,7 +513,7 @@
       const firstDay = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       
-      const nutritionData = getData('nutrition');
+      const nutritionData = await getData('nutrition');
       const daysEl = document.getElementById('calendarDays');
       daysEl.innerHTML = '';
 
@@ -473,19 +545,161 @@
       }
     }
 
-    document.getElementById('prevMonth').addEventListener('click', () => {
+    document.getElementById('prevMonth').addEventListener('click', async () => {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
-      renderCalendar();
+      await renderCalendar();
     });
 
-    document.getElementById('nextMonth').addEventListener('click', () => {
+    document.getElementById('nextMonth').addEventListener('click', async () => {
       currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
-      renderCalendar();
+      await renderCalendar();
     });
 
-    // Initialize
-    loadNutrition();
-    renderCalendar();
+    // ── Dishes Management ──
+    
+    // Cache for dishes (loaded from Supabase)
+    let dishesCache = [];
+
+    async function loadDishes() {
+      dishesCache = await getDishes(); // From db.js
+      const libraryEl = document.getElementById('dishesLibrary');
+      const selectEl = document.getElementById('quickDishSelect');
+      
+      if (dishesCache.length === 0) {
+        libraryEl.innerHTML = '<p class="text-sm text-stone-muted">No dishes saved yet. Create your first dish!</p>';
+      } else {
+        libraryEl.innerHTML = dishesCache.map((dish) => `
+          <div class="flex justify-between items-center p-3 bg-cream-50 rounded-lg">
+            <div class="flex-1 min-w-0">
+              <div class="text-sm font-medium">${dish.name}</div>
+              <div class="text-xs text-stone-muted">
+                Per 100g: ${dish.calories} cal • P: ${dish.protein}g • C: ${dish.carbs}g • F: ${dish.fats}g
+              </div>
+            </div>
+            <button onclick="deleteDishById('${dish.id}')" class="text-stone-muted hover:text-red-500 text-lg ml-2">×</button>
+          </div>
+        `).join('');
+      }
+      
+      // Update quick add dropdown
+      selectEl.innerHTML = '<option value="">-- Select a dish --</option>' + 
+        dishesCache.map((dish, i) => `<option value="${i}">${dish.name}</option>`).join('');
+    }
+
+    function openDishModal() {
+      document.getElementById('dishName').value = '';
+      document.getElementById('dishProtein').value = '';
+      document.getElementById('dishCarbs').value = '';
+      document.getElementById('dishFats').value = '';
+      document.getElementById('dishCalories').value = '';
+      document.getElementById('dishModal').classList.remove('hidden');
+      document.getElementById('dishModal').classList.add('flex');
+    }
+
+    function closeDishModal() {
+      document.getElementById('dishModal').classList.add('hidden');
+      document.getElementById('dishModal').classList.remove('flex');
+    }
+
+    // Auto-calculate dish calories
+    function updateDishCalories() {
+      const protein = parseFloat(document.getElementById('dishProtein').value) || 0;
+      const carbs = parseFloat(document.getElementById('dishCarbs').value) || 0;
+      const fats = parseFloat(document.getElementById('dishFats').value) || 0;
+      const calories = calculateCalories(protein, carbs, fats);
+      document.getElementById('dishCalories').value = Math.round(calories);
+    }
+
+    document.getElementById('dishProtein').addEventListener('input', updateDishCalories);
+    document.getElementById('dishCarbs').addEventListener('input', updateDishCalories);
+    document.getElementById('dishFats').addEventListener('input', updateDishCalories);
+
+    document.getElementById('addDishBtn').addEventListener('click', openDishModal);
+    document.getElementById('closeDishModal').addEventListener('click', closeDishModal);
+
+    document.getElementById('saveDish').addEventListener('click', async () => {
+      const name = document.getElementById('dishName').value.trim();
+      const protein = parseFloat(document.getElementById('dishProtein').value) || 0;
+      const carbs = parseFloat(document.getElementById('dishCarbs').value) || 0;
+      const fats = parseFloat(document.getElementById('dishFats').value) || 0;
+      const calories = parseFloat(document.getElementById('dishCalories').value) || 0;
+
+      if (!name) {
+        alert('Please enter a dish name');
+        return;
+      }
+
+      const dish = { name, protein, carbs, fats, calories };
+      await addDish(dish); // From db.js
+
+      closeDishModal();
+      await loadDishes();
+    });
+
+    async function deleteDishById(dishId) {
+      if (!confirm('Delete this dish?')) return;
+      await deleteDish(dishId); // From db.js
+      await loadDishes();
+    }
+
+    // Quick add dish to meal
+    document.getElementById('quickDishSelect').addEventListener('change', (e) => {
+      const index = e.target.value;
+      if (index !== '') {
+        document.getElementById('portionSection').classList.remove('hidden');
+        document.getElementById('portionSize').value = '100';
+      } else {
+        document.getElementById('portionSection').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('addDishToMeal').addEventListener('click', () => {
+      const dishIndex = document.getElementById('quickDishSelect').value;
+      const portionSize = parseFloat(document.getElementById('portionSize').value) || 100;
+      
+      if (dishIndex === '') return;
+      
+      const dish = dishesCache[dishIndex]; // Use cached dishes
+      
+      // Calculate nutrition for the portion
+      const multiplier = portionSize / 100;
+      const protein = Math.round(dish.protein * multiplier * 10) / 10;
+      const carbs = Math.round(dish.carbs * multiplier * 10) / 10;
+      const fats = Math.round(dish.fats * multiplier * 10) / 10;
+      const calories = Math.round(dish.calories * multiplier);
+      
+      // Fill in the manual entry fields
+      document.getElementById('mealDescription').value = `${dish.name} (${portionSize}g)`;
+      document.getElementById('mealProtein').value = protein;
+      document.getElementById('mealCarbs').value = carbs;
+      document.getElementById('mealFats').value = fats;
+      document.getElementById('mealCalories').value = calories;
+      
+      // Reset quick add section
+      document.getElementById('quickDishSelect').value = '';
+      document.getElementById('portionSection').classList.add('hidden');
+    });
+
+    // Initialize - will run after auth check
+    async function initNutrition() {
+      await loadDishes();
+      await loadNutrition();
+      await renderCalendar();
+    }
+  </script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    // Auth check
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        initNutrition();
+      }
+    })();
   </script>
 </body>
 </html>

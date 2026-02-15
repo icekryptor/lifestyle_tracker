@@ -40,8 +40,14 @@
   <div class="max-w-md mx-auto p-6 pb-12">
     <!-- Header -->
     <header class="mb-8 pb-4 border-b border-stone-border">
-      <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
-      <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+      <div class="flex justify-between items-start mb-2">
+        <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
+        <button id="logoutBtn" class="text-xs px-3 py-1.5 rounded-lg border border-stone-border hover:border-red-300 hover:text-red-600 transition-colors">
+          Logout
+        </button>
+      </div>
+      <p class="text-sm text-stone-muted font-light" id="todayDate"></p>
+      <p class="text-xs text-stone-muted/60 mt-1" id="userEmail"></p>
     </header>
 
     <!-- Today's Tasks -->
@@ -150,7 +156,12 @@
     document.getElementById('todayDate').textContent = formatDate(todayKey());
 
     // Update today's tasks based on completion status
-    function updateTodayTasks() {
+    async function updateTodayTasks() {
+      // Load all data into cache first
+      await getData('sleep');
+      await getData('nutrition');
+      await getData('activity');
+
       const sleepData = getTodayData('sleep');
       const nutritionData = getTodayData('nutrition');
       const activityData = getTodayData('activity');
@@ -172,12 +183,14 @@
       const nutritionTitle = document.getElementById('nutritionTaskTitle');
       const nutritionDesc = document.getElementById('nutritionTaskDesc');
       
-      if (nutritionData && nutritionData.entries && nutritionData.entries.length > 0) {
-        const totalCals = nutritionData.entries.reduce((s, e) => s + (e.cals || 0), 0);
+      if (nutritionData && nutritionData.meals && Object.keys(nutritionData.meals).length > 0) {
+        const meals = nutritionData.meals;
+        const mealCount = Object.keys(meals).length;
+        const totalCals = Object.values(meals).reduce((s, m) => s + (m.calories || 0), 0);
         nutritionTask.classList.remove('border-2', 'border-stone-border');
         nutritionTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         nutritionTitle.innerHTML = '✓ Meals logged';
-        nutritionDesc.textContent = `${nutritionData.entries.length} meal(s)${totalCals ? ' • ' + totalCals + ' cal' : ''}`;
+        nutritionDesc.textContent = `${mealCount} meal(s)${totalCals ? ' • ' + totalCals + ' cal' : ''}`;
       }
 
       // Activity task
@@ -185,24 +198,25 @@
       const activityTitle = document.getElementById('activityTaskTitle');
       const activityDesc = document.getElementById('activityTaskDesc');
       
-      if (activityData && activityData.entries && activityData.entries.length > 0) {
-        const totalMins = activityData.entries.reduce((s, e) => s + (e.mins || 0), 0);
+      if (activityData && (activityData.steps > 0 || (activityData.gymSessions && activityData.gymSessions.length > 0))) {
+        const steps = activityData.steps || 0;
+        const gymMins = (activityData.gymSessions || []).reduce((s, g) => s + (g.minutes || 0), 0);
         activityTask.classList.remove('border-2', 'border-stone-border');
         activityTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
         activityTitle.innerHTML = '✓ Activity logged';
-        activityDesc.textContent = `${totalMins} minutes total`;
+        activityDesc.textContent = `${steps.toLocaleString()} steps${gymMins ? ' • ' + gymMins + ' min gym' : ''}`;
       }
     }
 
     // Dashboard rendering
-    function renderDashboard() {
-      renderSleepTrend();
-      renderNutritionTrend();
-      renderActivityTrend();
+    async function renderDashboard() {
+      await renderSleepTrend();
+      await renderNutritionTrend();
+      await renderActivityTrend();
     }
 
-    function renderSleepTrend() {
-      const data = getData('sleep');
+    async function renderSleepTrend() {
+      const data = await getData('sleep');
       const chartEl = document.getElementById('dashSleepChart');
       const avgEl = document.getElementById('dashSleepAvg');
 
@@ -244,8 +258,8 @@
       }
     }
 
-    function renderNutritionTrend() {
-      const data = getData('nutrition');
+    async function renderNutritionTrend() {
+      const data = await getData('nutrition');
       const chartEl = document.getElementById('dashNutritionChart');
       const avgEl = document.getElementById('dashNutritionAvg');
 
@@ -253,7 +267,7 @@
       for (let i = 6; i >= 0; i--) {
         const key = getDayKey(i);
         const day = data[key];
-        const totalCals = day ? day.entries.reduce((s, e) => s + (e.cals || 0), 0) : 0;
+        const totalCals = day && day.meals ? Object.values(day.meals).reduce((s, m) => s + (m.calories || 0), 0) : 0;
         last7.push({ label: getDayLabel(i), cals: totalCals });
       }
 
@@ -272,8 +286,8 @@
       avgEl.textContent = avgCals ? `${avgCals} cal/day avg` : 'No data';
     }
 
-    function renderActivityTrend() {
-      const data = getData('activity');
+    async function renderActivityTrend() {
+      const data = await getData('activity');
       const chartEl = document.getElementById('dashActivityChart');
       const avgEl = document.getElementById('dashActivityAvg');
 
@@ -281,8 +295,8 @@
       for (let i = 6; i >= 0; i--) {
         const key = getDayKey(i);
         const day = data[key];
-        const totalMins = day ? day.entries.reduce((s, e) => s + (e.mins || 0), 0) : 0;
-        last7.push({ label: getDayLabel(i), mins: totalMins });
+        const gymMins = day && day.gymSessions ? day.gymSessions.reduce((s, g) => s + (g.minutes || 0), 0) : 0;
+        last7.push({ label: getDayLabel(i), mins: gymMins });
       }
 
       const maxMins = Math.max(...last7.map(d => d.mins), 1);
@@ -300,9 +314,34 @@
       avgEl.textContent = avgMins ? `${avgMins} min/day avg` : 'No data';
     }
 
-    // Initialize
-    updateTodayTasks();
-    renderDashboard();
+    // Initialize - will run after auth check
+    async function initDashboard() {
+      await updateTodayTasks();
+      await renderDashboard();
+    }
+  </script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script>
+    // Auth check
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        document.getElementById('userEmail').textContent = user.email;
+        initDashboard();
+      }
+    })();
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (confirm('Are you sure you want to logout?')) {
+        await supabase.auth.signOut();
+        window.location.href = 'login.html';
+      }
+    });
   </script>
 </body>
 </html>

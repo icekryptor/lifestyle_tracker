@@ -1,0 +1,302 @@
+// Database layer - Supabase integration
+// This replaces localStorage with Supabase database
+
+// Check if user is logged in
+async function getCurrentUser() {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
+}
+
+// Session check
+async function requireAuth() {
+  const user = await getCurrentUser();
+  if (!user) {
+    window.location.href = 'login.html';
+    return null;
+  }
+  return user;
+}
+
+// ── Sleep Data ──
+async function getSleepData() {
+  const user = await getCurrentUser();
+  if (!user) return {};
+
+  const { data, error } = await supabase
+    .from('sleep_entries')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching sleep data:', error);
+    return {};
+  }
+
+  // Convert array to object keyed by date
+  const result = {};
+  data.forEach(entry => {
+    result[entry.date] = {
+      bedtime: entry.bedtime,
+      wakeTime: entry.wake_time,
+      durationMins: entry.duration_mins,
+      rating: entry.rating,
+      breakdown: entry.breakdown
+    };
+  });
+  return result;
+}
+
+async function setSleepData(dateKey, sleepEntry) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from('sleep_entries')
+    .upsert({
+      user_id: user.id,
+      date: dateKey,
+      bedtime: sleepEntry.bedtime,
+      wake_time: sleepEntry.wakeTime,
+      duration_mins: sleepEntry.durationMins,
+      rating: sleepEntry.rating,
+      breakdown: sleepEntry.breakdown
+    }, { onConflict: 'user_id,date' });
+
+  if (error) {
+    console.error('Error saving sleep data:', error);
+  }
+}
+
+async function deleteSleepData(dateKey) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('sleep_entries')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('date', dateKey);
+
+  if (error) {
+    console.error('Error deleting sleep data:', error);
+  }
+}
+
+// ── Activity Data ──
+async function getActivityData() {
+  const user = await getCurrentUser();
+  if (!user) return {};
+
+  const { data, error } = await supabase
+    .from('activity_entries')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching activity data:', error);
+    return {};
+  }
+
+  const result = {};
+  data.forEach(entry => {
+    result[entry.date] = {
+      steps: entry.steps,
+      gymSessions: entry.gym_sessions
+    };
+  });
+  return result;
+}
+
+async function setActivityData(dateKey, activityEntry) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('activity_entries')
+    .upsert({
+      user_id: user.id,
+      date: dateKey,
+      steps: activityEntry.steps || 0,
+      gym_sessions: activityEntry.gymSessions || []
+    }, { onConflict: 'user_id,date' });
+
+  if (error) {
+    console.error('Error saving activity data:', error);
+  }
+}
+
+async function deleteActivityData(dateKey) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('activity_entries')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('date', dateKey);
+
+  if (error) {
+    console.error('Error deleting activity data:', error);
+  }
+}
+
+// ── Nutrition Data ──
+async function getNutritionData() {
+  const user = await getCurrentUser();
+  if (!user) return {};
+
+  const { data, error } = await supabase
+    .from('nutrition_entries')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching nutrition data:', error);
+    return {};
+  }
+
+  const result = {};
+  data.forEach(entry => {
+    result[entry.date] = {
+      meals: entry.meals
+    };
+  });
+  return result;
+}
+
+async function setNutritionData(dateKey, nutritionEntry) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('nutrition_entries')
+    .upsert({
+      user_id: user.id,
+      date: dateKey,
+      meals: nutritionEntry.meals || {}
+    }, { onConflict: 'user_id,date' });
+
+  if (error) {
+    console.error('Error saving nutrition data:', error);
+  }
+}
+
+async function deleteNutritionData(dateKey) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('nutrition_entries')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('date', dateKey);
+
+  if (error) {
+    console.error('Error deleting nutrition data:', error);
+  }
+}
+
+// ── Dishes Library ──
+async function getDishes() {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('dishes')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching dishes:', error);
+    return [];
+  }
+
+  return data.map(d => ({
+    id: d.id,
+    name: d.name,
+    protein: d.protein,
+    carbs: d.carbs,
+    fats: d.fats,
+    calories: d.calories
+  }));
+}
+
+async function addDish(dish) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from('dishes')
+    .insert({
+      user_id: user.id,
+      name: dish.name,
+      protein: dish.protein,
+      carbs: dish.carbs,
+      fats: dish.fats,
+      calories: dish.calories
+    })
+    .select();
+
+  if (error) {
+    console.error('Error adding dish:', error);
+    return null;
+  }
+
+  return data[0];
+}
+
+async function deleteDish(dishId) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('dishes')
+    .delete()
+    .eq('id', dishId)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error deleting dish:', error);
+  }
+}
+
+// ── Generic Data Access (for backwards compatibility with existing code) ──
+let dataCache = {
+  sleep: {},
+  activity: {},
+  nutrition: {}
+};
+
+async function getData(type) {
+  switch(type) {
+    case 'sleep':
+      dataCache.sleep = await getSleepData();
+      return dataCache.sleep;
+    case 'activity':
+      dataCache.activity = await getActivityData();
+      return dataCache.activity;
+    case 'nutrition':
+      dataCache.nutrition = await getNutritionData();
+      return dataCache.nutrition;
+    default:
+      return {};
+  }
+}
+
+async function setData(type, data) {
+  // Update cache
+  dataCache[type] = data;
+  
+  // This function expects the full data object for a type
+  // We'll need to save each entry individually
+  // For now, we'll just cache it and let individual save functions handle it
+}
+
+function getTodayData(type) {
+  const key = todayKey();
+  return dataCache[type]?.[key] || null;
+}
