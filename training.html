@@ -70,9 +70,15 @@
       <!-- Workout in progress -->
       <div id="workoutInProgress" class="hidden">
         <div class="bg-cream-50 rounded-lg p-4 mb-3">
-          <div class="flex justify-between items-center mb-2">
-            <span class="text-xs text-stone-muted">DURATION</span>
-            <span class="text-lg font-semibold" id="workoutTimer">00:00</span>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <span class="text-xs text-stone-muted block">DURATION</span>
+              <span class="text-lg font-semibold" id="workoutTimer">00:00</span>
+            </div>
+            <div>
+              <span class="text-xs text-stone-muted block">CALORIES</span>
+              <span class="text-lg font-semibold text-terracotta" id="workoutCalories">0</span>
+            </div>
           </div>
         </div>
         
@@ -92,7 +98,7 @@
       <!-- Workout summary -->
       <div id="workoutSummary" class="hidden">
         <div class="bg-cream-50 rounded-lg p-4">
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-2 gap-3 mb-3">
             <div>
               <div class="text-2xl font-semibold" id="summaryDuration">0:00</div>
               <div class="text-xs text-stone-muted">Duration</div>
@@ -101,9 +107,15 @@
               <div class="text-2xl font-semibold" id="summaryExercises">0</div>
               <div class="text-xs text-stone-muted">Exercises</div>
             </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
             <div>
               <div class="text-2xl font-semibold" id="summaryVolume">0</div>
-              <div class="text-xs text-stone-muted">Volume</div>
+              <div class="text-xs text-stone-muted">Volume (kg)</div>
+            </div>
+            <div>
+              <div class="text-2xl font-semibold text-terracotta" id="summaryCalories">0</div>
+              <div class="text-xs text-stone-muted">Calories</div>
             </div>
           </div>
         </div>
@@ -325,14 +337,20 @@
       document.getElementById('summaryDuration').textContent = durationText;
       document.getElementById('summaryExercises').textContent = workout.exercises.length;
       
-      // Calculate total volume
+      // Calculate total volume and calories
       let totalVolume = 0;
+      let totalCalories = 0;
       workout.exercises.forEach(ex => {
         ex.sets.forEach(set => {
-          totalVolume += (set.weight || 0) * (set.reps || 0);
+          const weight = set.weight || 0;
+          const reps = set.reps || 0;
+          totalVolume += weight * reps;
+          totalCalories += calculateSetCalories(weight, reps, ex.exerciseName);
         });
       });
-      document.getElementById('summaryVolume').textContent = Math.round(totalVolume) + 'kg';
+      
+      document.getElementById('summaryVolume').textContent = Math.round(totalVolume);
+      document.getElementById('summaryCalories').textContent = Math.round(totalCalories);
     }
 
     function startWorkout() {
@@ -367,34 +385,46 @@
       
       if (currentWorkout.exercises.length === 0) {
         container.innerHTML = '<p class="text-sm text-stone-muted text-center py-2">No exercises added yet</p>';
+        updateWorkoutCalories();
         return;
       }
 
-      container.innerHTML = currentWorkout.exercises.map((ex, idx) => `
-        <div class="border border-stone-border rounded-lg p-3">
-          <div class="flex justify-between items-start mb-2">
-            <div class="flex-1">
-              <div class="font-medium text-sm">${ex.exerciseName}</div>
-              <div class="text-xs text-stone-muted">${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''}</div>
+      container.innerHTML = currentWorkout.exercises.map((ex, idx) => {
+        const exerciseCalories = calculateExerciseCalories(ex.sets, ex.exerciseName);
+        return `
+          <div class="border border-stone-border rounded-lg p-3">
+            <div class="flex justify-between items-start mb-2">
+              <div class="flex-1">
+                <div class="font-medium text-sm">${ex.exerciseName}</div>
+                <div class="text-xs text-stone-muted">${ex.sets.length} set${ex.sets.length !== 1 ? 's' : ''} • ${Math.round(exerciseCalories)} cal</div>
+              </div>
+              <button onclick="removeExerciseFromWorkout(${idx})" class="text-stone-muted hover:text-red-500">×</button>
             </div>
-            <button onclick="removeExerciseFromWorkout(${idx})" class="text-stone-muted hover:text-red-500">×</button>
+            
+            ${ex.sets.length > 0 ? `
+              <div class="space-y-1 mb-2">
+                ${ex.sets.map((set, setIdx) => `
+                  <div class="flex justify-between items-center text-xs bg-cream-50 px-2 py-1 rounded">
+                    <span>Set ${setIdx + 1}</span>
+                    <span>${set.weight}kg × ${set.reps} reps</span>
+                    <button onclick="removeSet(${idx}, ${setIdx})" class="text-stone-muted hover:text-red-500">×</button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            
+            <button onclick="openLogSetModal(${idx})" class="w-full border border-sage/30 text-sage text-xs rounded px-3 py-1.5 hover:bg-sage/5">+ Add Set</button>
           </div>
-          
-          ${ex.sets.length > 0 ? `
-            <div class="space-y-1 mb-2">
-              ${ex.sets.map((set, setIdx) => `
-                <div class="flex justify-between items-center text-xs bg-cream-50 px-2 py-1 rounded">
-                  <span>Set ${setIdx + 1}</span>
-                  <span>${set.weight}kg × ${set.reps} reps</span>
-                  <button onclick="removeSet(${idx}, ${setIdx})" class="text-stone-muted hover:text-red-500">×</button>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-          
-          <button onclick="openLogSetModal(${idx})" class="w-full border border-sage/30 text-sage text-xs rounded px-3 py-1.5 hover:bg-sage/5">+ Add Set</button>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+      
+      updateWorkoutCalories();
+    }
+
+    function updateWorkoutCalories() {
+      if (!currentWorkout) return;
+      const totalCalories = calculateWorkoutCalories(currentWorkout.exercises);
+      document.getElementById('workoutCalories').textContent = Math.round(totalCalories);
     }
 
     function openSelectExerciseModal() {

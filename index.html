@@ -166,6 +166,15 @@
           </div>
           <div class="flex items-end justify-between h-16 gap-0.5" id="dashActivityChart"></div>
         </div>
+
+        <!-- Training trend (Workout Calories) -->
+        <div class="bg-white border border-stone-border rounded-xl p-4">
+          <div class="flex justify-between items-baseline mb-3">
+            <span class="text-sm font-medium">Training Calories</span>
+            <span class="text-xs text-stone-muted" id="dashTrainingAvg">—</span>
+          </div>
+          <div class="flex items-end justify-between h-16 gap-0.5" id="dashTrainingChart"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -175,6 +184,7 @@
   <script src="supabase-config.js"></script>
   <script src="db.js"></script>
   <script src="app.js"></script>
+  <script src="training-logic.js"></script>
   <script>
     // Update today's date
     document.getElementById('todayDate').textContent = formatDate(todayKey());
@@ -230,6 +240,21 @@
         activityTitle.innerHTML = '✓ Activity logged';
         activityDesc.textContent = `${steps.toLocaleString()} steps${gymMins ? ' • ' + gymMins + ' min gym' : ''}`;
       }
+
+      // Training task
+      const trainingTask = document.getElementById('trainingTask');
+      const trainingTitle = document.getElementById('trainingTaskTitle');
+      const trainingDesc = document.getElementById('trainingTaskDesc');
+      
+      const todayWorkout = await getWorkoutByDate(todayKey());
+      if (todayWorkout && todayWorkout.exercises && todayWorkout.exercises.length > 0) {
+        const calories = Math.round(calculateWorkoutCalories(todayWorkout.exercises));
+        const exerciseCount = todayWorkout.exercises.length;
+        trainingTask.classList.remove('border-2', 'border-stone-border');
+        trainingTask.classList.add('border', 'border-green-200', 'bg-green-50/50');
+        trainingTitle.innerHTML = '✓ Workout completed';
+        trainingDesc.textContent = `${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''} • ${calories} cal burned`;
+      }
     }
 
     // Dashboard rendering
@@ -237,6 +262,7 @@
       await renderSleepTrend();
       await renderNutritionTrend();
       await renderActivityTrend();
+      await renderTrainingTrend();
     }
 
     async function renderSleepTrend() {
@@ -336,6 +362,45 @@
       const totalMins = last7.reduce((s, d) => s + d.mins, 0);
       const avgMins = last7.length ? Math.round(totalMins / 7) : 0;
       avgEl.textContent = avgMins ? `${avgMins} min/day avg` : 'No data';
+    }
+
+    async function renderTrainingTrend() {
+      const workouts = await getWorkouts();
+      const chartEl = document.getElementById('dashTrainingChart');
+      const avgEl = document.getElementById('dashTrainingAvg');
+
+      // Group workouts by date
+      const workoutsByDate = {};
+      workouts.forEach(w => {
+        workoutsByDate[w.date] = w;
+      });
+
+      const last7 = [];
+      for (let i = 6; i >= 0; i--) {
+        const key = getDayKey(i);
+        const workout = workoutsByDate[key];
+        let calories = 0;
+        
+        if (workout && workout.exercises) {
+          calories = calculateWorkoutCalories(workout.exercises);
+        }
+        
+        last7.push({ label: getDayLabel(i), calories: Math.round(calories) });
+      }
+
+      const maxCals = Math.max(...last7.map(d => d.calories), 1);
+
+      chartEl.innerHTML = last7.map(d => {
+        const height = maxCals > 0 ? (d.calories / maxCals) * 100 : 8;
+        const tooltip = d.calories ? `${d.label}: ${d.calories} cal` : `${d.label}: No workout`;
+        return `<div class="flex-1 bg-sage rounded-t min-h-[4px] relative group transition-opacity hover:opacity-80 cursor-pointer" style="height: ${height}%;">
+          <span class="tooltip">${tooltip}</span>
+        </div>`;
+      }).join('');
+
+      const totalCals = last7.reduce((s, d) => s + d.calories, 0);
+      const avgCals = last7.length ? Math.round(totalCals / 7) : 0;
+      avgEl.textContent = avgCals ? `${avgCals} cal/day avg` : 'No data';
     }
 
     // Initialize - will run after auth check
