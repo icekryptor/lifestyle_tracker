@@ -308,6 +308,7 @@
     let currentMealType = null;
     let currentCalendarDate = new Date();
     let uploadedPhoto = null;
+    let editingMealDishIndex = null;
 
     // Update today's date
     document.getElementById('todayDate').textContent = formatDate(todayKey());
@@ -345,21 +346,33 @@
         dinner: '🌆 Add Dinner',
         supper: '🌙 Add Supper'
       };
-      document.getElementById('modalTitle').textContent = titles[mealType];
+      const editTitles = {
+        breakfast: '🌅 Edit Breakfast Dish',
+        lunch: '☀️ Edit Lunch Dish',
+        dinner: '🌆 Edit Dinner Dish',
+        supper: '🌙 Edit Supper Dish'
+      };
       
-      // Always start with Quick Add tab
-      switchToQuickAdd();
+      // Set title based on edit mode
+      document.getElementById('modalTitle').textContent = editingMealDishIndex !== null ? 
+        editTitles[mealType] : titles[mealType];
       
-      // Clear form
-      document.getElementById('mealDescription').value = '';
-      document.getElementById('mealProtein').value = '';
-      document.getElementById('mealCarbs').value = '';
-      document.getElementById('mealFats').value = '';
-      document.getElementById('mealFiber').value = '';
-      document.getElementById('mealCalories').value = '';
-      document.getElementById('photoPreview').classList.add('hidden');
-      document.getElementById('aiRecognize').classList.add('hidden');
-      uploadedPhoto = null;
+      // Only reset if not editing
+      if (editingMealDishIndex === null) {
+        // Always start with Quick Add tab
+        switchToQuickAdd();
+        
+        // Clear form
+        document.getElementById('mealDescription').value = '';
+        document.getElementById('mealProtein').value = '';
+        document.getElementById('mealCarbs').value = '';
+        document.getElementById('mealFats').value = '';
+        document.getElementById('mealFiber').value = '';
+        document.getElementById('mealCalories').value = '';
+        document.getElementById('photoPreview').classList.add('hidden');
+        document.getElementById('aiRecognize').classList.add('hidden');
+        uploadedPhoto = null;
+      }
       
       document.getElementById('mealModal').classList.remove('hidden');
       document.getElementById('mealModal').classList.add('flex');
@@ -370,6 +383,7 @@
       document.getElementById('mealModal').classList.remove('flex');
       currentMealType = null;
       uploadedPhoto = null;
+      editingMealDishIndex = null;
     }
 
     document.getElementById('closeModal').addEventListener('click', closeMealModal);
@@ -436,8 +450,15 @@
         today.meals[currentMealType] = [today.meals[currentMealType]];
       }
       
-      // Add dish to meal array
-      today.meals[currentMealType].push(dish);
+      // Check if we're editing or adding
+      if (editingMealDishIndex !== null) {
+        // Update existing dish
+        today.meals[currentMealType][editingMealDishIndex] = dish;
+        editingMealDishIndex = null;
+      } else {
+        // Add new dish to meal array
+        today.meals[currentMealType].push(dish);
+      }
       
       await setNutritionData(todayKey(), today);
 
@@ -481,7 +502,14 @@
                       ${dish.calories} cal • P: ${dish.protein}g • C: ${dish.carbs}g • F: ${dish.fats}g
                     </div>
                   </div>
-                  <button onclick="deleteDish('${mealType}', ${index})" class="text-stone-muted hover:text-red-500 text-lg self-start">×</button>
+                  <div class="flex gap-1">
+                    <button onclick="editMealDish('${mealType}', ${index})" class="text-stone-muted hover:text-terracotta" title="Edit">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                      </svg>
+                    </button>
+                    <button onclick="deleteDish('${mealType}', ${index})" class="text-stone-muted hover:text-red-500 text-lg" title="Delete">×</button>
+                  </div>
                 </div>
               `).join('')}
               
@@ -568,6 +596,44 @@
         await renderCalendar();
       }
     }
+
+    window.editMealDish = async function(mealType, dishIndex) {
+      const data = await getData('nutrition');
+      const today = data[todayKey()];
+      if (!today || !today.meals || !today.meals[mealType]) return;
+      
+      let meal = today.meals[mealType];
+      if (!Array.isArray(meal)) {
+        meal = [meal];
+      }
+      
+      const dish = meal[dishIndex];
+      if (!dish) return;
+      
+      currentMealType = mealType;
+      editingMealDishIndex = dishIndex;
+      
+      // Open modal first
+      openMealModal(mealType);
+      
+      // Switch to manual entry tab
+      switchToManualEntry();
+      
+      // Populate the manual entry fields with dish data
+      document.getElementById('mealDescription').value = dish.description || '';
+      document.getElementById('mealProtein').value = dish.protein || '';
+      document.getElementById('mealCarbs').value = dish.carbs || '';
+      document.getElementById('mealFats').value = dish.fats || '';
+      document.getElementById('mealFiber').value = dish.fiber || '';
+      document.getElementById('mealCalories').value = dish.calories || '';
+      
+      // Handle photo if present
+      if (dish.photo) {
+        uploadedPhoto = dish.photo;
+        document.getElementById('photoPreview').src = dish.photo;
+        document.getElementById('photoPreview').classList.remove('hidden');
+      }
+    };
 
     async function deleteMeal(mealType) {
       if (!confirm('Delete entire meal?')) return;

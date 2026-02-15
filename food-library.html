@@ -230,6 +230,7 @@
     let currentFilter = 'all';
     let searchQuery = '';
     let currentDishPhoto = null;
+    let currentEditingDishId = null;
 
     // Load and display dishes
     async function loadDishes() {
@@ -274,11 +275,18 @@
                 ${dish.brand ? `<div class="text-xs text-stone-muted/70 font-light">${dish.brand}</div>` : ''}
                 <span class="text-xs text-stone-muted">${getCategoryLabel(dish.category)}</span>
               </div>
-              <button onclick="deleteDishById('${dish.id}')" class="text-stone-muted hover:text-red-500 ml-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
+              <div class="flex gap-1">
+                <button onclick="editDishById('${dish.id}')" class="text-stone-muted hover:text-terracotta">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button onclick="deleteDishById('${dish.id}')" class="text-stone-muted hover:text-red-500">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
             </div>
             <div class="text-xs text-stone-muted space-y-1">
               <div class="flex justify-between">
@@ -350,6 +358,7 @@
       document.getElementById('dishPhotoUrlPreview').classList.add('hidden');
       document.getElementById('dishPhotoPlaceholder').classList.remove('hidden');
       currentDishPhoto = null;
+      currentEditingDishId = null;
       
       // Reset to upload tab
       switchToPhotoUpload();
@@ -357,6 +366,48 @@
       document.getElementById('dishModal').classList.remove('hidden');
       document.getElementById('dishModal').classList.add('flex');
     }
+
+    window.editDishById = function(dishId) {
+      const dish = dishesCache.find(d => d.id === dishId);
+      if (!dish) return;
+
+      currentEditingDishId = dishId;
+      document.getElementById('dishModalTitle').textContent = 'Edit Dish';
+      document.getElementById('dishName').value = dish.name;
+      document.getElementById('dishBrand').value = dish.brand || '';
+      document.getElementById('dishCategory').value = dish.category;
+      document.getElementById('dishProtein').value = dish.protein;
+      document.getElementById('dishCarbs').value = dish.carbs;
+      document.getElementById('dishFats').value = dish.fats;
+      document.getElementById('dishCalories').value = dish.calories;
+      
+      currentDishPhoto = dish.photo;
+      
+      if (dish.photo) {
+        // Check if it's a URL or base64
+        if (dish.photo.startsWith('http://') || dish.photo.startsWith('https://')) {
+          // It's a URL - switch to URL tab
+          switchToPhotoUrl();
+          document.getElementById('dishPhotoUrl').value = dish.photo;
+          document.getElementById('dishPhotoUrlPreview').src = dish.photo;
+          document.getElementById('dishPhotoUrlPreview').classList.remove('hidden');
+        } else {
+          // It's base64 - switch to upload tab
+          switchToPhotoUpload();
+          document.getElementById('dishPhotoPreview').src = dish.photo;
+          document.getElementById('dishPhotoPreview').classList.remove('hidden');
+          document.getElementById('dishPhotoPlaceholder').classList.add('hidden');
+        }
+      } else {
+        switchToPhotoUpload();
+        document.getElementById('dishPhotoPreview').classList.add('hidden');
+        document.getElementById('dishPhotoUrlPreview').classList.add('hidden');
+        document.getElementById('dishPhotoPlaceholder').classList.remove('hidden');
+      }
+
+      document.getElementById('dishModal').classList.remove('hidden');
+      document.getElementById('dishModal').classList.add('flex');
+    };
 
     function closeDishModal() {
       document.getElementById('dishModal').classList.add('hidden');
@@ -457,7 +508,13 @@
         calories, 
         photo: currentDishPhoto 
       };
-      const result = await addDish(dish);
+      
+      let result;
+      if (currentEditingDishId) {
+        result = await updateDish(currentEditingDishId, dish);
+      } else {
+        result = await addDish(dish);
+      }
 
       if (result) {
         closeDishModal();

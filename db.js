@@ -308,6 +308,36 @@ async function addDish(dish) {
   return data[0];
 }
 
+async function updateDish(dishId, dish) {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('dishes')
+    .update({
+      name: dish.name,
+      brand: dish.brand || null,
+      category: dish.category || 'other',
+      photo: dish.photo || null,
+      protein: dish.protein,
+      carbs: dish.carbs,
+      fats: dish.fats,
+      calories: dish.calories,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', dishId)
+    .eq('user_id', user.id)
+    .select();
+
+  if (error) {
+    console.error('Error updating dish:', error);
+    console.error('Error details:', error.message, error.details, error.hint);
+    return null;
+  }
+
+  return data[0];
+}
+
 async function deleteDish(dishId) {
   const user = await getCurrentUser();
   if (!user) return;
