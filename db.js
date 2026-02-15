@@ -264,6 +264,69 @@ async function deleteDish(dishId) {
   }
 }
 
+// ── Exercise Library ──
+async function getExercises() {
+  const user = await getCurrentUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from('exercises')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching exercises:', error);
+    return [];
+  }
+
+  return data.map(ex => ({
+    id: ex.id,
+    name: ex.name,
+    category: ex.category,
+    equipment: ex.equipment,
+    notes: ex.notes
+  }));
+}
+
+async function addExercise(exercise) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { data, error } = await supabase
+    .from('exercises')
+    .insert({
+      user_id: user.id,
+      name: exercise.name,
+      category: exercise.category,
+      equipment: exercise.equipment || null,
+      notes: exercise.notes || null
+    })
+    .select();
+
+  if (error) {
+    console.error('Error adding exercise:', error);
+    return null;
+  }
+
+  return data[0];
+}
+
+async function deleteExercise(exerciseId) {
+  const user = await getCurrentUser();
+  if (!user) return;
+
+  const { error } = await supabase
+    .from('exercises')
+    .delete()
+    .eq('id', exerciseId)
+    .eq('user_id', user.id);
+
+  if (error) {
+    console.error('Error deleting exercise:', error);
+  }
+}
+
 // ── Generic Data Access (for backwards compatibility with existing code) ──
 let dataCache = {
   sleep: {},

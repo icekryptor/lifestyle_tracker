@@ -80,12 +80,30 @@ create table if not exists dishes (
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+create table if not exists exercises (
+  id uuid default uuid_generate_v4() primary key,
+  user_id uuid references auth.users on delete cascade not null,
+  name text not null,
+  category text not null, -- push, pull, legs, core, cardio, other
+  equipment text,
+  notes text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Drop existing policies for exercises (now that table exists)
+drop policy if exists "Users can view own exercises" on exercises;
+drop policy if exists "Users can insert own exercises" on exercises;
+drop policy if exists "Users can update own exercises" on exercises;
+drop policy if exists "Users can delete own exercises" on exercises;
+
 -- Enable RLS on all tables
 alter table profiles enable row level security;
 alter table sleep_entries enable row level security;
 alter table activity_entries enable row level security;
 alter table nutrition_entries enable row level security;
 alter table dishes enable row level security;
+alter table exercises enable row level security;
 
 -- Create policies
 -- Profiles policies
@@ -169,11 +187,29 @@ create policy "Users can delete own dishes"
   on dishes for delete
   using (auth.uid() = user_id);
 
+-- Exercises policies
+create policy "Users can view own exercises"
+  on exercises for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert own exercises"
+  on exercises for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own exercises"
+  on exercises for update
+  using (auth.uid() = user_id);
+
+create policy "Users can delete own exercises"
+  on exercises for delete
+  using (auth.uid() = user_id);
+
 -- Create indexes (if not exists is implicit for indexes)
 create index if not exists sleep_entries_user_date_idx on sleep_entries(user_id, date desc);
 create index if not exists activity_entries_user_date_idx on activity_entries(user_id, date desc);
 create index if not exists nutrition_entries_user_date_idx on nutrition_entries(user_id, date desc);
 create index if not exists dishes_user_idx on dishes(user_id);
+create index if not exists exercises_user_idx on exercises(user_id);
 
 -- Drop existing triggers (safe)
 drop trigger if exists update_profiles_updated_at on profiles;
@@ -181,6 +217,7 @@ drop trigger if exists update_sleep_entries_updated_at on sleep_entries;
 drop trigger if exists update_activity_entries_updated_at on activity_entries;
 drop trigger if exists update_nutrition_entries_updated_at on nutrition_entries;
 drop trigger if exists update_dishes_updated_at on dishes;
+drop trigger if exists update_exercises_updated_at on exercises;
 
 -- Drop and recreate function
 drop function if exists update_updated_at_column();
@@ -206,4 +243,7 @@ create trigger update_nutrition_entries_updated_at before update on nutrition_en
   for each row execute procedure update_updated_at_column();
 
 create trigger update_dishes_updated_at before update on dishes
+  for each row execute procedure update_updated_at_column();
+
+create trigger update_exercises_updated_at before update on exercises
   for each row execute procedure update_updated_at_column();

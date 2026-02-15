@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Outfit', 'sans-serif']
+          },
+          colors: {
+            cream: {
+              50: '#faf8f5',
+              100: '#f5f2ed'
+            },
+            sage: '#7d8b6f',
+            lavender: '#8b7d9e',
+            terracotta: '#9e8b7d',
+            teal: '#7d9e8b',
+            stone: {
+              border: '#e8e4de',
+              text: '#2d2a26',
+              muted: '#6b6560'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-stone-text min-h-screen font-sans">
+  <div class="max-w-md mx-auto p-6 pb-12">
+    <!-- Header with back button -->
+    <header class="mb-8 pb-4 border-b border-stone-border flex items-center gap-4">
+      <a href="index.html" class="w-8 h-8 rounded-full hover:bg-stone-border/50 flex items-center justify-center transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+      </a>
+      <div>
+        <h1 class="text-2xl font-medium tracking-tight">Training Diary</h1>
+        <p class="text-sm text-stone-muted font-light mt-1" id="todayDate"></p>
+      </div>
+    </header>
+
+    <!-- My Exercises Library -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-sage">My Exercises</h2>
+        <button id="addExerciseBtn" class="text-xs px-2 py-1 rounded bg-sage/10 text-sage font-medium">+ Add Exercise</button>
+      </div>
+      <div id="exercisesLibrary" class="space-y-2"></div>
+    </section>
+
+    <!-- Today's Workout -->
+    <section class="bg-white rounded-xl border border-stone-border p-5 mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="text-xs font-medium uppercase tracking-wider text-sage">Today's Workout</h2>
+        <button id="startWorkoutBtn" class="text-xs px-2 py-1 rounded bg-sage text-white font-medium">Start Workout</button>
+      </div>
+      
+      <!-- Workout in progress -->
+      <div id="workoutInProgress" class="hidden">
+        <div class="bg-cream-50 rounded-lg p-4 mb-3">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs text-stone-muted">DURATION</span>
+            <span class="text-lg font-semibold" id="workoutTimer">00:00</span>
+          </div>
+        </div>
+        
+        <div id="workoutExercises" class="space-y-3 mb-3"></div>
+        
+        <div class="flex gap-2">
+          <button id="addExerciseToWorkout" class="flex-1 border border-sage text-sage rounded-lg px-4 py-2 text-sm font-medium hover:bg-sage/5">+ Add Exercise</button>
+          <button id="finishWorkout" class="flex-1 bg-sage text-white rounded-lg px-4 py-2 text-sm font-medium hover:opacity-90">Finish</button>
+        </div>
+      </div>
+
+      <!-- No workout -->
+      <div id="noWorkout">
+        <p class="text-sm text-stone-muted">No workout logged today</p>
+      </div>
+
+      <!-- Workout summary -->
+      <div id="workoutSummary" class="hidden">
+        <div class="bg-cream-50 rounded-lg p-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <div class="text-2xl font-semibold" id="summaryDuration">0:00</div>
+              <div class="text-xs text-stone-muted">Duration</div>
+            </div>
+            <div>
+              <div class="text-2xl font-semibold" id="summaryExercises">0</div>
+              <div class="text-xs text-stone-muted">Exercises</div>
+            </div>
+          </div>
+        </div>
+        <button id="viewWorkoutDetails" class="w-full mt-3 border border-stone-border rounded-lg px-4 py-2 text-sm text-stone-muted hover:border-sage hover:text-sage transition-colors">View Details</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Add Exercise Modal -->
+  <div id="exerciseModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-xl max-w-sm w-full p-5">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-medium">Add Exercise</h3>
+        <button id="closeExerciseModal" class="w-8 h-8 rounded-lg hover:bg-cream-50 flex items-center justify-center">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">EXERCISE NAME</label>
+          <input type="text" id="exerciseName" placeholder="e.g. Bench Press" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+        </div>
+        
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">CATEGORY</label>
+          <select id="exerciseCategory" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm bg-cream-50 focus:outline-none focus:border-sage">
+            <option value="push">Push (Chest, Shoulders, Triceps)</option>
+            <option value="pull">Pull (Back, Biceps)</option>
+            <option value="legs">Legs (Quads, Hamstrings, Glutes)</option>
+            <option value="core">Core (Abs, Lower Back)</option>
+            <option value="cardio">Cardio</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">EQUIPMENT (OPTIONAL)</label>
+          <input type="text" id="exerciseEquipment" placeholder="e.g. Barbell, Dumbbells" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage" />
+        </div>
+
+        <div>
+          <label class="text-xs font-medium text-stone-muted block mb-1">NOTES (OPTIONAL)</label>
+          <textarea id="exerciseNotes" placeholder="Form cues, variations, etc." rows="2" class="w-full border border-stone-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-sage"></textarea>
+        </div>
+
+        <button id="saveExercise" class="w-full bg-sage text-white rounded-lg px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity mt-4">Save Exercise</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Supabase + DB first -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+  <script src="training-logic.js"></script>
+  <script>
+    // Update today's date
+    document.getElementById('todayDate').textContent = formatDate(todayKey());
+
+    // Exercise cache
+    let exercisesCache = [];
+
+    // ── Exercise Library Functions ──
+    
+    async function loadExercises() {
+      exercisesCache = await getExercises(); // From db.js
+      const libraryEl = document.getElementById('exercisesLibrary');
+      
+      if (exercisesCache.length === 0) {
+        libraryEl.innerHTML = '<p class="text-sm text-stone-muted">No exercises yet. Add your first exercise!</p>';
+        return;
+      }
+      
+      // Group by category
+      const grouped = {};
+      exercisesCache.forEach(ex => {
+        if (!grouped[ex.category]) grouped[ex.category] = [];
+        grouped[ex.category].push(ex);
+      });
+
+      libraryEl.innerHTML = Object.entries(grouped).map(([category, exercises]) => {
+        const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
+        return `
+          <div class="mb-3">
+            <div class="text-xs font-medium text-stone-muted mb-2">${categoryLabel}</div>
+            ${exercises.map(ex => `
+              <div class="flex justify-between items-center p-2 hover:bg-cream-50 rounded-lg transition-colors">
+                <div class="flex-1 min-w-0">
+                  <div class="text-sm font-medium">${ex.name}</div>
+                  ${ex.equipment ? `<div class="text-xs text-stone-muted">${ex.equipment}</div>` : ''}
+                </div>
+                <button onclick="deleteExerciseById('${ex.id}')" class="text-stone-muted hover:text-red-500 text-lg ml-2">×</button>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openExerciseModal() {
+      document.getElementById('exerciseName').value = '';
+      document.getElementById('exerciseCategory').value = 'push';
+      document.getElementById('exerciseEquipment').value = '';
+      document.getElementById('exerciseNotes').value = '';
+      document.getElementById('exerciseModal').classList.remove('hidden');
+      document.getElementById('exerciseModal').classList.add('flex');
+    }
+
+    function closeExerciseModal() {
+      document.getElementById('exerciseModal').classList.add('hidden');
+      document.getElementById('exerciseModal').classList.remove('flex');
+    }
+
+    document.getElementById('addExerciseBtn').addEventListener('click', openExerciseModal);
+    document.getElementById('closeExerciseModal').addEventListener('click', closeExerciseModal);
+
+    document.getElementById('saveExercise').addEventListener('click', async () => {
+      const name = document.getElementById('exerciseName').value.trim();
+      const category = document.getElementById('exerciseCategory').value;
+      const equipment = document.getElementById('exerciseEquipment').value.trim();
+      const notes = document.getElementById('exerciseNotes').value.trim();
+
+      if (!name) {
+        alert('Please enter an exercise name');
+        return;
+      }
+
+      const exercise = { name, category, equipment, notes };
+      await addExercise(exercise); // From db.js
+
+      closeExerciseModal();
+      await loadExercises();
+    });
+
+    async function deleteExerciseById(exerciseId) {
+      if (!confirm('Delete this exercise?')) return;
+      await deleteExercise(exerciseId); // From db.js
+      await loadExercises();
+    }
+
+    // ── Workout Functions ──
+    
+    let workoutStartTime = null;
+    let workoutTimer = null;
+
+    function startWorkout() {
+      workoutStartTime = Date.now();
+      document.getElementById('noWorkout').classList.add('hidden');
+      document.getElementById('workoutInProgress').classList.remove('hidden');
+      
+      // Start timer
+      updateWorkoutTimer();
+      workoutTimer = setInterval(updateWorkoutTimer, 1000);
+    }
+
+    function updateWorkoutTimer() {
+      const elapsed = Math.floor((Date.now() - workoutStartTime) / 1000);
+      const mins = Math.floor(elapsed / 60);
+      const secs = elapsed % 60;
+      document.getElementById('workoutTimer').textContent = 
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    document.getElementById('startWorkoutBtn').addEventListener('click', startWorkout);
+
+    document.getElementById('addExerciseToWorkout').addEventListener('click', () => {
+      alert('Exercise selection coming in next iteration!');
+    });
+
+    document.getElementById('finishWorkout').addEventListener('click', () => {
+      if (workoutTimer) clearInterval(workoutTimer);
+      alert('Workout saved! Full workout logging coming in next iteration.');
+      
+      // For now, just reset
+      document.getElementById('workoutInProgress').classList.add('hidden');
+      document.getElementById('noWorkout').classList.remove('hidden');
+      workoutStartTime = null;
+    });
+
+    // Auth check and init
+    (async () => {
+      const user = await requireAuth();
+      if (user) {
+        await loadExercises();
+      }
+    })();
+  </script>
+</body>
+</html>
