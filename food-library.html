@@ -375,11 +375,20 @@
         return;
       }
 
-      const dish = { name, category, protein, carbs, fats, calories, photo: currentDishPhoto };
-      await addDish(dish);
+      if (protein === 0 && carbs === 0 && fats === 0) {
+        alert('Please enter at least one macro value');
+        return;
+      }
 
-      closeDishModal();
-      await loadDishes();
+      const dish = { name, category, protein, carbs, fats, calories, photo: currentDishPhoto };
+      const result = await addDish(dish);
+
+      if (result) {
+        closeDishModal();
+        await loadDishes();
+      } else {
+        alert('Failed to save dish. Please try again.');
+      }
     });
 
     async function deleteDishById(dishId) {

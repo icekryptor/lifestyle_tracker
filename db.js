@@ -260,7 +260,7 @@ async function getDishes() {
     .from('dishes')
     .select('*')
     .eq('user_id', user.id)
-    .order('name', { ascending: true });
+    .order('created_at', { ascending: false }); // Most recent first
 
   if (error) {
     console.error('Error fetching dishes:', error);
