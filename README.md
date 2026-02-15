@@ -1,6 +1,8 @@
-# Lifestyle Tracker with Supabase
+# Regime
 
-A personal lifestyle tracking app for monitoring sleep, nutrition, and physical activity with cloud sync via Supabase.
+> Your complete lifestyle tracking system
+
+A minimalist personal tracking app for sleep, nutrition, training, and activity with cloud sync via Supabase.
 
 ## 🚀 Quick Start
 
@@ -15,7 +17,7 @@ A personal lifestyle tracking app for monitoring sleep, nutrition, and physical 
 1. Go to [supabase.com](https://supabase.com) and sign up
 2. Click "New Project"
 3. Fill in:
-   - **Name:** lifestyle-tracker
+   - **Name:** regime
    - **Database Password:** (create a strong password and save it)
    - **Region:** Choose closest to you
 4. Wait ~2 minutes for provisioning
@@ -50,49 +52,82 @@ const SUPABASE_ANON_KEY = 'your-anon-key';
 ## 📁 Project Structure
 
 ```
-lifestyle_tracker/
+regime/
 ├── index.html                      # Main dashboard
 ├── login.html                      # Authentication page
 ├── sleep.html                      # Sleep tracker
-├── activity.html                   # Activity & gym tracker
+├── activity.html                   # Activity & workout tracker
 ├── nutrition.html                  # Nutrition & meal tracker
+├── training.html                   # Training diary & workouts
+├── profile.html                    # User profile & metrics
+├── food-library.html               # Custom food library
+├── exercise-library.html           # Custom exercise library
+├── logo.svg                        # Regime logo
+├── favicon.svg                     # Favicon
 ├── app.js                          # Shared utilities
 ├── db.js                           # Supabase database functions
 ├── sleep-logic.js                  # Sleep analysis logic
 ├── activity-logic.js               # Activity calculations
 ├── nutrition-logic.js              # Nutrition analysis
-├── style.css                       # Styles
+├── training-logic.js               # Workout calorie calculations
+├── profile-logic.js                # BMI, BMR, TDEE calculations
+├── seed-data.js                    # Sample dishes & exercises
+├── style.css                       # Dark theme styles
 ├── supabase-config.js              # Your credentials (DO NOT COMMIT)
-├── supabase-config.example.js      # Template for config
 ├── supabase-schema.sql             # Database setup script
-├── SUPABASE_SETUP.md              # Detailed setup guide
 └── .gitignore                      # Protects your credentials
 ```
 
 ## ✨ Features
 
-### Sleep Tracking
-- Log bedtime and wake time
-- Circadian rhythm analysis
-- Sleep quality scoring
-- Duration, bedtime, and wake time breakdown
+### 🌙 Sleep Tracking
+- Log bedtime and wake time with sleep quality rating
+- Circadian rhythm analysis and optimal sleep time warnings
+- Sleep duration tracking
 - Calendar view of sleep history
 
-### Activity Tracking
+### 🥗 Nutrition Tracking
+- 4 meals per day (Breakfast, Lunch, Dinner, Supper)
+- Full macro tracking (protein, carbs, fats)
+- Automatic calorie calculation
+- Photo upload for meals (file or URL)
+- Custom food library with categories
+- Brand tracking for packaged foods
+- Quick-add from saved dishes with autocomplete
+- Monthly nutrition calendar
+- 50+ pre-loaded sample dishes
+
+### 🏋️ Training & Workouts
+- Detailed workout logging with exercises, sets, reps, and weight
+- Exercise library with categories (strength, cardio, flexibility, olympic, etc.)
+- Real-time workout timer
+- Smart calorie calculation based on weight lifted
+- 30+ pre-loaded sample exercises
+- Workout history and statistics
+
+### 🏃 Activity Tracking
 - Daily step counter with calorie calculation
-- Gym session logging (with intensity levels)
-- Total calorie expenditure
+- Integrated workout calorie tracking
+- Total daily calorie expenditure
 - Step goal progress (10,000 steps/day)
 
-### Nutrition Tracking
-- 4 meals per day (Breakfast, Lunch, Dinner, Supper)
-- Macro tracking (protein, carbs, fats, fiber)
-- Calorie auto-calculation
-- Photo upload for meals
-- Custom dish library (save frequently eaten foods)
-- Quick-add from saved dishes
-- Meal-specific macro recommendations
-- Calendar view of nutrition history
+### 📊 Profile & Metrics
+- BMI calculation and categorization
+- BMR (Basal Metabolic Rate) calculation
+- TDEE (Total Daily Energy Expenditure) with activity multiplier
+- Goal setting (target weight, body fat percentage)
+- Customizable goal speed (extreme loss to fast gain)
+- Advanced body composition tracking (optional)
+- Automatic calorie target calculation
+
+### 📈 Dashboard & Analytics
+- Unified dashboard with all metrics
+- Daily goal progress with circular visualization
+- Customizable date range for trends
+- Line graphs for sleep, nutrition, activity, and training
+- Average calculations across actual data days
+- Desktop-optimized 12-column grid layout
+- Quick links to all tracking sections
 
 ## 🔒 Security
 
@@ -145,18 +180,25 @@ Your data is in Supabase and can be exported anytime:
 4. Click **Export** (top right)
 5. Choose CSV or JSON format
 
+## 🎨 Design
+
+- **Dark Theme**: Sophisticated navy blue and indigo color scheme
+- **Typography**: Poppins font for clean, modern readability
+- **Responsive**: Mobile-first design with desktop-optimized layouts
+- **Minimalist Logo**: Geometric "R" representing structure and discipline
+- **Smooth Interactions**: Polished animations and transitions throughout
+
 ## 🚀 Future Enhancements
 
 Ideas for next features:
 - [ ] AI nutrition recognition from meal photos
 - [ ] Auto-fill dish nutrition from food databases
-- [ ] Weekly/monthly reports and insights
-- [ ] Goals and streaks
+- [ ] Weekly/monthly comprehensive reports
+- [ ] Streak tracking and achievements
 - [ ] Export to Apple Health / Google Fit
-- [ ] Reminders and notifications
+- [ ] Push notifications and reminders
 - [ ] Progressive Web App (install on phone)
-- [ ] Dark mode
-- [ ] Data visualization charts
+- [ ] Social features and challenges
 
 ## 📝 Migration from localStorage
 

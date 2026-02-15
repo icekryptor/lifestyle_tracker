@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lifestyle Tracker</title>
+  <title>Regime</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -54,11 +55,19 @@
     <header class="bg-slate-800 border-b border-dark-border sticky top-0 z-10 backdrop-blur-sm bg-opacity-95">
       <div class="max-w-[1920px] mx-auto px-4 lg:px-8 py-4">
         <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-2xl font-medium tracking-tight">Lifestyle Tracker</h1>
-            <div class="flex gap-4 mt-1">
-              <p class="text-sm text-dark-muted font-light" id="todayDate"></p>
-              <p class="text-xs text-dark-muted/60" id="userEmail"></p>
+          <div class="flex items-center gap-3">
+            <svg width="36" height="36" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="30" y="30" width="12" height="60" fill="#6366f1" rx="2"/>
+              <path d="M42 30 L65 30 C75 30 80 35 80 45 C80 55 75 60 65 60 L42 60" stroke="#6366f1" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="60" y1="60" x2="85" y2="90" stroke="#6366f1" stroke-width="12" stroke-linecap="round"/>
+              <circle cx="90" cy="90" r="4" fill="#818cf8"/>
+            </svg>
+            <div>
+              <h1 class="text-2xl font-medium tracking-tight">Regime</h1>
+              <div class="flex gap-4 mt-0.5">
+                <p class="text-sm text-dark-muted font-light" id="todayDate"></p>
+                <p class="text-xs text-dark-muted/60" id="userEmail"></p>
+              </div>
             </div>
           </div>
           <div class="flex gap-2">
@@ -538,6 +547,7 @@
             const y = 100 - ((d.value - minValue) / range) * 100;
             return `<circle cx="${x}" cy="${y}" r="2.5" fill="${color}" class="hover-point">
               <title>${d.label}: ${d.value}${unit}</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
             </circle>`;
           }).join('')}
         </svg>

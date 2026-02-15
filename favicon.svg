@@ -1,0 +1,15 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simplified R for favicon -->
+  <rect x="8" y="8" width="3" height="16" fill="#6366f1" rx="0.5"/>
+  <path d="M11 8 L17 8 C20 8 21 9 21 12 C21 15 20 16 17 16 L11 16" 
+        stroke="#6366f1" 
+        stroke-width="3" 
+        fill="none" 
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  <line x1="16" y1="16" x2="23" y2="24" 
+        stroke="#6366f1" 
+        stroke-width="3" 
+        stroke-linecap="round"/>
+  <circle cx="23.5" cy="24" r="1.5" fill="#818cf8"/>
+</svg>

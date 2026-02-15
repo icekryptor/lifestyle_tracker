@@ -1,7 +1,7 @@
 {
-  "name": "lifestyle_tracker",
-  "version": "1.0.0",
-  "description": "A personal lifestyle tracking app for monitoring sleep, nutrition, and physical activity with cloud sync via Supabase.",
+  "name": "regime",
+  "version": "2.0.0",
+  "description": "Your complete lifestyle tracking system - minimalist app for sleep, nutrition, training, and activity with cloud sync via Supabase.",
   "main": "activity-logic.js",
   "scripts": {
     "build": "node scripts/build-config.js"

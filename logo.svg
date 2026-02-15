@@ -1,0 +1,22 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Geometric R shape made of simple forms -->
+  <!-- Vertical bar -->
+  <rect x="30" y="30" width="12" height="60" fill="#6366f1" rx="2"/>
+  
+  <!-- Top arc/circle (top of R) -->
+  <path d="M42 30 L65 30 C75 30 80 35 80 45 C80 55 75 60 65 60 L42 60" 
+        stroke="#6366f1" 
+        stroke-width="12" 
+        fill="none" 
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Diagonal leg -->
+  <line x1="60" y1="60" x2="85" y2="90" 
+        stroke="#6366f1" 
+        stroke-width="12" 
+        stroke-linecap="round"/>
+  
+  <!-- Subtle accent dot -->
+  <circle cx="90" cy="90" r="4" fill="#818cf8"/>
+</svg>
