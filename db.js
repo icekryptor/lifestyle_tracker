@@ -41,6 +41,11 @@ async function saveUserProfile(profile) {
   const user = await getCurrentUser();
   if (!user) return null;
 
+  console.log('Saving profile to database:', { // Debug
+    activity_level: profile.activity_level,
+    goal_speed: profile.goal_speed
+  });
+
   const { data, error } = await supabase
     .from('profiles')
     .upsert({
@@ -66,6 +71,8 @@ async function saveUserProfile(profile) {
     console.error('Error saving profile:', error);
     return null;
   }
+  
+  console.log('Profile saved successfully:', data); // Debug
 
   return data[0];
 }

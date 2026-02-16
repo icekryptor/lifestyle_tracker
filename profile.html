@@ -253,15 +253,27 @@
       currentProfile = await getUserProfile();
       
       if (currentProfile) {
+        console.log('Loading profile:', currentProfile); // Debug
+        
         // Fill form
         document.getElementById('userName').value = currentProfile.name || '';
         document.getElementById('userDob').value = currentProfile.date_of_birth || '';
         document.getElementById('userHeight').value = currentProfile.height || '';
         document.getElementById('userWeight').value = currentProfile.weight || '';
         document.getElementById('userSex').value = currentProfile.sex || '';
-        document.getElementById('activityLevel').value = currentProfile.activity_level || '1.2';
+        
+        // Convert activity_level to string for select matching
+        const activityLevel = currentProfile.activity_level ? String(currentProfile.activity_level) : '1.2';
+        document.getElementById('activityLevel').value = activityLevel;
+        console.log('Set activity level to:', activityLevel); // Debug
+        
         document.getElementById('targetWeight').value = currentProfile.target_weight || '';
-        document.getElementById('goalSpeed').value = currentProfile.goal_speed || 'moderate';
+        
+        // Set goal speed
+        const goalSpeed = currentProfile.goal_speed || 'moderate';
+        document.getElementById('goalSpeed').value = goalSpeed;
+        console.log('Set goal speed to:', goalSpeed); // Debug
+        
         document.getElementById('targetBodyFat').value = currentProfile.target_body_fat || '';
         document.getElementById('currentBodyFat').value = currentProfile.current_body_fat || '';
         document.getElementById('currentWater').value = currentProfile.current_water || '';
@@ -317,15 +329,20 @@
     }
 
     async function saveProfile() {
+      const activityValue = document.getElementById('activityLevel').value;
+      const goalSpeedValue = document.getElementById('goalSpeed').value;
+      
+      console.log('Saving - Activity Level:', activityValue, 'Goal Speed:', goalSpeedValue); // Debug
+      
       const profile = {
         name: document.getElementById('userName').value.trim(),
         date_of_birth: document.getElementById('userDob').value,
         height: parseFloat(document.getElementById('userHeight').value) || null,
         weight: parseFloat(document.getElementById('userWeight').value) || null,
         sex: document.getElementById('userSex').value,
-        activity_level: parseFloat(document.getElementById('activityLevel').value) || 1.2,
+        activity_level: parseFloat(activityValue) || 1.2,
         target_weight: parseFloat(document.getElementById('targetWeight').value) || null,
-        goal_speed: document.getElementById('goalSpeed').value || 'moderate',
+        goal_speed: goalSpeedValue || 'moderate',
         target_body_fat: parseFloat(document.getElementById('targetBodyFat').value) || null,
         current_body_fat: parseFloat(document.getElementById('currentBodyFat').value) || null,
         current_water: parseFloat(document.getElementById('currentWater').value) || null,
@@ -333,8 +350,15 @@
         current_bone: parseFloat(document.getElementById('currentBone').value) || null
       };
 
-      await saveUserProfile(profile);
+      console.log('Profile object to save:', profile); // Debug
+      
+      const result = await saveUserProfile(profile);
+      console.log('Save result:', result); // Debug
+      
       alert('Profile saved successfully!');
+      
+      // Reload profile to confirm saved values
+      await loadProfile();
     }
 
     // Event listeners
