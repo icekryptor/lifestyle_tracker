@@ -36,6 +36,7 @@ create table if not exists profiles (
   sex text, -- 'male' or 'female'
   activity_level numeric(3,2) default 1.2, -- 1.2 to 1.9
   target_weight numeric(5,1), -- kg
+  goal_speed text DEFAULT 'moderate', -- weight loss/gain speed
   target_body_fat numeric(4,1), -- percentage
   current_body_fat numeric(4,1), -- percentage (from impedance)
   current_water numeric(4,1), -- percentage (from impedance)
